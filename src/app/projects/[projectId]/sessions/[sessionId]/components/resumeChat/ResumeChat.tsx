@@ -6,6 +6,7 @@ import {
   type MessageInput,
   useCreateSessionProcessMutation,
 } from "../../../../components/chatForm";
+import { usePendingPermissionMode } from "../../hooks/usePendingPermissionMode";
 
 export const ResumeChat: FC<{
   projectId: string;
@@ -14,12 +15,18 @@ export const ResumeChat: FC<{
   const { i18n } = useLingui();
   const createSessionProcess = useCreateSessionProcessMutation(projectId);
   const { config } = useConfig();
+  const { pendingMode, clearPendingMode } = usePendingPermissionMode(sessionId);
 
   const handleSubmit = async (input: MessageInput) => {
     await createSessionProcess.mutateAsync({
       input,
       baseSessionId: sessionId,
+      permissionModeOverride: pendingMode ?? undefined,
     });
+    // Clear pending mode after successful submission
+    if (pendingMode) {
+      clearPendingMode();
+    }
   };
 
   const getPlaceholder = () => {
