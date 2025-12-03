@@ -174,6 +174,7 @@ describe("EventBus", () => {
             cwd: "/test/path",
             abortController: new AbortController(),
             setNextMessage: () => {},
+            permissionMode: "default",
           },
           tasks: [],
         };
@@ -183,6 +184,7 @@ describe("EventBus", () => {
           projectId: "project-1",
           sessionId: "session-1",
           status: "running",
+          permissionMode: "default",
         };
 
         yield* eventBus.emit("sessionProcessChanged", {
