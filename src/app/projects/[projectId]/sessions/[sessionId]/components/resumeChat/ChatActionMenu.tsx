@@ -10,11 +10,19 @@ import {
   XIcon,
 } from "lucide-react";
 import type { FC } from "react";
+import { useConfig } from "@/app/hooks/useConfig";
 import { Button } from "@/components/ui/button";
-import type { PublicSessionProcess } from "../../../../../../../types/session-process";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
+import type {
+  PermissionMode,
+  PublicSessionProcess,
+} from "../../../../../../../types/session-process";
+import { PermissionModeBadge } from "./PermissionModeBadge";
+import { PermissionModeSelector } from "./PermissionModeSelector";
 
 interface ChatActionMenuProps {
   projectId: string;
+  sessionId?: string;
   isPending?: boolean;
   onScrollToTop?: () => void;
   onScrollToBottom?: () => void;
@@ -22,10 +30,12 @@ interface ChatActionMenuProps {
   sessionProcess?: PublicSessionProcess;
   abortTask?: UseMutationResult<unknown, Error, string, unknown>;
   isNewChat?: boolean;
+  onInterruptAndChangePermission?: (newMode: PermissionMode) => void;
 }
 
 export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   projectId,
+  sessionId,
   isPending = false,
   onScrollToTop,
   onScrollToBottom,
@@ -33,9 +43,16 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   sessionProcess,
   abortTask,
   isNewChat = false,
+  onInterruptAndChangePermission,
 }) => {
   const { i18n } = useLingui();
   const navigate = useNavigate();
+  const { config } = useConfig();
+  const { isFlagEnabled } = useFeatureFlags();
+  const isToolApprovalAvailable = isFlagEnabled("tool-approval");
+  // Use session process permission mode if available, otherwise fall back to global config
+  const permissionMode =
+    sessionProcess?.permissionMode ?? config?.permissionMode ?? "default";
 
   const handleStartNewChat = () => {
     navigate({
@@ -119,6 +136,17 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
             <ArrowDownIcon className="w-3.5 h-3.5" />
           </Button>
         )}
+        {isToolApprovalAvailable &&
+          (sessionId ? (
+            <PermissionModeSelector
+              sessionId={sessionId}
+              currentMode={permissionMode}
+              sessionStatus={sessionProcess?.status ?? "none"}
+              onInterruptAndChange={onInterruptAndChangePermission}
+            />
+          ) : (
+            <PermissionModeBadge permissionMode={permissionMode} />
+          ))}
         {sessionProcess && abortTask && (
           <Button
             type="button"
