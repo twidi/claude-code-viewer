@@ -446,6 +446,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
               projectId: z.string(),
               input: userMessageInputSchema,
               baseSessionId: z.string().optional(),
+              permissionModeOverride: z
+                .enum(["acceptEdits", "bypassPermissions", "default", "plan"])
+                .optional(),
             }),
           ),
           async (c) => {
@@ -493,6 +496,19 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
               claudeCodeLifeCycleService.abortTask(sessionProcessId),
             );
             return c.json({ message: "Task aborted" });
+          },
+        )
+
+        // stop (graceful, no error - used for permission mode changes)
+        .post(
+          "/api/cc/session-processes/:sessionProcessId/stop",
+          zValidator("json", z.object({ projectId: z.string() })),
+          async (c) => {
+            const { sessionProcessId } = c.req.param();
+            await Runtime.runPromise(runtime)(
+              claudeCodeLifeCycleService.stopTask(sessionProcessId),
+            );
+            return c.json({ message: "Task stopped" });
           },
         )
 
