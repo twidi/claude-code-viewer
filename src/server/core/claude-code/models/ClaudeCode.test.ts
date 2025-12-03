@@ -159,7 +159,9 @@ describe("ClaudeCode.Config", () => {
       });
     });
 
-    it("should fail when both which results are npx shim paths", async () => {
+    it("should fallback to npx shim path when first which is npx shim and second is also npx shim", async () => {
+      // Note: As of v0.4.12, the behavior changed to accept npx shim paths from the second which (with shell)
+      // Previously this would fail, but now it falls back to the second result even if it's an npx shim
       const CommandExecutorTest = Layer.effect(
         CommandExecutor.CommandExecutor,
         Effect.map(CommandExecutor.CommandExecutor, (realExecutor) => ({
@@ -170,21 +172,26 @@ describe("ClaudeCode.Config", () => {
               "/home/user/.npm/_npx/abc123/node_modules/.bin/claude",
               // 2nd: which claude (with shell) also returns npx shim
               "/custom/cache/_npx/def456/node_modules/.bin/claude",
+              // 3rd: --version call
+              "2.0.30 (Claude Code)\n",
             ];
             return () => Effect.succeed(responses.shift() ?? "");
           })(),
         })),
       ).pipe(Layer.provide(NodeContext.layer));
 
-      await expect(
-        Effect.runPromise(
-          ClaudeCode.Config.pipe(
-            Effect.provide(EnvService.Live),
-            Effect.provide(Path.layer),
-            Effect.provide(CommandExecutorTest),
-          ),
+      const config = await Effect.runPromise(
+        ClaudeCode.Config.pipe(
+          Effect.provide(EnvService.Live),
+          Effect.provide(Path.layer),
+          Effect.provide(CommandExecutorTest),
         ),
-      ).rejects.toThrow("Claude Code CLI not found in any location");
+      );
+
+      // Falls back to the second npx shim path
+      expect(config.claudeCodeExecutablePath).toBe(
+        "/custom/cache/_npx/def456/node_modules/.bin/claude",
+      );
     });
 
     it("should use project-local node_modules/.bin if it is the first result (not _npx)", async () => {
