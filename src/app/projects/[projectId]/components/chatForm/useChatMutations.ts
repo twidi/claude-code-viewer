@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { honoClient } from "../../../../../lib/api/client";
+import type { PermissionMode } from "../../../../../types/session-process";
 import type { MessageInput } from "./ChatInput";
 
 export const useCreateSessionProcessMutation = (
@@ -13,6 +14,7 @@ export const useCreateSessionProcessMutation = (
     mutationFn: async (options: {
       input: MessageInput;
       baseSessionId?: string;
+      permissionModeOverride?: PermissionMode;
     }) => {
       const response = await honoClient.api.cc["session-processes"].$post(
         {
@@ -20,6 +22,7 @@ export const useCreateSessionProcessMutation = (
             projectId,
             baseSessionId: options.baseSessionId,
             input: options.input,
+            permissionModeOverride: options.permissionModeOverride,
           },
         },
         {

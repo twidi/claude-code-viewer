@@ -114,6 +114,7 @@ const LayerImpl = Effect.gen(function* () {
             abortController: new AbortController(),
             setNextMessage,
             sessionProcessId: ulid(),
+            permissionMode: userConfig.permissionMode ?? "default",
           },
           taskDef:
             baseSession.sessionId === undefined
@@ -391,6 +392,18 @@ const LayerImpl = Effect.gen(function* () {
       return processes.filter((process) => CCSessionProcess.isPublic(process));
     });
 
+  const stopTask = (sessionProcessId: string): Effect.Effect<void, Error> =>
+    Effect.gen(function* () {
+      const currentProcess =
+        yield* sessionProcessService.getSessionProcess(sessionProcessId);
+
+      currentProcess.def.abortController.abort();
+
+      yield* sessionProcessService.toCompletedState({
+        sessionProcessId: currentProcess.def.sessionProcessId,
+      });
+    });
+
   const abortTask = (sessionProcessId: string): Effect.Effect<void, Error> =>
     Effect.gen(function* () {
       const currentProcess =
@@ -419,6 +432,7 @@ const LayerImpl = Effect.gen(function* () {
   return {
     continueTask,
     startTask,
+    stopTask,
     abortTask,
     abortAllTasks,
     getPublicSessionProcesses,
