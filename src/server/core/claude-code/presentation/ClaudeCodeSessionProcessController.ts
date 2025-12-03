@@ -1,5 +1,6 @@
 import { Context, Effect, Layer } from "effect";
 import type { PublicSessionProcess } from "../../../../types/session-process";
+import type { UserConfig } from "../../../lib/config/config";
 import type { ControllerResponse } from "../../../lib/effect/toEffectResponse";
 import type { InferEffect } from "../../../lib/effect/types";
 import { UserConfigService } from "../../platform/services/UserConfigService";
@@ -25,6 +26,7 @@ const LayerImpl = Effect.gen(function* () {
               projectId: p.def.projectId,
               sessionId: p.sessionId,
               status: p.type === "paused" ? "paused" : "running",
+              permissionMode: p.def.permissionMode,
             }),
           ),
         },
@@ -36,9 +38,11 @@ const LayerImpl = Effect.gen(function* () {
     projectId: string;
     input: UserMessageInput;
     baseSessionId?: string | undefined;
+    permissionModeOverride?: NonNullable<UserConfig["permissionMode"]>;
   }) =>
     Effect.gen(function* () {
-      const { projectId, input, baseSessionId } = options;
+      const { projectId, input, baseSessionId, permissionModeOverride } =
+        options;
 
       const { project } = yield* projectRepository.getProject(projectId);
       const userConfig = yield* userConfigService.getUserConfig();
@@ -50,13 +54,18 @@ const LayerImpl = Effect.gen(function* () {
         } as const satisfies ControllerResponse;
       }
 
+      // Use override if provided, otherwise use userConfig
+      const effectiveUserConfig = permissionModeOverride
+        ? { ...userConfig, permissionMode: permissionModeOverride }
+        : userConfig;
+
       const result = yield* claudeCodeLifeCycleService.startTask({
         baseSession: {
           cwd: project.meta.projectPath,
           projectId,
           sessionId: baseSessionId,
         },
-        userConfig,
+        userConfig: effectiveUserConfig,
         input,
       });
 
