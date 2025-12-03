@@ -20,6 +20,7 @@ const createMockSessionProcessDef = (
   cwd: "/test/path",
   abortController: new AbortController(),
   setNextMessage: () => {},
+  permissionMode: "default",
 });
 
 // Helper function to create mock new task definition
