@@ -206,6 +206,7 @@ const LayerImpl = Effect.gen(function* () {
               projectId: process.def.projectId,
               sessionId: process.sessionId,
               status: process.type === "paused" ? "paused" : "running",
+              permissionMode: process.def.permissionMode,
             })),
           changed: nextState,
         });

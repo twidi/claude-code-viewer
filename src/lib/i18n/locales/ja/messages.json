@@ -195,7 +195,7 @@
         177
       ]
     ],
-    "translation": "タスクの読み込みに失敗しました"
+    "translation": ""
   },
   "assistant.tool.input_parameters": {
     "placeholders": {},
@@ -217,7 +217,7 @@
         169
       ]
     ],
-    "translation": "タスクを読み込み中..."
+    "translation": ""
   },
   "assistant.tool.message_count": {
     "placeholders": {
@@ -243,7 +243,7 @@
         187
       ]
     ],
-    "translation": "タスクデータがありません"
+    "translation": ""
   },
   "assistant.tool.no_task_data_description": {
     "placeholders": {},
@@ -254,7 +254,7 @@
         190
       ]
     ],
-    "translation": "このタスクのデータは利用できません"
+    "translation": ""
   },
   "assistant.tool.result": {
     "placeholders": {},
@@ -276,7 +276,7 @@
         180
       ]
     ],
-    "translation": "再試行"
+    "translation": ""
   },
   "assistant.tool.task_id": {
     "placeholders": {},
@@ -361,11 +361,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        182
+        200
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        462
+        480
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
@@ -381,7 +381,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        37
+        66
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -397,7 +397,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        30
+        59
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -413,7 +413,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        43
+        72
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -429,7 +429,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        35
+        42
       ]
     ],
     "translation": "メッセージを入力... （/でコマンド、@でファイル、Command+Enterで送信）"
@@ -441,7 +441,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        28
+        35
       ]
     ],
     "translation": "メッセージを入力... （/でコマンド、@でファイル、Enterで送信）"
@@ -453,7 +453,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        41
+        48
       ]
     ],
     "translation": "メッセージを入力... （/でコマンド、@でファイル、Shift+Enterで送信）"
@@ -464,7 +464,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        48
+        55
       ]
     ],
     "translation": "再開"
@@ -511,7 +511,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        60
+        97
       ]
     ],
     "translation": "送信"
@@ -700,11 +700,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        237
+        255
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        348
+        366
       ]
     ],
     "translation": "ブランチ"
@@ -715,7 +715,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        72
+        89
       ]
     ],
     "translation": "Git"
@@ -726,7 +726,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        311
+        329
       ]
     ],
     "translation": "メタデータ"
@@ -737,7 +737,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        104
+        121
       ]
     ],
     "translation": "新規"
@@ -749,22 +749,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        97
+        114
       ]
     ],
     "translation": "新しいチャット"
   },
   "control.open_browser": {
+    "translation": "",
     "message": "Open Browser",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        83
+        100
       ]
-    ],
-    "translation": "ブラウザで開く"
+    ]
   },
   "control.open_git_dialog": {
     "message": "Open Git Dialog",
@@ -773,7 +773,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        65
+        82
       ]
     ],
     "translation": "Gitダイアログを開く"
@@ -784,7 +784,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        317
+        335
       ]
     ],
     "translation": "プロジェクトパス"
@@ -796,7 +796,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        131
+        148
       ]
     ],
     "translation": "ボトムにスクロール"
@@ -808,7 +808,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        115
+        132
       ]
     ],
     "translation": "トップにスクロール"
@@ -819,11 +819,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        252
+        270
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        335
+        353
       ]
     ],
     "translation": "セッションID"
@@ -1467,6 +1467,120 @@
     ],
     "translation": "テスト"
   },
+  "permission.mode.change.cancelled": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        77
+      ]
+    ],
+    "translation": "権限モードの変更がキャンセルされました"
+  },
+  "permission.mode.change.pending": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        92
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        107
+      ]
+    ],
+    "translation": "権限モードは次のメッセージ送信時に適用されます"
+  },
+  "permission.mode.change.pending.hint": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        147
+      ]
+    ],
+    "translation": "この変更は次のメッセージ送信時に適用されます"
+  },
+  "permission.mode.change.pending.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        133
+      ]
+    ],
+    "translation": "クリックして権限モードを変更（次のメッセージ送信時に適用されます）"
+  },
+  "permission.mode.change.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        135
+      ]
+    ],
+    "translation": "クリックして権限モードを変更"
+  },
+  "permission.mode.running.dialog.apply_later": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        192
+      ]
+    ],
+    "translation": ""
+  },
+  "permission.mode.running.dialog.description": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        187
+      ]
+    ],
+    "translation": ""
+  },
+  "permission.mode.running.dialog.interrupt_now": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        195
+      ]
+    ],
+    "translation": ""
+  },
+  "permission.mode.running.dialog.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        184
+      ]
+    ],
+    "translation": ""
+  },
+  "permission.mode.select.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        143
+      ]
+    ],
+    "translation": "権限モードを選択"
+  },
   "project.new": {
     "placeholders": {},
     "comments": [],
@@ -1992,7 +2106,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        156
+        184
       ]
     ],
     "translation": "中止"
@@ -2003,7 +2117,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        272
+        290
       ]
     ],
     "translation": "一時停止"
@@ -2014,7 +2128,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        263
+        281
       ]
     ],
     "translation": "実行中"
@@ -2025,7 +2139,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        405
+        423
       ]
     ],
     "translation": "キャッシュ作成"
@@ -2036,7 +2150,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        419
+        437
       ]
     ],
     "translation": "キャッシュ読込"
@@ -2047,7 +2161,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        377
+        395
       ]
     ],
     "translation": "入力トークン"
@@ -2058,7 +2172,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        362
+        380
       ]
     ],
     "translation": "セッションコスト"
@@ -2069,7 +2183,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        391
+        409
       ]
     ],
     "translation": "出力トークン"
@@ -2080,7 +2194,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        369
+        387
       ]
     ],
     "translation": "合計"
@@ -2091,10 +2205,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        465
+        483
       ]
     ],
-    "translation": "新しいチャットを開始して会話を始めましょう"
+    "translation": ""
   },
   "session.processing": {
     "placeholders": {},
@@ -2102,7 +2216,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        479
+        497
       ]
     ],
     "translation": "Claude Codeが処理中..."
