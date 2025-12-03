@@ -12,6 +12,7 @@ import {
 import {
   type FC,
   type ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -33,10 +34,12 @@ import {
 import { usePermissionRequests } from "@/hooks/usePermissionRequests";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { honoClient } from "@/lib/api/client";
+import type { PermissionMode } from "@/types/session-process";
 import { firstUserMessageToTitle } from "../../../services/firstCommandToTitle";
 import { useExportSession } from "../hooks/useExportSession";
 import type { useGitCurrentRevisions } from "../hooks/useGit";
 import { useGitCurrentRevisions as useGitCurrentRevisionsHook } from "../hooks/useGit";
+import { useInterruptAndChangePermissionMutation } from "../hooks/useInterruptAndChangePermissionMutation";
 import { useSession } from "../hooks/useSession";
 import { useSessionProcess } from "../hooks/useSessionProcess";
 import { ConversationList } from "./conversationList/ConversationList";
@@ -134,6 +137,21 @@ const SessionPageMainContent: FC<
       return response.json();
     },
   });
+
+  const interruptAndChangePermission =
+    useInterruptAndChangePermissionMutation(projectId);
+
+  const handleInterruptAndChangePermission = useCallback(
+    (newMode: PermissionMode) => {
+      if (!relatedSessionProcess || !sessionId) return;
+      interruptAndChangePermission.mutate({
+        sessionProcessId: relatedSessionProcess.id,
+        sessionId,
+        newPermissionMode: newMode,
+      });
+    },
+    [relatedSessionProcess, sessionId, interruptAndChangePermission],
+  );
 
   useEffect(() => {
     if (!isExistingSession) return;
@@ -487,6 +505,7 @@ const SessionPageMainContent: FC<
         <div className="w-full pt-3">
           <ChatActionMenu
             projectId={projectId}
+            sessionId={sessionId}
             onScrollToTop={handleScrollToTop}
             onScrollToBottom={handleScrollToBottom}
             onOpenDiffModal={
@@ -495,6 +514,7 @@ const SessionPageMainContent: FC<
             sessionProcess={relatedSessionProcess}
             abortTask={abortTask}
             isNewChat={!isExistingSession}
+            onInterruptAndChangePermission={handleInterruptAndChangePermission}
           />
         </div>
 
@@ -505,6 +525,7 @@ const SessionPageMainContent: FC<
               sessionId={sessionId}
               sessionProcessId={relatedSessionProcess.id}
               sessionProcessStatus={relatedSessionProcess.status}
+              currentPermissionMode={relatedSessionProcess.permissionMode}
             />
           ) : isExistingSession && sessionId ? (
             <ResumeChat projectId={projectId} sessionId={sessionId} />

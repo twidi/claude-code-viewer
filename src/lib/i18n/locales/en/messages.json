@@ -372,11 +372,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        182
+        200
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        462
+        480
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
@@ -392,7 +392,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        37
+        66
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -408,7 +408,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        30
+        59
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -424,7 +424,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        43
+        72
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -440,7 +440,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        35
+        42
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Command+Enter to send)"
@@ -452,7 +452,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        28
+        35
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Enter to send)"
@@ -464,7 +464,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        41
+        48
       ]
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
@@ -475,7 +475,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ResumeChat.tsx",
-        48
+        55
       ]
     ],
     "translation": "Resume"
@@ -522,7 +522,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        60
+        97
       ]
     ],
     "translation": "Send"
@@ -711,11 +711,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        237
+        255
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        348
+        366
       ]
     ],
     "translation": "Branch"
@@ -726,7 +726,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        72
+        89
       ]
     ],
     "translation": "Git"
@@ -737,7 +737,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        311
+        329
       ]
     ],
     "translation": "Metadata"
@@ -748,7 +748,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        104
+        121
       ]
     ],
     "translation": "New"
@@ -760,7 +760,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        97
+        114
       ]
     ],
     "translation": "New Chat"
@@ -772,7 +772,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        83
+        100
       ]
     ],
     "translation": "Open Browser"
@@ -784,7 +784,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        65
+        82
       ]
     ],
     "translation": "Open Git Dialog"
@@ -795,7 +795,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        317
+        335
       ]
     ],
     "translation": "Project Path"
@@ -807,7 +807,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        131
+        148
       ]
     ],
     "translation": "Scroll to Bottom"
@@ -819,7 +819,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        115
+        132
       ]
     ],
     "translation": "Scroll to Top"
@@ -830,11 +830,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        252
+        270
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        335
+        353
       ]
     ],
     "translation": "Session ID"
@@ -1478,6 +1478,120 @@
     ],
     "translation": "Test"
   },
+  "permission.mode.change.cancelled": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        77
+      ]
+    ],
+    "translation": "Permission mode change cancelled"
+  },
+  "permission.mode.change.pending": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        92
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        107
+      ]
+    ],
+    "translation": "Permission mode will be applied on next message"
+  },
+  "permission.mode.change.pending.hint": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        147
+      ]
+    ],
+    "translation": "This change will be applied when you send your next message"
+  },
+  "permission.mode.change.pending.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        133
+      ]
+    ],
+    "translation": "Click to change permission mode (pending change will be applied on next message)"
+  },
+  "permission.mode.change.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        135
+      ]
+    ],
+    "translation": "Click to change permission mode"
+  },
+  "permission.mode.running.dialog.apply_later": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        192
+      ]
+    ],
+    "translation": "permission.mode.running.dialog.apply_later"
+  },
+  "permission.mode.running.dialog.description": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        187
+      ]
+    ],
+    "translation": "permission.mode.running.dialog.description"
+  },
+  "permission.mode.running.dialog.interrupt_now": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        195
+      ]
+    ],
+    "translation": "permission.mode.running.dialog.interrupt_now"
+  },
+  "permission.mode.running.dialog.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        184
+      ]
+    ],
+    "translation": "permission.mode.running.dialog.title"
+  },
+  "permission.mode.select.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
+        143
+      ]
+    ],
+    "translation": "Select Permission Mode"
+  },
   "project.new": {
     "placeholders": {},
     "comments": [],
@@ -2003,7 +2117,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        156
+        184
       ]
     ],
     "translation": "Abort"
@@ -2014,7 +2128,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        272
+        290
       ]
     ],
     "translation": "Paused"
@@ -2025,7 +2139,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        263
+        281
       ]
     ],
     "translation": "Running"
@@ -2036,7 +2150,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        405
+        423
       ]
     ],
     "translation": "Cache creation"
@@ -2047,7 +2161,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        419
+        437
       ]
     ],
     "translation": "Cache read"
@@ -2058,7 +2172,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        377
+        395
       ]
     ],
     "translation": "Input tokens"
@@ -2069,7 +2183,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        362
+        380
       ]
     ],
     "translation": "Session Cost"
@@ -2080,7 +2194,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        391
+        409
       ]
     ],
     "translation": "Output tokens"
@@ -2091,7 +2205,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        369
+        387
       ]
     ],
     "translation": "Total"
@@ -2102,7 +2216,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        465
+        483
       ]
     ],
     "translation": "session.empty_state.description"
@@ -2113,7 +2227,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        479
+        497
       ]
     ],
     "translation": "Claude Code is processing..."
