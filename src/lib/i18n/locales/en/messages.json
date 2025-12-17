@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        411
+        413
       ]
     ],
     "translation": "Message input with completion support"
@@ -317,7 +317,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        460
+        462
       ]
     ],
     "translation": "Attach"
@@ -328,10 +328,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        472
+        474
       ]
     ],
     "translation": "Autocomplete Active"
+  },
+  "chat.button.queue": {
+    "message": "Queue",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        550
+      ]
+    ],
+    "translation": "Queue"
   },
   "chat.button.start": {
     "placeholders": {},
@@ -350,7 +362,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        375
+        377
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -381,7 +393,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        66
+        243
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -397,7 +409,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        59
+        236
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -413,7 +425,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        72
+        249
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -458,6 +470,139 @@
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
   },
+  "chat.queue.clear_all": {
+    "message": "Clear all",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        164
+      ]
+    ],
+    "translation": "Clear all"
+  },
+  "chat.queue.cleared": {
+    "message": "Queued messages cleared",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        226
+      ]
+    ],
+    "translation": "Queued messages cleared"
+  },
+  "chat.queue.edit": {
+    "message": "Edit message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        130
+      ]
+    ],
+    "translation": "Edit message"
+  },
+  "chat.queue.files_not_supported": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        87
+      ]
+    ],
+    "translation": "File attachments are not supported for queued messages"
+  },
+  "chat.queue.message_queued": {
+    "placeholders": {
+      "count": [
+        "newCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        95
+      ]
+    ],
+    "translation": "Message queued ({count})"
+  },
+  "chat.queue.pending_indicator": {
+    "message": "{count} message(s) queued",
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        73
+      ]
+    ],
+    "translation": "{count} message(s) queued"
+  },
+  "chat.queue.remove": {
+    "message": "Remove message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        142
+      ]
+    ],
+    "translation": "Remove message"
+  },
+  "chat.queue.send_failed": {
+    "message": "Failed to send queued messages",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        154
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        166
+      ]
+    ],
+    "translation": "Failed to send queued messages"
+  },
+  "chat.queue.send_now": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        170
+      ]
+    ],
+    "translation": "Send now"
+  },
+  "chat.queue.sending_queued": {
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        127
+      ]
+    ],
+    "translation": "Sending {count} queued message(s)..."
+  },
   "chat.resume": {
     "placeholders": {},
     "comments": [],
@@ -476,7 +621,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        221
+        223
       ]
     ],
     "translation": "Failed to schedule message"
@@ -488,7 +633,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        205
+        207
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -500,7 +645,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        210
+        212
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -511,7 +656,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        97
+        288
       ]
     ],
     "translation": "Send"
@@ -522,7 +667,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        498
+        500
       ]
     ],
     "translation": "Send Now"
@@ -533,7 +678,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        481
+        483
       ]
     ],
     "translation": "Send Mode"
@@ -544,7 +689,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        501
+        503
       ]
     ],
     "translation": "Schedule Send"
@@ -555,7 +700,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        512
+        514
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -566,7 +711,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        541
+        543
       ]
     ],
     "translation": "Processing..."
@@ -583,9 +728,14 @@
     "translation": "Cancel"
   },
   "common.cancel": {
+    "message": "Cancel",
     "placeholders": {},
     "comments": [],
     "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        115
+      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
         348
@@ -671,6 +821,18 @@
       ]
     ],
     "translation": "Reload"
+  },
+  "common.save": {
+    "message": "Save",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        108
+      ]
+    ],
+    "translation": "Save"
   },
   "common.saving": {
     "placeholders": {},
@@ -1515,7 +1677,6 @@
     "translation": "Click to change permission mode"
   },
   "permission.mode.running.dialog.apply_later": {
-    "translation": "permission.mode.running.dialog.apply_later",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -1523,10 +1684,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
         192
       ]
-    ]
+    ],
+    "translation": "Apply when finished"
   },
   "permission.mode.running.dialog.description": {
-    "translation": "permission.mode.running.dialog.description",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -1534,10 +1695,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
         187
       ]
-    ]
+    ],
+    "translation": "Claude is currently working. Do you want to interrupt the current task and apply the new permission mode immediately, or apply it when Claude finishes?"
   },
   "permission.mode.running.dialog.interrupt_now": {
-    "translation": "permission.mode.running.dialog.interrupt_now",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -1545,10 +1706,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
         195
       ]
-    ]
+    ],
+    "translation": "Interrupt and apply now"
   },
   "permission.mode.running.dialog.title": {
-    "translation": "permission.mode.running.dialog.title",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -1556,7 +1717,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/PermissionModeSelector.tsx",
         184
       ]
-    ]
+    ],
+    "translation": "Change Permission Mode"
   },
   "permission.mode.select.title": {
     "placeholders": {},
