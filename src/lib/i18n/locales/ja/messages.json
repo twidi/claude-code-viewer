@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        411
+        413
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        505
+        507
       ]
     ],
     "translation": "添付"
@@ -350,10 +350,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        517
+        519
       ]
     ],
     "translation": "オートコンプリート有効"
+  },
+  "chat.button.queue": {
+    "message": "Queue",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        595
+      ]
+    ],
+    "translation": "キューに追加"
   },
   "chat.button.start": {
     "placeholders": {},
@@ -372,7 +384,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        375
+        377
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -403,7 +415,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        66
+        243
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -419,7 +431,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        59
+        236
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -435,7 +447,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        72
+        249
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -480,6 +492,139 @@
     ],
     "translation": "メッセージを入力... （/でコマンド、@でファイル、Shift+Enterで送信）"
   },
+  "chat.queue.clear_all": {
+    "message": "Clear all",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        164
+      ]
+    ],
+    "translation": "すべてクリア"
+  },
+  "chat.queue.cleared": {
+    "message": "Queued messages cleared",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        226
+      ]
+    ],
+    "translation": "キューに入ったメッセージをクリアしました"
+  },
+  "chat.queue.edit": {
+    "message": "Edit message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        130
+      ]
+    ],
+    "translation": "メッセージを編集"
+  },
+  "chat.queue.files_not_supported": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        87
+      ]
+    ],
+    "translation": "キューされたメッセージではファイル添付はサポートされていません"
+  },
+  "chat.queue.message_queued": {
+    "placeholders": {
+      "count": [
+        "newCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        95
+      ]
+    ],
+    "translation": "メッセージがキューに追加されました ({count})"
+  },
+  "chat.queue.pending_indicator": {
+    "message": "{count} message(s) queued",
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        73
+      ]
+    ],
+    "translation": "{count}件のメッセージがキューに入っています"
+  },
+  "chat.queue.remove": {
+    "message": "Remove message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        142
+      ]
+    ],
+    "translation": "メッセージを削除"
+  },
+  "chat.queue.send_failed": {
+    "message": "Failed to send queued messages",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        154
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        166
+      ]
+    ],
+    "translation": "キューされたメッセージの送信に失敗しました"
+  },
+  "chat.queue.send_now": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        170
+      ]
+    ],
+    "translation": "今すぐ送信"
+  },
+  "chat.queue.sending_queued": {
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        127
+      ]
+    ],
+    "translation": "{count}件のキューされたメッセージを送信中..."
+  },
   "chat.resume": {
     "placeholders": {},
     "comments": [],
@@ -498,7 +643,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        221
+        223
       ]
     ],
     "translation": "メッセージの予約に失敗しました"
@@ -510,7 +655,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        205
+        207
       ]
     ],
     "translation": "メッセージを予約しました"
@@ -522,7 +667,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        210
+        212
       ]
     ],
     "translation": "スケジューラタブで確認・管理できます"
@@ -533,7 +678,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        97
+        288
       ]
     ],
     "translation": "送信"
@@ -544,11 +689,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        462
+        464
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        546
+        548
       ]
     ],
     "translation": "今すぐ送信"
@@ -559,11 +704,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        445
+        447
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        529
+        531
       ]
     ],
     "translation": "送信モード"
@@ -574,15 +719,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        465
+        467
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        549
+        551
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        566
+        568
       ]
     ],
     "translation": "予約送信"
@@ -593,7 +738,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        472
+        474
       ]
     ],
     "translation": "送信予定時刻"
@@ -604,7 +749,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        585
+        587
       ]
     ],
     "translation": "処理中..."
@@ -621,9 +766,14 @@
     "translation": "キャンセル"
   },
   "common.cancel": {
+    "message": "Cancel",
     "placeholders": {},
     "comments": [],
     "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        115
+      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
         348
@@ -709,6 +859,18 @@
       ]
     ],
     "translation": "再読み込み"
+  },
+  "common.save": {
+    "message": "Save",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        108
+      ]
+    ],
+    "translation": "保存"
   },
   "common.saving": {
     "placeholders": {},
@@ -1573,7 +1735,7 @@
         192
       ]
     ],
-    "translation": ""
+    "translation": "完了後に適用"
   },
   "permission.mode.running.dialog.description": {
     "placeholders": {},
@@ -1584,7 +1746,7 @@
         187
       ]
     ],
-    "translation": ""
+    "translation": "Claudeは現在作業中です。現在のタスクを中断して新しい権限モードを即座に適用しますか、それともClaudeの作業完了後に適用しますか？"
   },
   "permission.mode.running.dialog.interrupt_now": {
     "placeholders": {},
@@ -1595,7 +1757,7 @@
         195
       ]
     ],
-    "translation": ""
+    "translation": "中断して今すぐ適用"
   },
   "permission.mode.running.dialog.title": {
     "placeholders": {},
@@ -1606,7 +1768,7 @@
         184
       ]
     ],
-    "translation": ""
+    "translation": "権限モードの変更"
   },
   "permission.mode.select.title": {
     "placeholders": {},
