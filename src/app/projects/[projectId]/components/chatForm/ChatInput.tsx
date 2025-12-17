@@ -57,6 +57,7 @@ export interface ChatInputProps {
   buttonSize?: "sm" | "default" | "lg";
   enableScheduledSend?: boolean;
   baseSessionId?: string | null;
+  isQueueMode?: boolean;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -72,6 +73,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   buttonSize = "lg",
   enableScheduledSend = false,
   baseSessionId = null,
+  isQueueMode = false,
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -407,7 +409,7 @@ export const ChatInput: FC<ChatInputProps> = ({
               style={{
                 minHeight: `${minHeightValue}px`,
               }}
-              disabled={isPending || disabled}
+              disabled={isPending || (disabled && !isQueueMode)}
               aria-label={i18n._("Message input with completion support")}
               aria-describedby={helpId}
               aria-expanded={message.startsWith("/") || message.includes("@")}
@@ -452,7 +454,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={isPending || disabled}
+                disabled={isPending || disabled || isQueueMode}
                 className="gap-1.5"
               >
                 <PaperclipIcon className="w-4 h-4" />
@@ -485,7 +487,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                     onValueChange={(value: "immediate" | "scheduled") =>
                       setSendMode(value)
                     }
-                    disabled={isPending || disabled}
+                    disabled={isPending || (disabled && !isQueueMode)}
                   >
                     <SelectTrigger
                       id="send-mode"
@@ -529,7 +531,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                 disabled={
                   (!message.trim() && attachedFiles.length === 0) ||
                   isPending ||
-                  disabled
+                  (disabled && !isQueueMode)
                 }
                 size={buttonSize}
                 className="gap-2 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-muted disabled:to-muted"
@@ -544,7 +546,11 @@ export const ChatInput: FC<ChatInputProps> = ({
                 ) : (
                   <>
                     <SendIcon className="w-4 h-4" />
-                    {buttonText}
+                    {isQueueMode ? (
+                      <Trans id="chat.button.queue" message="Queue" />
+                    ) : (
+                      buttonText
+                    )}
                   </>
                 )}
               </Button>
