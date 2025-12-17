@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        411
+        413
       ]
     ],
     "translation": "带补全支持的消息输入"
@@ -328,7 +328,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        460
+        462
       ]
     ],
     "translation": "附加"
@@ -339,10 +339,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        472
+        474
       ]
     ],
     "translation": "自动补全已激活"
+  },
+  "chat.button.queue": {
+    "message": "Queue",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        550
+      ]
+    ],
+    "translation": "排队"
   },
   "chat.button.start": {
     "placeholders": {},
@@ -361,7 +373,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        375
+        377
       ]
     ],
     "translation": "发送消息失败。请重试。"
@@ -392,7 +404,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        66
+        243
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -408,7 +420,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        59
+        236
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -424,7 +436,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        72
+        249
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -469,6 +481,139 @@
     ],
     "translation": "输入消息...(输入 / 使用命令,@ 使用文件,Shift+Enter 发送)"
   },
+  "chat.queue.clear_all": {
+    "message": "Clear all",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        164
+      ]
+    ],
+    "translation": "全部清除"
+  },
+  "chat.queue.cleared": {
+    "message": "Queued messages cleared",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        226
+      ]
+    ],
+    "translation": "已清除排队消息"
+  },
+  "chat.queue.edit": {
+    "message": "Edit message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        130
+      ]
+    ],
+    "translation": "编辑消息"
+  },
+  "chat.queue.files_not_supported": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        87
+      ]
+    ],
+    "translation": "排队消息不支持文件附件"
+  },
+  "chat.queue.message_queued": {
+    "placeholders": {
+      "count": [
+        "newCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        95
+      ]
+    ],
+    "translation": "消息已排队 ({count})"
+  },
+  "chat.queue.pending_indicator": {
+    "message": "{count} message(s) queued",
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        73
+      ]
+    ],
+    "translation": "{count}条消息已排队"
+  },
+  "chat.queue.remove": {
+    "message": "Remove message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        142
+      ]
+    ],
+    "translation": "删除消息"
+  },
+  "chat.queue.send_failed": {
+    "message": "Failed to send queued messages",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        154
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        166
+      ]
+    ],
+    "translation": "发送排队消息失败"
+  },
+  "chat.queue.send_now": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        170
+      ]
+    ],
+    "translation": "立即发送"
+  },
+  "chat.queue.sending_queued": {
+    "placeholders": {
+      "count": [
+        "messages.length"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        127
+      ]
+    ],
+    "translation": "正在发送 {count} 条排队消息..."
+  },
   "chat.resume": {
     "placeholders": {},
     "comments": [],
@@ -487,7 +632,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        221
+        223
       ]
     ],
     "translation": "定时发送消息失败"
@@ -499,7 +644,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        205
+        207
       ]
     ],
     "translation": "消息定时发送成功"
@@ -511,7 +656,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        210
+        212
       ]
     ],
     "translation": "您可以在定时任务选项卡中查看和管理"
@@ -522,7 +667,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        97
+        288
       ]
     ],
     "translation": "发送"
@@ -533,7 +678,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        498
+        500
       ]
     ],
     "translation": "立即发送"
@@ -544,7 +689,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        481
+        483
       ]
     ],
     "translation": "发送模式"
@@ -555,7 +700,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        501
+        503
       ]
     ],
     "translation": "定时发送"
@@ -566,7 +711,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        512
+        514
       ]
     ],
     "translation": "定时发送时间"
@@ -577,7 +722,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        541
+        543
       ]
     ],
     "translation": "处理中..."
@@ -594,9 +739,14 @@
     "translation": "取消"
   },
   "common.cancel": {
+    "message": "Cancel",
     "placeholders": {},
     "comments": [],
     "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        115
+      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
         348
@@ -682,6 +832,18 @@
       ]
     ],
     "translation": "刷新"
+  },
+  "common.save": {
+    "message": "Save",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
+        108
+      ]
+    ],
+    "translation": "保存"
   },
   "common.saving": {
     "placeholders": {},
@@ -1546,7 +1708,7 @@
         192
       ]
     ],
-    "translation": ""
+    "translation": "完成后应用"
   },
   "permission.mode.running.dialog.description": {
     "placeholders": {},
@@ -1557,7 +1719,7 @@
         187
       ]
     ],
-    "translation": ""
+    "translation": "Claude正在工作中。您想要中断当前任务并立即应用新的权限模式，还是等Claude完成后再应用？"
   },
   "permission.mode.running.dialog.interrupt_now": {
     "placeholders": {},
@@ -1568,7 +1730,7 @@
         195
       ]
     ],
-    "translation": ""
+    "translation": "中断并立即应用"
   },
   "permission.mode.running.dialog.title": {
     "placeholders": {},
@@ -1579,7 +1741,7 @@
         184
       ]
     ],
-    "translation": ""
+    "translation": "更改权限模式"
   },
   "permission.mode.select.title": {
     "placeholders": {},
