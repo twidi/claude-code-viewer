@@ -120,6 +120,8 @@ const SessionPageMainContent: FC<
     useState(0);
   const [isDiffModalOpen, setIsDiffModalOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  // Track if user is near bottom - initialized to true so first messages auto-scroll
+  const isNearBottomRef = useRef(true);
 
   const abortTask = useMutation({
     mutationFn: async (sessionProcessId: string) => {
@@ -153,13 +155,31 @@ const SessionPageMainContent: FC<
     [relatedSessionProcess, sessionId, interruptAndChangePermission],
   );
 
+  // Track scroll position to update isNearBottomRef
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const distanceFromBottom =
+        scrollContainer.scrollHeight -
+        scrollContainer.scrollTop -
+        scrollContainer.clientHeight;
+      isNearBottomRef.current = distanceFromBottom < 150;
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll);
+    return () => scrollContainer.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     if (!isExistingSession) return;
-    if (
-      relatedSessionProcess?.status === "running" &&
-      conversations.length !== previousConversationLength
-    ) {
-      setPreviousConversationLength(conversations.length);
+    if (conversations.length === previousConversationLength) return;
+
+    setPreviousConversationLength(conversations.length);
+
+    // Only auto-scroll if user is near the bottom
+    if (isNearBottomRef.current) {
       const scrollContainer = scrollContainerRef.current;
       if (scrollContainer) {
         scrollContainer.scrollTo({
@@ -168,12 +188,7 @@ const SessionPageMainContent: FC<
         });
       }
     }
-  }, [
-    conversations,
-    isExistingSession,
-    relatedSessionProcess?.status,
-    previousConversationLength,
-  ]);
+  }, [conversations, isExistingSession, previousConversationLength]);
 
   const handleScrollToTop = () => {
     const scrollContainer = scrollContainerRef.current;
