@@ -280,6 +280,7 @@ export const ContinueChat: FC<{
         isSending={isPending}
       />
       <ChatInput
+        key={`${projectId}-${sessionId}`}
         projectId={projectId}
         onSubmit={handleSubmit}
         isPending={isPending}
