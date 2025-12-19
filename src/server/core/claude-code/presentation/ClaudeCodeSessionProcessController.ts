@@ -7,6 +7,7 @@ import { UserConfigService } from "../../platform/services/UserConfigService";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
 import type { UserMessageInput } from "../functions/createMessageGenerator";
 import { ClaudeCodeLifeCycleService } from "../services/ClaudeCodeLifeCycleService";
+import { SessionProcessNotFoundError } from "../services/ClaudeCodeSessionProcessService";
 
 const LayerImpl = Effect.gen(function* () {
   const projectRepository = yield* ProjectRepository;
@@ -101,11 +102,53 @@ const LayerImpl = Effect.gen(function* () {
         } as const satisfies ControllerResponse;
       }
 
-      const result = yield* claudeCodeLifeCycleService.continueTask({
-        sessionProcessId,
-        input,
-        baseSessionId,
-      });
+      const continueResult = yield* claudeCodeLifeCycleService
+        .continueTask({
+          sessionProcessId,
+          input,
+          baseSessionId,
+        })
+        .pipe(Effect.either);
+
+      // If session process not found (e.g., server restarted), fallback to starting a new process
+      if (
+        continueResult._tag === "Left" &&
+        continueResult.left instanceof SessionProcessNotFoundError
+      ) {
+        console.log(
+          `Session process ${sessionProcessId} not found, falling back to startTask`,
+        );
+        const userConfig = yield* userConfigService.getUserConfig();
+        const startResult = yield* claudeCodeLifeCycleService.startTask({
+          baseSession: {
+            cwd: project.meta.projectPath,
+            projectId,
+            sessionId: baseSessionId,
+          },
+          userConfig,
+          input,
+        });
+
+        const { sessionId } = yield* startResult.yieldSessionInitialized();
+
+        return {
+          response: {
+            sessionProcess: {
+              id: startResult.sessionProcess.def.sessionProcessId,
+              projectId,
+              sessionId,
+            },
+          },
+          status: 201,
+        } as const satisfies ControllerResponse;
+      }
+
+      // Re-throw other errors
+      if (continueResult._tag === "Left") {
+        return yield* Effect.fail(continueResult.left);
+      }
+
+      const result = continueResult.right;
 
       return {
         response: {
