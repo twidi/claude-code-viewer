@@ -6,7 +6,7 @@ import * as CCSessionProcess from "../models/CCSessionProcess";
 import type * as CCTask from "../models/ClaudeCodeTask";
 import type { InitMessageContext } from "../types";
 
-class SessionProcessNotFoundError extends Data.TaggedError(
+export class SessionProcessNotFoundError extends Data.TaggedError(
   "SessionProcessNotFoundError",
 )<{
   sessionProcessId: string;
