@@ -1,5 +1,6 @@
 import { Trans, useLingui } from "@lingui/react";
 import type { FC } from "react";
+import type { PermissionMode } from "@/types/session-process";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import {
   ChatInput,
@@ -7,13 +8,19 @@ import {
   useCreateSessionProcessMutation,
 } from "../../../../components/chatForm";
 
-export const StartNewChat: FC<{ projectId: string }> = ({ projectId }) => {
+export const StartNewChat: FC<{
+  projectId: string;
+  permissionMode?: PermissionMode;
+}> = ({ projectId, permissionMode }) => {
   const { i18n } = useLingui();
   const createSessionProcess = useCreateSessionProcessMutation(projectId);
   const { config } = useConfig();
 
   const handleSubmit = async (input: MessageInput) => {
-    await createSessionProcess.mutateAsync({ input });
+    await createSessionProcess.mutateAsync({
+      input,
+      permissionModeOverride: permissionMode,
+    });
   };
 
   const getPlaceholder = () => {

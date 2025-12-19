@@ -17,7 +17,7 @@ import type {
   PermissionMode,
   PublicSessionProcess,
 } from "../../../../../../../types/session-process";
-import { PermissionModeBadge } from "./PermissionModeBadge";
+import { NewChatPermissionModeSelector } from "./NewChatPermissionModeSelector";
 import { PermissionModeSelector } from "./PermissionModeSelector";
 
 interface ChatActionMenuProps {
@@ -31,6 +31,8 @@ interface ChatActionMenuProps {
   abortTask?: UseMutationResult<unknown, Error, string, unknown>;
   isNewChat?: boolean;
   onInterruptAndChangePermission?: (newMode: PermissionMode) => void;
+  newChatPermissionMode?: PermissionMode;
+  onNewChatPermissionModeChange?: (mode: PermissionMode) => void;
 }
 
 export const ChatActionMenu: FC<ChatActionMenuProps> = ({
@@ -44,6 +46,8 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   abortTask,
   isNewChat = false,
   onInterruptAndChangePermission,
+  newChatPermissionMode,
+  onNewChatPermissionModeChange,
 }) => {
   const { i18n } = useLingui();
   const navigate = useNavigate();
@@ -144,9 +148,12 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
               sessionStatus={sessionProcess?.status ?? "none"}
               onInterruptAndChange={onInterruptAndChangePermission}
             />
-          ) : (
-            <PermissionModeBadge permissionMode={permissionMode} />
-          ))}
+          ) : newChatPermissionMode && onNewChatPermissionModeChange ? (
+            <NewChatPermissionModeSelector
+              currentMode={newChatPermissionMode}
+              onChange={onNewChatPermissionModeChange}
+            />
+          ) : null)}
         {sessionProcess && abortTask && (
           <Button
             type="button"

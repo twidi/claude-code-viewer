@@ -18,6 +18,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useConfig } from "@/app/hooks/useConfig";
 import { PermissionDialog } from "@/components/PermissionDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,7 @@ const SessionPageMainContent: FC<
   const { data: revisionsDataFallback } = useGitCurrentRevisionsHook(projectId);
   const revisionsData = revisionsDataProp ?? revisionsDataFallback;
   const exportSession = useExportSession();
+  const { config } = useConfig();
 
   const sessionProcess = useSessionProcess();
   const relatedSessionProcess = useMemo(() => {
@@ -119,7 +121,16 @@ const SessionPageMainContent: FC<
   const [previousConversationLength, setPreviousConversationLength] =
     useState(0);
   const [isDiffModalOpen, setIsDiffModalOpen] = useState(false);
+  const [newChatPermissionMode, setNewChatPermissionMode] =
+    useState<PermissionMode>(config?.permissionMode ?? "default");
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Sync newChatPermissionMode with config when config loads
+  useEffect(() => {
+    if (config?.permissionMode) {
+      setNewChatPermissionMode(config.permissionMode);
+    }
+  }, [config?.permissionMode]);
 
   const abortTask = useMutation({
     mutationFn: async (sessionProcessId: string) => {
@@ -515,6 +526,8 @@ const SessionPageMainContent: FC<
             abortTask={abortTask}
             isNewChat={!isExistingSession}
             onInterruptAndChangePermission={handleInterruptAndChangePermission}
+            newChatPermissionMode={newChatPermissionMode}
+            onNewChatPermissionModeChange={setNewChatPermissionMode}
           />
         </div>
 
@@ -530,7 +543,10 @@ const SessionPageMainContent: FC<
           ) : isExistingSession && sessionId ? (
             <ResumeChat projectId={projectId} sessionId={sessionId} />
           ) : (
-            <StartNewChat projectId={projectId} />
+            <StartNewChat
+              projectId={projectId}
+              permissionMode={newChatPermissionMode}
+            />
           )}
         </div>
       </div>
