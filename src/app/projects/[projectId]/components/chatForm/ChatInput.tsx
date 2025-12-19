@@ -37,6 +37,7 @@ import type { CommandCompletionRef } from "./CommandCompletion";
 import type { FileCompletionRef } from "./FileCompletion";
 import { processFile } from "./fileUtils";
 import { InlineCompletion } from "./InlineCompletion";
+import { useDraftMessage } from "./useDraftMessage";
 
 export interface MessageInput {
   text: string;
@@ -91,7 +92,11 @@ export const ChatInput: FC<ChatInputProps> = ({
   };
   const minHeightValue = parseMinHeight(minHeightProp);
   const { i18n } = useLingui();
-  const [message, setMessage] = useState("");
+  const { draft, setDraft, clearDraft } = useDraftMessage(
+    projectId,
+    baseSessionId,
+  );
+  const [message, setMessage] = useState(draft);
   const [attachedFiles, setAttachedFiles] = useState<
     Array<{ file: File; id: string }>
   >([]);
@@ -218,6 +223,7 @@ export const ChatInput: FC<ChatInputProps> = ({
 
         setMessage("");
         setAttachedFiles([]);
+        clearDraft();
       } catch (error) {
         toast.error(
           i18n._({
@@ -230,15 +236,20 @@ export const ChatInput: FC<ChatInputProps> = ({
         );
       }
     } else {
-      // Immediate send
-      await onSubmit({
-        text: message,
-        images: images.length > 0 ? images : undefined,
-        documents: documents.length > 0 ? documents : undefined,
-      });
+      // Immediate send - clear UI before async operation
+      const textToSend = message;
+      const imagesToSend = images.length > 0 ? images : undefined;
+      const documentsToSend = documents.length > 0 ? documents : undefined;
 
       setMessage("");
       setAttachedFiles([]);
+      clearDraft();
+
+      await onSubmit({
+        text: textToSend,
+        images: imagesToSend,
+        documents: documentsToSend,
+      });
     }
   };
 
@@ -402,6 +413,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                 }
 
                 setMessage(e.target.value);
+                setDraft(e.target.value);
               }}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}

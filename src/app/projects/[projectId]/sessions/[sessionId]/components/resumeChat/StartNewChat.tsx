@@ -49,6 +49,7 @@ export const StartNewChat: FC<{
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-3">
       <ChatInput
+        key={`${projectId}-new`}
         projectId={projectId}
         onSubmit={handleSubmit}
         isPending={createSessionProcess.isPending}
