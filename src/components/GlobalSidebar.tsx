@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react";
 import { useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { InfoIcon, LogOut, SearchIcon, SettingsIcon } from "lucide-react";
-import { type FC, type ReactNode, Suspense, useState } from "react";
+import { type FC, type ReactNode, Suspense, useEffect, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -110,6 +110,14 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
     defaultActiveTab ?? allTabs[allTabs.length - 1]?.id ?? "settings",
   );
   const [isExpanded, setIsExpanded] = useState(!!defaultActiveTab);
+
+  // Sync activeTab with defaultActiveTab when it changes (e.g., from URL navigation)
+  useEffect(() => {
+    if (defaultActiveTab && defaultActiveTab !== activeTab) {
+      setActiveTab(defaultActiveTab);
+      setIsExpanded(true);
+    }
+  }, [defaultActiveTab, activeTab]);
 
   const handleTabClick = (tabId: string) => {
     if (activeTab === tabId && isExpanded) {

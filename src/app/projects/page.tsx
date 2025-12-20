@@ -1,14 +1,32 @@
 import { Trans } from "@lingui/react";
-import { HistoryIcon } from "lucide-react";
-import { type FC, Suspense } from "react";
-import { GlobalSidebar } from "@/components/GlobalSidebar";
+import { HistoryIcon, LayersIcon } from "lucide-react";
+import { type FC, Suspense, useMemo } from "react";
+import { GlobalSidebar, type SidebarTab } from "@/components/GlobalSidebar";
+import { Loading } from "@/components/Loading";
+import { AllProjectsSessionsTab } from "./[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab";
 import { ProjectList } from "./components/ProjectList";
 import { SetupProjectDialog } from "./components/SetupProjectDialog";
 
 export const ProjectsPage: FC = () => {
+  const additionalTabs: SidebarTab[] = useMemo(
+    () => [
+      {
+        id: "all-sessions",
+        icon: LayersIcon,
+        title: <Trans id="sidebar.show.all.projects.session.list" />,
+        content: (
+          <Suspense fallback={<Loading />}>
+            <AllProjectsSessionsTab />
+          </Suspense>
+        ),
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="flex h-screen max-h-screen overflow-hidden">
-      <GlobalSidebar />
+      <GlobalSidebar additionalTabs={additionalTabs} />
       <div className="flex-1 overflow-auto">
         <div className="container mx-auto px-4 py-8">
           <header className="mb-8">
