@@ -1,12 +1,13 @@
 import { Trans } from "@lingui/react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
   CalendarClockIcon,
+  LayersIcon,
   MessageSquareIcon,
   PlugIcon,
 } from "lucide-react";
-import { type FC, Suspense, useMemo } from "react";
+import { type FC, Suspense, useCallback, useMemo } from "react";
 import type { SidebarTab } from "@/components/GlobalSidebar";
 import { GlobalSidebar } from "@/components/GlobalSidebar";
 import {
@@ -17,11 +18,12 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Loading } from "../../../../../../../components/Loading";
+import { AllProjectsSessionsTab } from "./AllProjectsSessionsTab";
 import { McpTab } from "./McpTab";
 import { MobileSidebar } from "./MobileSidebar";
 import { SchedulerTab } from "./SchedulerTab";
 import { SessionsTab } from "./SessionsTab";
-import type { Tab } from "./schema";
+import { type Tab, tabSchema } from "./schema";
 
 export const SessionSidebar: FC<{
   currentSessionId?: string;
@@ -39,6 +41,26 @@ export const SessionSidebar: FC<{
   initialTab,
 }) => {
   const activeSessionId = currentSessionId ?? "";
+  const navigate = useNavigate();
+  const search = useSearch({
+    from: "/projects/$projectId/session",
+  });
+
+  const handleTabChange = useCallback(
+    (tabId: string) => {
+      const parsed = tabSchema.safeParse(tabId);
+      if (!parsed.success) return;
+
+      navigate({
+        to: "/projects/$projectId/session",
+        params: { projectId },
+        search: { ...search, tab: parsed.data },
+        replace: true,
+      });
+    },
+    [navigate, projectId, search],
+  );
+
   const additionalTabs: SidebarTab[] = useMemo(
     () => [
       {
@@ -51,6 +73,16 @@ export const SessionSidebar: FC<{
               currentSessionId={activeSessionId}
               projectId={projectId}
             />
+          </Suspense>
+        ),
+      },
+      {
+        id: "all-sessions",
+        icon: LayersIcon,
+        title: <Trans id="sidebar.show.all.projects.session.list" />,
+        content: (
+          <Suspense fallback={<Loading />}>
+            <AllProjectsSessionsTab currentSessionId={activeSessionId} />
           </Suspense>
         ),
       },
@@ -80,6 +112,7 @@ export const SessionSidebar: FC<{
           projectId={projectId}
           additionalTabs={additionalTabs}
           defaultActiveTab={initialTab}
+          onTabChange={handleTabChange}
           headerButton={
             <TooltipProvider>
               <Tooltip>
