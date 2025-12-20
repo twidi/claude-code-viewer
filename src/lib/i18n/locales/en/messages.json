@@ -373,11 +373,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        215
+        216
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        495
+        577
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
@@ -866,11 +866,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        270
+        271
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        381
+        416
       ]
     ],
     "translation": "Branch"
@@ -892,7 +892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        344
+        379
       ]
     ],
     "translation": "Metadata"
@@ -938,7 +938,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        350
+        385
       ]
     ],
     "translation": "Project Path"
@@ -973,11 +973,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        285
+        286
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        368
+        403
       ]
     ],
     "translation": "Session ID"
@@ -2254,6 +2254,50 @@
     ],
     "translation": "Scheduler"
   },
+  "session.context.current_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        531
+      ]
+    ],
+    "translation": "Current tokens"
+  },
+  "session.context.label": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        507
+      ]
+    ],
+    "translation": "Context Window"
+  },
+  "session.context.max_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        540
+      ]
+    ],
+    "translation": "Max tokens"
+  },
+  "session.context.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        316
+      ]
+    ],
+    "translation": "Context Window Usage"
+  },
   "session.conversation.abort": {
     "placeholders": {},
     "comments": [],
@@ -2271,7 +2315,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        305
+        340
       ]
     ],
     "translation": "Paused"
@@ -2282,7 +2326,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        296
+        331
       ]
     ],
     "translation": "Running"
@@ -2293,7 +2337,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        438
+        473
       ]
     ],
     "translation": "Cache creation"
@@ -2304,7 +2348,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        452
+        487
       ]
     ],
     "translation": "Cache read"
@@ -2315,7 +2359,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        410
+        445
       ]
     ],
     "translation": "Input tokens"
@@ -2326,7 +2370,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        395
+        430
       ]
     ],
     "translation": "Session Cost"
@@ -2337,7 +2381,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        424
+        459
       ]
     ],
     "translation": "Output tokens"
@@ -2348,7 +2392,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        402
+        437
       ]
     ],
     "translation": "Total"
@@ -2359,7 +2403,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        498
+        580
       ]
     ],
     "translation": "session.empty_state.description"
@@ -2370,7 +2414,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        512
+        594
       ]
     ],
     "translation": "Claude Code is processing..."
