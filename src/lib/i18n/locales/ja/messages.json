@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        413
+        425
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -317,7 +317,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        462
+        474
       ]
     ],
     "translation": "添付"
@@ -328,7 +328,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        474
+        486
       ]
     ],
     "translation": "オートコンプリート有効"
@@ -340,7 +340,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        550
+        562
       ]
     ],
     "translation": "キューに追加"
@@ -351,7 +351,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        50
+        51
       ]
     ],
     "translation": "チャット開始"
@@ -362,7 +362,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        377
+        388
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -373,15 +373,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        200
+        215
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        480
+        495
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        102
+        73
       ]
     ],
     "translation": "新しいチャットを開始"
@@ -621,7 +621,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        223
+        229
       ]
     ],
     "translation": "メッセージの予約に失敗しました"
@@ -633,7 +633,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        207
+        212
       ]
     ],
     "translation": "メッセージを予約しました"
@@ -645,7 +645,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        212
+        217
       ]
     ],
     "translation": "スケジューラタブで確認・管理できます"
@@ -656,7 +656,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        288
+        289
       ]
     ],
     "translation": "送信"
@@ -667,7 +667,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        500
+        512
       ]
     ],
     "translation": "今すぐ送信"
@@ -678,7 +678,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        483
+        495
       ]
     ],
     "translation": "送信モード"
@@ -689,7 +689,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        503
+        515
       ]
     ],
     "translation": "予約送信"
@@ -700,7 +700,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        514
+        526
       ]
     ],
     "translation": "送信予定時刻"
@@ -711,7 +711,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        543
+        555
       ]
     ],
     "translation": "処理中..."
@@ -804,8 +804,12 @@
         419
       ],
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
+        82
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        190
+        108
       ]
     ],
     "translation": "読み込み中..."
@@ -862,11 +866,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        255
+        270
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        366
+        381
       ]
     ],
     "translation": "ブランチ"
@@ -888,7 +892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        329
+        344
       ]
     ],
     "translation": "メタデータ"
@@ -934,7 +938,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        335
+        350
       ]
     ],
     "translation": "プロジェクトパス"
@@ -969,11 +973,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        270
+        285
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        353
+        368
       ]
     ],
     "translation": "セッションID"
@@ -2267,7 +2271,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        290
+        305
       ]
     ],
     "translation": "一時停止"
@@ -2278,7 +2282,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        281
+        296
       ]
     ],
     "translation": "実行中"
@@ -2289,7 +2293,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        423
+        438
       ]
     ],
     "translation": "キャッシュ作成"
@@ -2300,7 +2304,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        437
+        452
       ]
     ],
     "translation": "キャッシュ読込"
@@ -2311,7 +2315,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        395
+        410
       ]
     ],
     "translation": "入力トークン"
@@ -2322,7 +2326,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        380
+        395
       ]
     ],
     "translation": "セッションコスト"
@@ -2333,7 +2337,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        409
+        424
       ]
     ],
     "translation": "出力トークン"
@@ -2344,7 +2348,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        387
+        402
       ]
     ],
     "translation": "合計"
@@ -2355,7 +2359,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        483
+        498
       ]
     ],
     "translation": ""
@@ -2366,7 +2370,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        497
+        512
       ]
     ],
     "translation": "Claude Codeが処理中..."
@@ -2376,8 +2380,8 @@
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        149
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
+        76
       ]
     ],
     "translation": "一時停止"
@@ -2387,19 +2391,34 @@
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        147
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
+        74
       ]
     ],
     "translation": "実行中"
+  },
+  "sessions.all_projects.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
+        42
+      ]
+    ],
+    "translation": "セッション（全プロジェクト）"
   },
   "sessions.load.more": {
     "placeholders": {},
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
+        84
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        192
+        110
       ]
     ],
     "translation": "さらに読み込む"
@@ -2410,7 +2429,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        77
+        48
       ]
     ],
     "translation": "セッション"
@@ -2420,8 +2439,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
+        46
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        81
+        52
       ]
     ],
     "translation": "合計"
@@ -2432,7 +2455,7 @@
     "origin": [
       [
         "src/components/GlobalSidebar.tsx",
-        62
+        64
       ]
     ],
     "translation": "表示と動作の設定"
@@ -2502,7 +2525,7 @@
       ],
       [
         "src/components/GlobalSidebar.tsx",
-        70
+        72
       ]
     ],
     "translation": "設定を読み込み中..."
@@ -2656,7 +2679,7 @@
     "origin": [
       [
         "src/components/GlobalSidebar.tsx",
-        85
+        87
       ]
     ],
     "translation": "通知"
@@ -2667,7 +2690,7 @@
     "origin": [
       [
         "src/components/GlobalSidebar.tsx",
-        78
+        80
       ]
     ],
     "translation": "セッション表示"
@@ -2678,7 +2701,7 @@
     "origin": [
       [
         "src/components/GlobalSidebar.tsx",
-        98
+        100
       ]
     ],
     "translation": "システム情報"
@@ -2748,7 +2771,7 @@
       ],
       [
         "src/components/GlobalSidebar.tsx",
-        54
+        56
       ]
     ],
     "translation": "表示と通知の設定"
@@ -2814,7 +2837,7 @@
     "origin": [
       [
         "src/components/GlobalSidebar.tsx",
-        59
+        61
       ]
     ],
     "translation": "設定"
@@ -2829,10 +2852,21 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        96
+        129
       ]
     ],
     "translation": "プロジェクト一覧に戻る"
+  },
+  "sidebar.show.all.projects.session.list": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
+        82
+      ]
+    ],
+    "translation": "セッション一覧を表示（全プロジェクト）"
   },
   "sidebar.show.mcp.settings": {
     "placeholders": {},
@@ -2844,7 +2878,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        60
+        92
       ]
     ],
     "translation": "MCPサーバー設定を表示"
@@ -2855,7 +2889,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        66
+        98
       ]
     ],
     "translation": "スケジューラジョブを表示"
@@ -2870,7 +2904,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        47
+        69
       ]
     ],
     "translation": "セッション一覧を表示"
