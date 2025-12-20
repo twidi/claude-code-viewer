@@ -11,6 +11,7 @@ import {
   parsedUserMessageSchema,
 } from "../../claude-code/functions/parseUserMessage";
 import type { SessionMeta } from "../../types";
+import { calculateCurrentContextUsage } from "../functions/calculateCurrentContextUsage";
 import {
   calculateTokenCost,
   type TokenUsage,
@@ -189,6 +190,11 @@ export class SessionMetaService extends Context.Tag("SessionMetaService")<
           // Calculate cost information
           const { totalCost } = aggregateTokenUsageAndCost(content);
 
+          // Calculate current context usage
+          const conversations = parseJsonl(content);
+          const currentContextUsage =
+            calculateCurrentContextUsage(conversations);
+
           const sessionMeta: SessionMeta = {
             messageCount: lines.length,
             firstUserMessage: firstUserMessage,
@@ -197,6 +203,7 @@ export class SessionMetaService extends Context.Tag("SessionMetaService")<
               breakdown: totalCost.breakdown,
               tokenUsage: totalCost.tokenUsage,
             },
+            currentContextUsage,
           };
 
           yield* Ref.update(sessionMetaCacheRef, (cache) => {
