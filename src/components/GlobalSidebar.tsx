@@ -30,6 +30,7 @@ interface GlobalSidebarProps {
   additionalTabs?: SidebarTab[];
   defaultActiveTab?: string;
   headerButton?: ReactNode;
+  onTabChange?: (tabId: string) => void;
 }
 
 export const GlobalSidebar: FC<GlobalSidebarProps> = ({
@@ -38,6 +39,7 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
   additionalTabs = [],
   defaultActiveTab,
   headerButton,
+  onTabChange,
 }) => {
   const { openSearch } = useSearch();
   const { authEnabled, logout } = useAuth();
@@ -115,6 +117,7 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
     } else {
       setActiveTab(tabId);
       setIsExpanded(true);
+      onTabChange?.(tabId);
     }
   };
 
