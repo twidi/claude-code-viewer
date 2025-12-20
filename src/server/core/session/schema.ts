@@ -1,6 +1,16 @@
 import { z } from "zod";
 import { parsedUserMessageSchema } from "../claude-code/functions/parseUserMessage";
 
+export const MAX_CONTEXT_WINDOW_TOKENS = 200_000;
+
+export const currentContextUsageSchema = z.object({
+  tokens: z.number(),
+  percentage: z.number(),
+  maxTokens: z.number(),
+});
+
+export type CurrentContextUsage = z.infer<typeof currentContextUsageSchema>;
+
 export const sessionMetaSchema = z.object({
   messageCount: z.number(),
   firstUserMessage: parsedUserMessageSchema.nullable(),
@@ -19,4 +29,5 @@ export const sessionMetaSchema = z.object({
       cacheReadTokens: z.number(),
     }),
   }),
+  currentContextUsage: currentContextUsageSchema.nullable(),
 });
