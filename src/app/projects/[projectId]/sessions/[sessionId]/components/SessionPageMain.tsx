@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/react";
 import { useMutation } from "@tanstack/react-query";
 import {
+  BrainIcon,
   DownloadIcon,
   GitBranchIcon,
   InfoIcon,
@@ -300,6 +301,40 @@ const SessionPageMainContent: FC<
                   </TooltipContent>
                 </Tooltip>
               )}
+              {isExistingSession &&
+                sessionData?.session.meta.currentContextUsage && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant="secondary"
+                        className={`h-6 text-xs flex items-center gap-1 max-w-full cursor-help ${
+                          sessionData.session.meta.currentContextUsage
+                            .percentage >= 70
+                            ? "bg-red-500/10 text-red-900 dark:text-red-200 border-red-500/20"
+                            : sessionData.session.meta.currentContextUsage
+                                  .percentage >= 50
+                              ? "bg-orange-500/10 text-orange-900 dark:text-orange-200 border-orange-500/20"
+                              : ""
+                        }`}
+                      >
+                        <BrainIcon className="w-3 h-3 flex-shrink-0" />
+                        <span>
+                          {sessionData.session.meta.currentContextUsage.percentage.toFixed(
+                            0,
+                          )}
+                          %
+                        </span>
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <Trans id="session.context.tooltip" />:{" "}
+                      {sessionData.session.meta.currentContextUsage.tokens.toLocaleString()}{" "}
+                      /{" "}
+                      {sessionData.session.meta.currentContextUsage.maxTokens.toLocaleString()}{" "}
+                      tokens
+                    </TooltipContent>
+                  </Tooltip>
+                )}
             </div>
             {relatedSessionProcess?.status === "running" && (
               <Badge
@@ -479,6 +514,53 @@ const SessionPageMainContent: FC<
                           </div>
                         </div>
                       )}
+                      {isExistingSession &&
+                        sessionData?.session.meta.currentContextUsage && (
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs text-muted-foreground">
+                              <Trans id="session.context.label" />
+                            </span>
+                            <div className="space-y-1.5">
+                              <Badge
+                                variant="secondary"
+                                className={`h-7 text-xs flex items-center gap-1 w-fit font-semibold ${
+                                  sessionData.session.meta.currentContextUsage
+                                    .percentage >= 70
+                                    ? "bg-red-500/10 text-red-900 dark:text-red-200 border-red-500/20"
+                                    : sessionData.session.meta
+                                          .currentContextUsage.percentage >= 50
+                                      ? "bg-orange-500/10 text-orange-900 dark:text-orange-200 border-orange-500/20"
+                                      : ""
+                                }`}
+                              >
+                                <BrainIcon className="w-3 h-3" />
+                                {sessionData.session.meta.currentContextUsage.percentage.toFixed(
+                                  1,
+                                )}
+                                %
+                              </Badge>
+                              <div className="text-xs space-y-1 pl-2">
+                                <div className="flex justify-between gap-4">
+                                  <span className="text-muted-foreground">
+                                    <Trans id="session.context.current_tokens" />
+                                    :
+                                  </span>
+                                  <span>
+                                    {sessionData.session.meta.currentContextUsage.tokens.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between gap-4">
+                                  <span className="text-muted-foreground">
+                                    <Trans id="session.context.max_tokens" />:
+                                  </span>
+                                  <span>
+                                    {sessionData.session.meta.currentContextUsage.maxTokens.toLocaleString()}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
