@@ -1,5 +1,6 @@
 import { Trans } from "@lingui/react";
 import { useMutation } from "@tanstack/react-query";
+import { Link, useSearch } from "@tanstack/react-router";
 import {
   BrainIcon,
   DownloadIcon,
@@ -110,6 +111,10 @@ const SessionPageMainContent: FC<
   const revisionsData = revisionsDataProp ?? revisionsDataFallback;
   const exportSession = useExportSession();
   const { data: allSchedulerJobs } = useSchedulerJobs();
+  const search = useSearch({
+    from: "/projects/$projectId/session",
+  });
+  const isAllSessionsTab = search.tab === "all-sessions";
 
   const sessionProcess = useSessionProcess();
   const relatedSessionProcess = useMemo(() => {
@@ -258,16 +263,45 @@ const SessionPageMainContent: FC<
               {projectPath && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Badge
-                      variant="secondary"
-                      className="h-6 text-xs flex items-center max-w-full cursor-help"
-                    >
-                      <span className="truncate">
-                        {projectPath.split("/").pop()}
-                      </span>
-                    </Badge>
+                    {isAllSessionsTab ? (
+                      <Link
+                        to="/projects/$projectId/session"
+                        params={{ projectId }}
+                        search={{ tab: "sessions", sessionId }}
+                      >
+                        <Badge
+                          variant="secondary"
+                          className="h-6 text-xs flex items-center max-w-full cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                        >
+                          <span className="truncate">
+                            {projectPath.split("/").pop()}
+                          </span>
+                        </Badge>
+                      </Link>
+                    ) : (
+                      <Badge
+                        variant="secondary"
+                        className="h-6 text-xs flex items-center max-w-full cursor-help"
+                      >
+                        <span className="truncate">
+                          {projectPath.split("/").pop()}
+                        </span>
+                      </Badge>
+                    )}
                   </TooltipTrigger>
-                  <TooltipContent>{projectPath}</TooltipContent>
+                  <TooltipContent>
+                    {isAllSessionsTab ? (
+                      <>
+                        <Trans id="sessions.switch_to_project" />
+                        <br />
+                        <span className="text-muted-foreground">
+                          {projectPath}
+                        </span>
+                      </>
+                    ) : (
+                      projectPath
+                    )}
+                  </TooltipContent>
                 </Tooltip>
               )}
               {currentBranch && (
