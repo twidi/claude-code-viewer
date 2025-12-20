@@ -287,3 +287,21 @@ export const agentSessionQuery = (projectId: string, agentId: string) =>
       return await response.json();
     },
   }) as const;
+
+export const recentSessionsQuery = (cursor?: string) =>
+  ({
+    queryKey: ["sessions", "recent"],
+    queryFn: async () => {
+      const response = await honoClient.api.sessions.recent.$get({
+        query: { cursor },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch recent sessions: ${response.statusText}`,
+        );
+      }
+
+      return await response.json();
+    },
+  }) as const;

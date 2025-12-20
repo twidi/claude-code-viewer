@@ -131,6 +131,31 @@ export const routes = (app: HonoAppType) =>
         })
 
         .get(
+          "/api/sessions/recent",
+          zValidator(
+            "query",
+            z.object({
+              limit: z
+                .string()
+                .optional()
+                .transform((v) => (v ? Number.parseInt(v, 10) : undefined)),
+              cursor: z.string().optional(),
+            }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              projectController
+                .getRecentSessions({
+                  ...c.req.valid("query"),
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
+        .get(
           "/api/projects/:projectId",
           zValidator("query", z.object({ cursor: z.string().optional() })),
           async (c) => {
