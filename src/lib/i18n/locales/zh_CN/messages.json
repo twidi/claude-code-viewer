@@ -373,11 +373,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        215
+        216
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        495
+        577
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
@@ -866,11 +866,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        270
+        271
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        381
+        416
       ]
     ],
     "translation": "分支"
@@ -892,7 +892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        344
+        379
       ]
     ],
     "translation": "元数据"
@@ -938,7 +938,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        350
+        385
       ]
     ],
     "translation": "项目路径"
@@ -973,11 +973,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        285
+        286
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        368
+        403
       ]
     ],
     "translation": "会话 ID"
@@ -2254,6 +2254,50 @@
     ],
     "translation": "定时任务"
   },
+  "session.context.current_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        531
+      ]
+    ],
+    "translation": "当前令牌数"
+  },
+  "session.context.label": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        507
+      ]
+    ],
+    "translation": "上下文窗口"
+  },
+  "session.context.max_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        540
+      ]
+    ],
+    "translation": "最大令牌数"
+  },
+  "session.context.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        316
+      ]
+    ],
+    "translation": "上下文窗口使用量"
+  },
   "session.conversation.abort": {
     "placeholders": {},
     "comments": [],
@@ -2271,7 +2315,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        305
+        340
       ]
     ],
     "translation": "已暂停"
@@ -2282,7 +2326,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        296
+        331
       ]
     ],
     "translation": "运行中"
@@ -2293,7 +2337,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        438
+        473
       ]
     ],
     "translation": "缓存创建"
@@ -2304,7 +2348,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        452
+        487
       ]
     ],
     "translation": "缓存读取"
@@ -2315,7 +2359,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        410
+        445
       ]
     ],
     "translation": "输入令牌"
@@ -2326,7 +2370,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        395
+        430
       ]
     ],
     "translation": "会话成本"
@@ -2337,7 +2381,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        424
+        459
       ]
     ],
     "translation": "输出令牌"
@@ -2348,7 +2392,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        402
+        437
       ]
     ],
     "translation": "总计"
@@ -2359,7 +2403,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        498
+        580
       ]
     ],
     "translation": ""
@@ -2370,7 +2414,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        512
+        594
       ]
     ],
     "translation": "Claude Code 正在处理..."
