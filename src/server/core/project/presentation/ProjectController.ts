@@ -121,6 +121,76 @@ const LayerImpl = Effect.gen(function* () {
       } as const satisfies ControllerResponse;
     });
 
+  const getRecentSessions = (options: { limit?: number; cursor?: string }) =>
+    Effect.gen(function* () {
+      const { limit = 10, cursor } = options;
+      const userConfig = yield* userConfigService.getUserConfig();
+
+      // Get all projects
+      const { projects } = yield* projectRepository.getProjects();
+
+      // Get sessions from all projects (first page only, limited per project)
+      const allSessionsEffects = projects.map((project) =>
+        Effect.gen(function* () {
+          const { sessions } = yield* sessionRepository.getSessions(
+            project.id,
+            {
+              maxCount: 20, // Get more to have enough after filtering
+            },
+          );
+
+          // Filter sessions based on hideNoUserMessageSession setting
+          let filteredSessions = sessions;
+          if (userConfig.hideNoUserMessageSession) {
+            filteredSessions = filteredSessions.filter((session) => {
+              return session.meta.firstUserMessage !== null;
+            });
+          }
+
+          // Add project info to each session
+          return filteredSessions.map((session) => ({
+            ...session,
+            projectId: project.id,
+            projectName: project.meta.projectName,
+          }));
+        }).pipe(Effect.catchAll(() => Effect.succeed([]))),
+      );
+
+      const sessionsPerProject = yield* Effect.all(allSessionsEffects, {
+        concurrency: "unbounded",
+      });
+
+      // Flatten and sort by lastModifiedAt
+      const allSessions = sessionsPerProject
+        .flat()
+        .sort(
+          (a, b) => b.lastModifiedAt.getTime() - a.lastModifiedAt.getTime(),
+        );
+
+      // Apply cursor-based pagination
+      let startIndex = 0;
+      if (cursor) {
+        const cursorIndex = allSessions.findIndex((s) => s.id === cursor);
+        if (cursorIndex !== -1) {
+          startIndex = cursorIndex + 1;
+        }
+      }
+
+      const sessionsToReturn = allSessions.slice(
+        startIndex,
+        startIndex + limit,
+      );
+      const hasMore = startIndex + limit < allSessions.length;
+
+      return {
+        status: 200,
+        response: {
+          sessions: sessionsToReturn,
+          nextCursor: hasMore ? sessionsToReturn.at(-1)?.id : undefined,
+        },
+      } as const satisfies ControllerResponse;
+    });
+
   const createProject = (options: { projectPath: string }) =>
     Effect.gen(function* () {
       const { projectPath } = options;
@@ -166,6 +236,7 @@ const LayerImpl = Effect.gen(function* () {
     getProjects,
     getProject,
     getProjectLatestSession,
+    getRecentSessions,
     createProject,
   };
 });
