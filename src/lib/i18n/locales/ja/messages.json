@@ -373,11 +373,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        215
+        216
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        495
+        577
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
@@ -866,11 +866,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        270
+        271
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        381
+        416
       ]
     ],
     "translation": "ブランチ"
@@ -892,7 +892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        344
+        379
       ]
     ],
     "translation": "メタデータ"
@@ -950,7 +950,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        350
+        385
       ]
     ],
     "translation": "プロジェクトパス"
@@ -985,11 +985,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        285
+        286
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        368
+        403
       ]
     ],
     "translation": "セッションID"
@@ -2266,6 +2266,50 @@
     ],
     "translation": "スケジューラ"
   },
+  "session.context.current_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        531
+      ]
+    ],
+    "translation": "現在のトークン数"
+  },
+  "session.context.label": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        507
+      ]
+    ],
+    "translation": "コンテキストウィンドウ"
+  },
+  "session.context.max_tokens": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        540
+      ]
+    ],
+    "translation": "最大トークン数"
+  },
+  "session.context.tooltip": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        316
+      ]
+    ],
+    "translation": "コンテキストウィンドウ使用量"
+  },
   "session.conversation.abort": {
     "placeholders": {},
     "comments": [],
@@ -2283,7 +2327,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        305
+        340
       ]
     ],
     "translation": "一時停止"
@@ -2294,7 +2338,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        296
+        331
       ]
     ],
     "translation": "実行中"
@@ -2305,7 +2349,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        438
+        473
       ]
     ],
     "translation": "キャッシュ作成"
@@ -2316,7 +2360,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        452
+        487
       ]
     ],
     "translation": "キャッシュ読込"
@@ -2327,7 +2371,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        410
+        445
       ]
     ],
     "translation": "入力トークン"
@@ -2338,7 +2382,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        395
+        430
       ]
     ],
     "translation": "セッションコスト"
@@ -2349,7 +2393,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        424
+        459
       ]
     ],
     "translation": "出力トークン"
@@ -2360,7 +2404,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        402
+        437
       ]
     ],
     "translation": "合計"
@@ -2371,7 +2415,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        498
+        580
       ]
     ],
     "translation": ""
@@ -2382,7 +2426,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        512
+        594
       ]
     ],
     "translation": "Claude Codeが処理中..."
