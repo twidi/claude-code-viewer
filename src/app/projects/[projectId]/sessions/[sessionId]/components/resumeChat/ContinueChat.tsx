@@ -1,8 +1,10 @@
 import { Trans, useLingui } from "@lingui/react";
+import { useSetAtom } from "jotai";
 import type { FC } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { useConfig } from "../../../../../../hooks/useConfig";
+import { useConfig } from "@/app/hooks/useConfig";
+import { queuedMessagesPanelOpenForSessionAtom } from "@/lib/atoms/queuedMessagesPanelAtom";
 import {
   ChatInput,
   type MessageInput,
@@ -12,7 +14,7 @@ import {
 import { usePendingMessages } from "../../hooks/usePendingMessages";
 import { usePendingPermissionMode } from "../../hooks/usePendingPermissionMode";
 import { useStopSessionProcessMutation } from "../../hooks/useStopSessionProcessMutation";
-import { formatQueuedMessages } from "../../utils/formatQueuedMessages";
+import { sendQueuedMessages } from "../../utils/sendQueuedMessages";
 import { QueuedMessagesPanel } from "./QueuedMessagesPanel";
 
 export const ContinueChat: FC<{
@@ -46,17 +48,20 @@ export const ContinueChat: FC<{
     hasPendingMessages,
   } = usePendingMessages(sessionId);
 
-  // Track previous status for transition detection
-  const prevStatusRef = useRef<"running" | "paused" | undefined>(undefined);
-
-  // Track if panel is open (blocks auto-send when open)
+  // Track if panel is open
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const isPanelOpenRef = useRef(isPanelOpen);
+  const setQueuedMessagesPanelOpenForSession = useSetAtom(
+    queuedMessagesPanelOpenForSessionAtom,
+  );
 
-  // Keep ref in sync with state
+  // Keep the global atom in sync with local panel state
   useEffect(() => {
-    isPanelOpenRef.current = isPanelOpen;
-  }, [isPanelOpen]);
+    setQueuedMessagesPanelOpenForSession(isPanelOpen ? sessionId : null);
+    return () => {
+      // Clean up when component unmounts
+      setQueuedMessagesPanelOpenForSession(null);
+    };
+  }, [isPanelOpen, sessionId, setQueuedMessagesPanelOpenForSession]);
 
   // Auto-open panel when we have orphan messages and Claude is not running
   // This happens on page load/reload when messages couldn't be auto-sent
@@ -116,107 +121,27 @@ export const ContinueChat: FC<{
     }
   };
 
-  // Send queued messages helper
-  const sendQueuedMessages = useCallback(
-    (messages: { text: string; queuedAt: string }[]) => {
-      // Format the messages
-      const formattedText = formatQueuedMessages(messages);
-
-      // Show toast
-      toast.info(
-        i18n._({
-          id: "chat.queue.sending_queued",
-          values: { count: messages.length },
-        }),
-      );
-
-      // Send the formatted message
-      const input: MessageInput = {
-        text: formattedText,
-        images: [],
-        documents: [],
-      };
-
-      // Call the normal submit flow (not the handleSubmit to avoid queueing logic)
-      if (needsPermissionChange) {
-        stopSessionProcess
-          .mutateAsync(sessionProcessId)
-          .then(() =>
-            createSessionProcess.mutateAsync({
-              input,
-              baseSessionId: sessionId,
-              permissionModeOverride: pendingMode,
-            }),
-          )
-          .then(() => clearPendingMode())
-          .catch((error) => {
-            toast.error(
-              i18n._({
-                id: "chat.queue.send_failed",
-                message: "Failed to send queued messages",
-              }),
-            );
-            console.error("Failed to send queued messages:", error);
-          });
-      } else {
-        continueSessionProcess
-          .mutateAsync({ input, sessionProcessId })
-          .catch((error) => {
-            toast.error(
-              i18n._({
-                id: "chat.queue.send_failed",
-                message: "Failed to send queued messages",
-              }),
-            );
-            console.error("Failed to send queued messages:", error);
-          });
-      }
-    },
-    [
-      i18n,
-      needsPermissionChange,
-      stopSessionProcess,
-      sessionProcessId,
-      createSessionProcess,
-      sessionId,
-      pendingMode,
-      clearPendingMode,
-      continueSessionProcess,
-    ],
-  );
-
-  // Auto-send queued messages when session transitions from running to paused
-  // BUT only if the panel is NOT open (open panel = user wants to review/edit)
-  useEffect(() => {
-    const prevStatus = prevStatusRef.current;
-    const currentStatus = sessionProcessStatus;
-
-    // Detect transition from running to paused
-    const isTransition = prevStatus === "running" && currentStatus === "paused";
-
-    if (isTransition && hasPendingMessages && !isPanelOpenRef.current) {
-      // Get and clear all pending messages
-      const messages = clearPendingMessages();
-      sendQueuedMessages(messages);
-    }
-
-    // Update ref for next render
-    prevStatusRef.current = sessionProcessStatus;
-  }, [
-    sessionProcessStatus,
-    hasPendingMessages,
-    clearPendingMessages,
-    sendQueuedMessages,
-  ]);
-
   // Handle manual send from panel
   const handleSendNow = useCallback(() => {
     const messages = clearPendingMessages();
     if (messages.length > 0) {
       setIsPanelOpen(false);
-      sendQueuedMessages(messages);
+      sendQueuedMessages({
+        sessionProcessId,
+        projectId,
+        sessionId,
+        messages,
+      }).catch((error) => {
+        toast.error(
+          i18n._({
+            id: "chat.queue.send_failed",
+            message: "Failed to send queued messages",
+          }),
+        );
+        console.error("Failed to send queued messages:", error);
+      });
     }
-  }, [clearPendingMessages, sendQueuedMessages]);
+  }, [clearPendingMessages, sessionProcessId, projectId, sessionId, i18n]);
 
   // Handle clear all from panel
   const handleClearAll = useCallback(() => {
