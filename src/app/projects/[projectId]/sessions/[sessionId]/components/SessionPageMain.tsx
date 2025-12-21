@@ -35,7 +35,6 @@ import {
 } from "@/components/ui/tooltip";
 import { usePermissionRequests } from "@/hooks/usePermissionRequests";
 import { useSchedulerJobs } from "@/hooks/useScheduler";
-import { useTaskNotifications } from "@/hooks/useTaskNotifications";
 import { honoClient } from "@/lib/api/client";
 import type { PermissionMode } from "@/types/session-process";
 import { firstUserMessageToTitle } from "../../../services/firstCommandToTitle";
@@ -121,8 +120,6 @@ const SessionPageMainContent: FC<
     if (!sessionId) return undefined;
     return sessionProcess.getSessionProcess(sessionId);
   }, [sessionProcess, sessionId]);
-
-  useTaskNotifications(relatedSessionProcess?.status === "running");
 
   // Filter scheduler jobs related to this session
   const sessionScheduledJobs = useMemo(() => {
