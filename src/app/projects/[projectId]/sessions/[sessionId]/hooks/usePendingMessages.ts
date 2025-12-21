@@ -10,6 +10,44 @@ const STORAGE_KEY_PREFIX = "ccv-pending-messages-";
 const getStorageKey = (sessionId: string) =>
   `${STORAGE_KEY_PREFIX}${sessionId}`;
 
+/**
+ * Get pending messages for a session from localStorage (pure function, not a hook).
+ * Used by global session transition handler.
+ */
+export const getPendingMessagesForSession = (
+  sessionId: string,
+): PendingMessage[] => {
+  if (typeof window === "undefined") return [];
+  const value = localStorage.getItem(getStorageKey(sessionId));
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Clear pending messages for a session and return them (pure function, not a hook).
+ * Used by global session transition handler.
+ */
+export const clearPendingMessagesForSession = (
+  sessionId: string,
+): PendingMessage[] => {
+  const messages = getPendingMessagesForSession(sessionId);
+  if (messages.length > 0) {
+    localStorage.removeItem(getStorageKey(sessionId));
+    // Dispatch custom event for same-tab reactivity
+    window.dispatchEvent(
+      new CustomEvent("pending-messages-change", {
+        detail: { sessionId },
+      }),
+    );
+  }
+  return messages;
+};
+
 // Cache for getSnapshot to avoid infinite loops with useSyncExternalStore
 // useSyncExternalStore requires referentially stable results when data hasn't changed
 const snapshotCache = new Map<
