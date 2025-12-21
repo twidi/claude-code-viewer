@@ -2,7 +2,9 @@ import { Trans, useLingui } from "@lingui/react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowLeftIcon,
+  CalendarClockIcon,
   InfoIcon,
+  LayersIcon,
   MessageSquareIcon,
   PlugIcon,
   SettingsIcon,
@@ -21,14 +23,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { AllProjectsSessionsTab } from "./AllProjectsSessionsTab";
 import { McpTab } from "./McpTab";
+import { SchedulerTab } from "./SchedulerTab";
 import { SessionsTab } from "./SessionsTab";
+import type { Tab } from "./schema";
 
 interface MobileSidebarProps {
   currentSessionId: string;
   projectId: string;
   isOpen: boolean;
   onClose: () => void;
+  initialTab: Tab;
+  onTabChange: (tab: Tab) => void;
 }
 
 export const MobileSidebar: FC<MobileSidebarProps> = ({
@@ -36,17 +43,22 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
   projectId,
   isOpen,
   onClose,
+  initialTab,
+  onTabChange,
 }) => {
   const { i18n } = useLingui();
-  const [activeTab, setActiveTab] = useState<
-    "sessions" | "mcp" | "settings" | "system-info"
-  >("sessions");
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab);
   const [mounted, setMounted] = useState(false);
 
   // Handle portal mounting
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Sync activeTab with initialTab when URL changes
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   // Handle escape key
   useEffect(() => {
@@ -68,10 +80,9 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
     };
   }, [isOpen, onClose]);
 
-  const handleTabClick = (
-    tab: "sessions" | "mcp" | "settings" | "system-info",
-  ) => {
+  const handleTabClick = (tab: Tab) => {
     setActiveTab(tab);
+    onTabChange(tab);
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -90,8 +101,14 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
             isMobile={true}
           />
         );
+      case "all-sessions":
+        return <AllProjectsSessionsTab currentSessionId={currentSessionId} />;
       case "mcp":
         return <McpTab projectId={projectId} />;
+      case "scheduler":
+        return (
+          <SchedulerTab projectId={projectId} sessionId={currentSessionId} />
+        );
       case "settings":
         return (
           <div className="h-full flex flex-col">
@@ -208,6 +225,30 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
                 <TooltipTrigger asChild>
                   <button
                     type="button"
+                    onClick={() => handleTabClick("all-sessions")}
+                    className={cn(
+                      "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
+                      "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      activeTab === "all-sessions"
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                        : "text-sidebar-foreground/70",
+                    )}
+                    data-testid="all-sessions-tab-button-mobile"
+                  >
+                    <LayersIcon className="w-4 h-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>
+                    <Trans id="sidebar.show.all.projects.session.list" />
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
                     onClick={() => handleTabClick("mcp")}
                     className={cn(
                       "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
@@ -224,6 +265,30 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
                 <TooltipContent side="right">
                   <p>
                     <Trans id="sidebar.show.mcp.settings" />
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    onClick={() => handleTabClick("scheduler")}
+                    className={cn(
+                      "w-8 h-8 flex items-center justify-center rounded-md transition-colors",
+                      "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      activeTab === "scheduler"
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm"
+                        : "text-sidebar-foreground/70",
+                    )}
+                    data-testid="scheduler-tab-button-mobile"
+                  >
+                    <CalendarClockIcon className="w-4 h-4" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>
+                    <Trans id="sidebar.show.scheduler.jobs" />
                   </p>
                 </TooltipContent>
               </Tooltip>
