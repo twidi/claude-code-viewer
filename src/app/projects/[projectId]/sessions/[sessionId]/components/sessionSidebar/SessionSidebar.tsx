@@ -141,6 +141,8 @@ export const SessionSidebar: FC<{
         projectId={projectId}
         isOpen={isMobileOpen}
         onClose={() => onMobileOpenChange?.(false)}
+        initialTab={initialTab}
+        onTabChange={handleTabChange}
       />
     </>
   );
