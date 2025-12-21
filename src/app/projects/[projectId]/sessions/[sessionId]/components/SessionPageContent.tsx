@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBrowserPreview } from "@/hooks/useBrowserPreview";
 
 import { SessionPageMainWrapper } from "./SessionPageMainWrapper";
@@ -14,6 +14,12 @@ export const SessionPageContent: FC<{
   const { previewUrl, previewWidth } = useBrowserPreview();
 
   const mainContentWidth = previewUrl ? 100 - previewWidth : 100;
+
+  // Open sidebar when tab changes via URL (e.g., clicking project badge)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally react to tab changes
+  useEffect(() => {
+    setIsMobileSidebarOpen(true);
+  }, [tab]);
 
   return (
     <div
