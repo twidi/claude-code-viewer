@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+// MUST be first import - sets up global error handlers before any other code runs
+import "./lib/errorHandlers";
+
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { NodeContext } from "@effect/platform-node";
