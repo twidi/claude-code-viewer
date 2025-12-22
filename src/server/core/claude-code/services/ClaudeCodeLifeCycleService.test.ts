@@ -193,18 +193,17 @@ describe("ClaudeCodeLifeCycleService", () => {
       }
     });
 
-    it("should fail with SessionProcessNotFoundError for non-existent process", async () => {
+    it("should silently succeed for non-existent process (idempotent operation)", async () => {
       const program = Effect.gen(function* () {
         const lifeCycleService = yield* ClaudeCodeLifeCycleService;
 
-        const result = yield* Effect.flip(
-          lifeCycleService.stopTask("non-existent"),
-        );
+        // stopTask is idempotent - it should succeed even if process doesn't exist
+        yield* lifeCycleService.stopTask("non-existent");
 
-        return result;
+        return "success";
       });
 
-      const error = await Effect.runPromise(
+      const result = await Effect.runPromise(
         program.pipe(
           Effect.provide(ClaudeCodeLifeCycleService.Live),
           Effect.provide(ClaudeCodeSessionProcessService.Live),
@@ -217,10 +216,7 @@ describe("ClaudeCodeLifeCycleService", () => {
         ),
       );
 
-      expect(error).toMatchObject({
-        _tag: "SessionProcessNotFoundError",
-        sessionProcessId: "non-existent",
-      });
+      expect(result).toBe("success");
     });
   });
 
