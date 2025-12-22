@@ -46,6 +46,7 @@ export const SessionPageMainWrapper: FC<{
       </Suspense>
       <Suspense fallback={<Loading />}>
         <SessionPageMain
+          key={sessionId}
           projectId={projectId}
           sessionId={sessionId}
           setIsMobileSidebarOpen={setIsMobileSidebarOpen}
