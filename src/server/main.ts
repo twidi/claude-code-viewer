@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+// MUST be first import - sets up global error handlers before any other code runs
+import "./lib/errorHandlers";
+
 import { Command } from "commander";
 import { Effect } from "effect";
 import packageJson from "../../package.json" with { type: "json" };

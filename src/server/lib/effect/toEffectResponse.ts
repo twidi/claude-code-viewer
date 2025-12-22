@@ -36,8 +36,13 @@ export const effectToResponse = async <
   ctx: Context<HonoContext, P, I>,
   effect: Effect.Effect<CR, E, never>,
 ) => {
-  const result = await Effect.runPromise(effect);
-  const result2 = ctx.json(result.response, result.status);
+  try {
+    const result = await Effect.runPromise(effect);
+    const result2 = ctx.json(result.response, result.status);
 
-  return result2 as Ret;
+    return result2 as Ret;
+  } catch (error) {
+    console.error("Unhandled effect error:", error);
+    return ctx.json({ error: "Internal server error" }, 500) as Ret;
+  }
 };
