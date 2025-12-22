@@ -328,22 +328,26 @@ const LayerImpl = Effect.gen(function* () {
             sessionFileCreatedPromise.reject(error);
           }
 
+          // Ignore errors when updating task state - process may already be cleaned up
           await Effect.runPromise(
-            sessionProcessService.changeTaskState({
-              sessionProcessId: sessionProcess.def.sessionProcessId,
-              taskId: task.def.taskId,
-              nextTask: {
-                status: "failed",
-                def: task.def,
-                error: error,
-              },
-            }),
+            sessionProcessService
+              .changeTaskState({
+                sessionProcessId: sessionProcess.def.sessionProcessId,
+                taskId: task.def.taskId,
+                nextTask: {
+                  status: "failed",
+                  def: task.def,
+                  error: error,
+                },
+              })
+              .pipe(Effect.catchAll(() => Effect.void)),
           );
         }
       };
 
       const daemonPromise = handleSessionProcessDaemon()
         .catch((error) => {
+          // Log but don't rethrow - AbortError is expected when user aborts
           console.error("Error occur in task daemon process", error);
           if (sessionInitializedPromise.status === "pending") {
             sessionInitializedPromise.reject(error);
@@ -351,19 +355,29 @@ const LayerImpl = Effect.gen(function* () {
           if (sessionFileCreatedPromise.status === "pending") {
             sessionFileCreatedPromise.reject(error);
           }
-          throw error;
+          // Don't rethrow - let finally cleanup happen gracefully
         })
         .finally(() => {
           Effect.runFork(
             Effect.gen(function* () {
-              const currentProcess =
-                yield* sessionProcessService.getSessionProcess(
-                  sessionProcess.def.sessionProcessId,
+              const currentProcess = yield* sessionProcessService
+                .getSessionProcess(sessionProcess.def.sessionProcessId)
+                .pipe(
+                  Effect.catchTag("SessionProcessNotFoundError", () =>
+                    Effect.succeed(null),
+                  ),
                 );
 
-              yield* sessionProcessService.toCompletedState({
-                sessionProcessId: currentProcess.def.sessionProcessId,
-              });
+              // Process already gone - nothing to cleanup
+              if (currentProcess === null) {
+                return;
+              }
+
+              yield* sessionProcessService
+                .toCompletedState({
+                  sessionProcessId: currentProcess.def.sessionProcessId,
+                })
+                .pipe(Effect.catchAll(() => Effect.void));
             }),
           );
         });
@@ -390,29 +404,61 @@ const LayerImpl = Effect.gen(function* () {
       return processes.filter((process) => CCSessionProcess.isPublic(process));
     });
 
-  const stopTask = (sessionProcessId: string): Effect.Effect<void, Error> =>
+  const stopTask = (sessionProcessId: string): Effect.Effect<void> =>
     Effect.gen(function* () {
-      const currentProcess =
-        yield* sessionProcessService.getSessionProcess(sessionProcessId);
+      const currentProcess = yield* sessionProcessService
+        .getSessionProcess(sessionProcessId)
+        .pipe(
+          Effect.catchTag("SessionProcessNotFoundError", () =>
+            Effect.succeed(null),
+          ),
+        );
 
-      currentProcess.def.abortController.abort();
+      // Process already gone or doesn't exist - nothing to stop
+      if (currentProcess === null || currentProcess.type === "completed") {
+        return;
+      }
 
-      yield* sessionProcessService.toCompletedState({
-        sessionProcessId: currentProcess.def.sessionProcessId,
-      });
+      // Only abort if not already aborted
+      if (!currentProcess.def.abortController.signal.aborted) {
+        currentProcess.def.abortController.abort();
+      }
+
+      // Ignore errors - operation is idempotent
+      yield* sessionProcessService
+        .toCompletedState({
+          sessionProcessId: currentProcess.def.sessionProcessId,
+        })
+        .pipe(Effect.catchAll(() => Effect.void));
     });
 
-  const abortTask = (sessionProcessId: string): Effect.Effect<void, Error> =>
+  const abortTask = (sessionProcessId: string): Effect.Effect<void> =>
     Effect.gen(function* () {
-      const currentProcess =
-        yield* sessionProcessService.getSessionProcess(sessionProcessId);
+      const currentProcess = yield* sessionProcessService
+        .getSessionProcess(sessionProcessId)
+        .pipe(
+          Effect.catchTag("SessionProcessNotFoundError", () =>
+            Effect.succeed(null),
+          ),
+        );
 
-      currentProcess.def.abortController.abort();
+      // Process already gone or doesn't exist - nothing to abort
+      if (currentProcess === null || currentProcess.type === "completed") {
+        return;
+      }
 
-      yield* sessionProcessService.toCompletedState({
-        sessionProcessId: currentProcess.def.sessionProcessId,
-        error: new Error("Task aborted"),
-      });
+      // Only abort if not already aborted
+      if (!currentProcess.def.abortController.signal.aborted) {
+        currentProcess.def.abortController.abort();
+      }
+
+      // Ignore errors - operation is idempotent
+      yield* sessionProcessService
+        .toCompletedState({
+          sessionProcessId: currentProcess.def.sessionProcessId,
+          error: new Error("Task aborted"),
+        })
+        .pipe(Effect.catchAll(() => Effect.void));
     });
 
   const abortAllTasks = () =>
