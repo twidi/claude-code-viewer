@@ -452,9 +452,14 @@ export const routes = (app: HonoAppType) =>
           zValidator("json", z.object({ projectId: z.string() })),
           async (c) => {
             const { sessionProcessId } = c.req.param();
-            void Effect.runFork(
-              claudeCodeLifeCycleService.abortTask(sessionProcessId),
-            );
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.abortTask(sessionProcessId),
+              );
+            } catch (error) {
+              // Abort is idempotent - log but don't fail
+              console.error("Error aborting task:", error);
+            }
             return c.json({ message: "Task aborted" });
           },
         )
@@ -465,9 +470,14 @@ export const routes = (app: HonoAppType) =>
           zValidator("json", z.object({ projectId: z.string() })),
           async (c) => {
             const { sessionProcessId } = c.req.param();
-            await Runtime.runPromise(runtime)(
-              claudeCodeLifeCycleService.stopTask(sessionProcessId),
-            );
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.stopTask(sessionProcessId),
+              );
+            } catch (error) {
+              // Stop is idempotent - log but don't fail
+              console.error("Error stopping task:", error);
+            }
             return c.json({ message: "Task stopped" });
           },
         )
