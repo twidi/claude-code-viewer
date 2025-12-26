@@ -1,0 +1,13 @@
+[Unit]
+Description=Cloudflare Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/cloudflared tunnel run
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

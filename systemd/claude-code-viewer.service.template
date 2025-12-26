@@ -1,0 +1,17 @@
+[Unit]
+Description=Claude Code Viewer
+After=network-online.target cloudflared.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory={{INSTALL_DIR}}
+ExecStart=/usr/bin/node dist/main.js
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=HOME={{HOME}}
+Environment=PATH={{HOME}}/.npm-global/bin:{{HOME}}/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target
