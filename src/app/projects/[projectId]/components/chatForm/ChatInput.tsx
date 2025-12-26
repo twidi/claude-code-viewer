@@ -108,6 +108,10 @@ export const ChatInput: FC<ChatInputProps> = ({
     relative: { top: number; left: number };
     absolute: { top: number; left: number };
   }>({ relative: { top: 0, left: 0 }, absolute: { top: 0, left: 0 } });
+  const [isDraggingOnPage, setIsDraggingOnPage] = useState(false);
+  const [isDraggingOnZone, setIsDraggingOnZone] = useState(false);
+  const dragCounterRef = useRef(0);
+  const zoneDragCounterRef = useRef(0);
   const [sendMode, setSendMode] = useState<"immediate" | "scheduled">(
     "immediate",
   );
@@ -152,6 +156,47 @@ export const ChatInput: FC<ChatInputProps> = ({
     // Set initial height to minHeight value
     textarea.style.height = `${minHeightValue}px`;
   }, [minHeightValue]);
+
+  // Global drag listeners to detect when files are dragged anywhere on the page
+  useEffect(() => {
+    const handleGlobalDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current++;
+      if (e.dataTransfer?.types.includes("Files")) {
+        setIsDraggingOnPage(true);
+      }
+    };
+
+    const handleGlobalDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current--;
+      if (dragCounterRef.current === 0) {
+        setIsDraggingOnPage(false);
+      }
+    };
+
+    const handleGlobalDrop = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsDraggingOnPage(false);
+    };
+
+    const handleGlobalDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("dragenter", handleGlobalDragEnter);
+    document.addEventListener("dragleave", handleGlobalDragLeave);
+    document.addEventListener("drop", handleGlobalDrop);
+    document.addEventListener("dragover", handleGlobalDragOver);
+
+    return () => {
+      document.removeEventListener("dragenter", handleGlobalDragEnter);
+      document.removeEventListener("dragleave", handleGlobalDragLeave);
+      document.removeEventListener("drop", handleGlobalDrop);
+      document.removeEventListener("dragover", handleGlobalDragOver);
+    };
+  }, []);
 
   const handleSubmit = async () => {
     if (!message.trim() && attachedFiles.length === 0) return;
@@ -278,6 +323,65 @@ export const ChatInput: FC<ChatInputProps> = ({
     setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
   };
 
+  const addFiles = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const newFiles = fileArray.map((file) => ({
+      file,
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
+    setAttachedFiles((prev) => [...prev, ...newFiles]);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = e.clipboardData.files;
+    if (files.length === 0) return;
+
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    if (imageFiles.length > 0) {
+      addFiles(imageFiles);
+    }
+  };
+
+  const handleZoneDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files")) {
+      setIsDraggingOnZone(true);
+    }
+  };
+
+  const handleZoneDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current--;
+    if (zoneDragCounterRef.current === 0) {
+      setIsDraggingOnZone(false);
+    }
+  };
+
+  const handleZoneDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleZoneDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current = 0;
+    setIsDraggingOnZone(false);
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    if (imageFiles.length > 0) {
+      addFiles(imageFiles);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (fileCompletionRef.current?.handleKeyDown(e)) {
       return;
@@ -395,13 +499,33 @@ export const ChatInput: FC<ChatInputProps> = ({
         </div>
       )}
 
-      <div className="relative group">
+      <div
+        className="relative group"
+        onDragEnter={handleZoneDragEnter}
+        onDragLeave={handleZoneDragLeave}
+        onDragOver={handleZoneDragOver}
+        onDrop={handleZoneDrop}
+      >
         <div
-          className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className={`absolute -inset-0.5 rounded-2xl blur transition-opacity duration-300 ${
+            isDraggingOnZone
+              ? "opacity-100 bg-gradient-to-r from-blue-500/40 via-cyan-500/40 to-blue-500/40"
+              : isDraggingOnPage
+                ? "opacity-100 bg-gradient-to-r from-blue-500/30 via-cyan-500/30 to-blue-500/30"
+                : "opacity-0 group-hover:opacity-100 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20"
+          }`}
           aria-hidden="true"
         />
 
-        <div className="relative bg-background border border-border/40 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <div
+          className={`relative bg-background border border-border/40 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
+            isDraggingOnZone
+              ? "ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-2 ring-offset-background"
+              : isDraggingOnPage
+                ? "ring-2 ring-blue-400/50 dark:ring-blue-500/50 ring-offset-2 ring-offset-background"
+                : ""
+          }`}
+        >
           <div className="relative" ref={containerRef}>
             <Textarea
               ref={textareaRef}
@@ -421,6 +545,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                 setDraft(e.target.value);
               }}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder={placeholder}
               className="resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-5 py-2 text-base transition-all duration-200 placeholder:text-muted-foreground/60 overflow-y-auto leading-6"
               style={{
