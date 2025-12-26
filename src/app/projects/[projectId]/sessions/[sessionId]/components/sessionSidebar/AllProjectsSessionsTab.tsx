@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { PlusIcon } from "lucide-react";
-import { type FC, Suspense, useState } from "react";
+import { type FC, Suspense, useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSessionNames, useSetSessionName } from "@/hooks/useSessionNames";
 import { cn } from "@/lib/utils";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import { useProjects } from "../../../../../hooks/useProjects";
@@ -104,6 +105,16 @@ export const AllProjectsSessionsTab: FC<{
   const sessionProcesses = useAtomValue(sessionProcessesAtom);
   const { config } = useConfig();
 
+  const { data: sessionNames } = useSessionNames();
+  const setSessionName = useSetSessionName();
+
+  const handleRename = useCallback(
+    (sessionId: string, newName: string) => {
+      setSessionName.mutate({ sessionId, name: newName });
+    },
+    [setSessionName],
+  );
+
   // Default tab for navigation
   const currentTab = "all-sessions";
 
@@ -154,6 +165,8 @@ export const AllProjectsSessionsTab: FC<{
               isRunning={sessionProcess?.status === "running"}
               isPaused={sessionProcess?.status === "paused"}
               locale={config.locale}
+              customName={sessionNames?.[session.id]}
+              onRename={(newName) => handleRename(session.id, newName)}
             />
           );
         })}

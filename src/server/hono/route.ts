@@ -30,6 +30,7 @@ import {
 } from "../core/scheduler/schema";
 import type { VirtualConversationDatabase } from "../core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "../core/session/presentation/SessionController";
+import { SessionNameController } from "../core/session/presentation/SessionNameController";
 import type { SessionMetaService } from "../core/session/services/SessionMetaService";
 import { userConfigSchema } from "../lib/config/config";
 import { effectToResponse } from "../lib/effect/toEffectResponse";
@@ -53,6 +54,7 @@ export const routes = (app: HonoAppType) =>
     const claudeCodeController = yield* ClaudeCodeController;
     const schedulerController = yield* SchedulerController;
     const featureFlagController = yield* FeatureFlagController;
+    const sessionNameController = yield* SessionNameController;
 
     // services
     const envService = yield* EnvService;
@@ -640,6 +642,42 @@ export const routes = (app: HonoAppType) =>
             featureFlagController.getFlags().pipe(Effect.provide(runtime)),
           );
 
+          return response;
+        })
+
+        /**
+         * SessionNameController Routes
+         */
+        .get("/api/session-names", async (c) => {
+          const response = await effectToResponse(
+            c,
+            sessionNameController.getAllSessionNames(),
+          );
+          return response;
+        })
+
+        .put(
+          "/api/session-names/:sessionId",
+          zValidator("json", z.object({ name: z.string().min(1).max(200) })),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              sessionNameController.setSessionName({
+                sessionId: c.req.param("sessionId"),
+                name: c.req.valid("json").name,
+              }),
+            );
+            return response;
+          },
+        )
+
+        .delete("/api/session-names/:sessionId", async (c) => {
+          const response = await effectToResponse(
+            c,
+            sessionNameController.deleteSessionName({
+              sessionId: c.req.param("sessionId"),
+            }),
+          );
           return response;
         })
     );

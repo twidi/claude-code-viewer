@@ -33,7 +33,9 @@ import { SchedulerController } from "./core/scheduler/presentation/SchedulerCont
 import { SessionRepository } from "./core/session/infrastructure/SessionRepository";
 import { VirtualConversationDatabase } from "./core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "./core/session/presentation/SessionController";
+import { SessionNameController } from "./core/session/presentation/SessionNameController";
 import { SessionMetaService } from "./core/session/services/SessionMetaService";
+import { SessionNameService } from "./core/session/services/SessionNameService";
 import { honoApp } from "./hono/app";
 import { InitializeService } from "./hono/initialize";
 import { routes } from "./hono/route";
@@ -78,6 +80,7 @@ const program = routes(honoApp)
     Effect.provide(SSEController.Live),
     Effect.provide(SchedulerController.Live),
     Effect.provide(FeatureFlagController.Live),
+    Effect.provide(SessionNameController.Live),
   )
   .pipe(
     /** Application */
@@ -100,6 +103,7 @@ const program = routes(honoApp)
     Effect.provide(SessionRepository.Live),
     Effect.provide(ProjectMetaService.Live),
     Effect.provide(SessionMetaService.Live),
+    Effect.provide(SessionNameService.Live),
     Effect.provide(VirtualConversationDatabase.Live),
     Effect.provide(AgentSessionLayer),
   )

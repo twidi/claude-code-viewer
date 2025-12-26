@@ -2,8 +2,9 @@ import { Trans } from "@lingui/react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { PlusIcon } from "lucide-react";
-import type { FC } from "react";
+import { type FC, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { useSessionNames, useSetSessionName } from "@/hooks/useSessionNames";
 import { cn } from "@/lib/utils";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import { useProject } from "../../../../hooks/useProject";
@@ -29,6 +30,16 @@ export const SessionsTab: FC<{
   const search = useSearch({
     from: "/projects/$projectId/session",
   });
+
+  const { data: sessionNames } = useSessionNames();
+  const setSessionName = useSetSessionName();
+
+  const handleRename = useCallback(
+    (sessionId: string, newName: string) => {
+      setSessionName.mutate({ sessionId, name: newName });
+    },
+    [setSessionName],
+  );
 
   // Preserve current tab state or default to "sessions"
   const currentTab = search.tab ?? "sessions";
@@ -90,6 +101,8 @@ export const SessionsTab: FC<{
               isRunning={sessionProcess?.status === "running"}
               isPaused={sessionProcess?.status === "paused"}
               locale={config.locale}
+              customName={sessionNames?.[session.id]}
+              onRename={(newName) => handleRename(session.id, newName)}
             />
           );
         })}
