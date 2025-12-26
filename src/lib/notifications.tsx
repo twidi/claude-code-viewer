@@ -116,3 +116,90 @@ export function getSoundDisplayName(
 export function getAvailableSoundTypes(): NotificationSoundType[] {
   return ["none", "beep", "chime", "ping", "pop"];
 }
+
+/**
+ * Check if browser notifications are supported
+ */
+export function isBrowserNotificationSupported(): boolean {
+  return "Notification" in window;
+}
+
+/**
+ * Get current browser notification permission status
+ */
+export function getBrowserNotificationPermission():
+  | NotificationPermission
+  | "unsupported" {
+  if (!isBrowserNotificationSupported()) {
+    return "unsupported";
+  }
+  return Notification.permission;
+}
+
+/**
+ * Request browser notification permission
+ * Returns the permission status after the request
+ */
+export async function requestBrowserNotificationPermission(): Promise<
+  NotificationPermission | "unsupported"
+> {
+  if (!isBrowserNotificationSupported()) {
+    return "unsupported";
+  }
+
+  if (Notification.permission === "granted") {
+    return "granted";
+  }
+
+  if (Notification.permission === "denied") {
+    return "denied";
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    return permission;
+  } catch (error) {
+    console.warn("Failed to request notification permission:", error);
+    return "denied";
+  }
+}
+
+/**
+ * Send a browser notification for task completion
+ * Only shows if document is hidden (app in background)
+ */
+export function sendBrowserNotification(options: {
+  title: string;
+  body?: string;
+  tag?: string;
+  onClick?: () => void;
+}): Notification | null {
+  if (!isBrowserNotificationSupported()) {
+    return null;
+  }
+
+  if (Notification.permission !== "granted") {
+    return null;
+  }
+
+  try {
+    const notification = new Notification(options.title, {
+      body: options.body,
+      tag: options.tag,
+      icon: "/icon-192.png",
+    });
+
+    if (options.onClick) {
+      notification.onclick = () => {
+        window.focus();
+        options.onClick?.();
+        notification.close();
+      };
+    }
+
+    return notification;
+  } catch (error) {
+    console.warn("Failed to send browser notification:", error);
+    return null;
+  }
+}

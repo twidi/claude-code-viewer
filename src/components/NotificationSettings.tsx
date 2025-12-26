@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react";
 import { useAtom } from "jotai";
-import { type FC, useCallback, useId } from "react";
+import { type FC, useCallback, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -15,8 +15,11 @@ import {
 } from "@/lib/atoms/notifications";
 import {
   getAvailableSoundTypes,
+  getBrowserNotificationPermission,
   getSoundDisplayName,
+  isBrowserNotificationSupported,
   playNotificationSound,
+  requestBrowserNotificationPermission,
 } from "@/lib/notifications";
 
 interface NotificationSettingsProps {
@@ -32,6 +35,9 @@ export const NotificationSettings: FC<NotificationSettingsProps> = ({
 }: NotificationSettingsProps) => {
   const selectId = useId();
   const [settings, setSettings] = useAtom(notificationSettingsAtom);
+  const [permissionStatus, setPermissionStatus] = useState<
+    NotificationPermission | "unsupported"
+  >(() => getBrowserNotificationPermission());
 
   const handleSoundTypeChange = useCallback(
     (value: NotificationSoundType) => {
@@ -49,7 +55,26 @@ export const NotificationSettings: FC<NotificationSettingsProps> = ({
     }
   }, [settings.soundType]);
 
+  const handleRequestPermission = useCallback(async () => {
+    const permission = await requestBrowserNotificationPermission();
+    setPermissionStatus(permission);
+    if (permission === "granted") {
+      setSettings((prev) => ({
+        ...prev,
+        browserNotificationsEnabled: true,
+      }));
+    }
+  }, [setSettings]);
+
+  const handleToggleBrowserNotifications = useCallback(() => {
+    setSettings((prev) => ({
+      ...prev,
+      browserNotificationsEnabled: !prev.browserNotificationsEnabled,
+    }));
+  }, [setSettings]);
+
   const availableSoundTypes = getAvailableSoundTypes();
+  const browserNotificationsSupported = isBrowserNotificationSupported();
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -98,6 +123,56 @@ export const NotificationSettings: FC<NotificationSettingsProps> = ({
           </p>
         )}
       </div>
+
+      {browserNotificationsSupported && (
+        <div className="space-y-2">
+          {showLabels && (
+            <span className="text-sm font-medium leading-none">
+              <Trans id="notification.browser.label" />
+            </span>
+          )}
+
+          <div className="flex items-center gap-2">
+            {permissionStatus === "default" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRequestPermission}
+              >
+                <Trans id="notification.browser.enable" />
+              </Button>
+            )}
+
+            {permissionStatus === "granted" && (
+              <Button
+                variant={
+                  settings.browserNotificationsEnabled ? "default" : "outline"
+                }
+                size="sm"
+                onClick={handleToggleBrowserNotifications}
+              >
+                {settings.browserNotificationsEnabled ? (
+                  <Trans id="notification.browser.enabled" />
+                ) : (
+                  <Trans id="notification.browser.disabled" />
+                )}
+              </Button>
+            )}
+
+            {permissionStatus === "denied" && (
+              <span className="text-sm text-muted-foreground">
+                <Trans id="notification.browser.denied" />
+              </span>
+            )}
+          </div>
+
+          {showDescriptions && (
+            <p className="text-xs text-muted-foreground">
+              <Trans id="notification.browser.description" />
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

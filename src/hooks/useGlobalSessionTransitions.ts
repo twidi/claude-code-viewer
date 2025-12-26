@@ -4,11 +4,15 @@ import { toast } from "sonner";
 import { clearPendingMessagesForSession } from "@/app/projects/[projectId]/sessions/[sessionId]/hooks/usePendingMessages";
 import { sendQueuedMessages } from "@/app/projects/[projectId]/sessions/[sessionId]/utils/sendQueuedMessages";
 import {
+  browserNotificationsEnabledAtom,
   notificationSettingsAtom,
   soundNotificationsEnabledAtom,
 } from "@/lib/atoms/notifications";
 import { queuedMessagesPanelOpenForSessionAtom } from "@/lib/atoms/queuedMessagesPanelAtom";
-import { playNotificationSound } from "@/lib/notifications";
+import {
+  playNotificationSound,
+  sendBrowserNotification,
+} from "@/lib/notifications";
 import type { PublicSessionProcess } from "@/types/session-process";
 
 /**
@@ -26,6 +30,9 @@ export const useGlobalSessionTransitions = (
 ) => {
   const settings = useAtomValue(notificationSettingsAtom);
   const soundEnabled = useAtomValue(soundNotificationsEnabledAtom);
+  const browserNotificationsEnabled = useAtomValue(
+    browserNotificationsEnabledAtom,
+  );
   const queuedMessagesPanelOpenForSession = useAtomValue(
     queuedMessagesPanelOpenForSessionAtom,
   );
@@ -46,14 +53,28 @@ export const useGlobalSessionTransitions = (
         : clearPendingMessagesForSession(process.sessionId);
       const willAutoSendMessages = pendingMessages.length > 0;
 
-      // Show toast
-      toast.success("Task completed");
+      // Show toast (only if app is visible)
+      if (!document.hidden) {
+        toast.success("Task completed");
+      }
 
       // Play notification sound if enabled
       // BUT skip if we're about to auto-send messages (agent will restart immediately)
       // DO play if panel is open (user needs to review) or no messages to send
       if (soundEnabled && !willAutoSendMessages) {
         playNotificationSound(settings.soundType);
+      }
+
+      // Send browser notification if app is in background
+      if (
+        document.hidden &&
+        browserNotificationsEnabled &&
+        !willAutoSendMessages
+      ) {
+        sendBrowserNotification({
+          title: "Task completed",
+          tag: process.sessionId,
+        });
       }
 
       // Auto-send queued messages
@@ -69,7 +90,12 @@ export const useGlobalSessionTransitions = (
         });
       }
     },
-    [soundEnabled, settings.soundType, queuedMessagesPanelOpenForSession],
+    [
+      soundEnabled,
+      browserNotificationsEnabled,
+      settings.soundType,
+      queuedMessagesPanelOpenForSession,
+    ],
   );
 
   useEffect(() => {
