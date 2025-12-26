@@ -273,6 +273,44 @@ export const ChatInput: FC<ChatInputProps> = ({
     setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
   };
 
+  const addFiles = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const newFiles = fileArray.map((file) => ({
+      file,
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
+    setAttachedFiles((prev) => [...prev, ...newFiles]);
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = e.clipboardData.files;
+    if (files.length === 0) return;
+
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    if (imageFiles.length > 0) {
+      addFiles(imageFiles);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const imageFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    if (imageFiles.length > 0) {
+      addFiles(imageFiles);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (fileCompletionRef.current?.handleKeyDown(e)) {
       return;
@@ -416,6 +454,9 @@ export const ChatInput: FC<ChatInputProps> = ({
                 setDraft(e.target.value);
               }}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
               placeholder={placeholder}
               className="resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-5 py-2 text-base transition-all duration-200 placeholder:text-muted-foreground/60 overflow-y-auto leading-6"
               style={{
