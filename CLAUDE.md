@@ -1,9 +1,11 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 ## Critical Rules (Read First)
 
 **Communication**:
-- Always communicate with users in Japanese (日本語)
+- Always communicate with users in their preferred language
 - Code, comments, and commit messages should be in English
 - This document is in English for context efficiency
 
@@ -46,11 +48,53 @@ After `pnpm fix`, manually address any remaining issues.
 ### Testing
 
 ```bash
-# Run unit tests
+# Run all unit tests
 pnpm test
+
+# Run a single test file
+pnpm test src/server/core/session/functions/id.test.ts
+
+# Watch mode for development
+pnpm test:watch
 ```
 
 **TDD Workflow**: Write tests → Run tests → Implement → Verify → Quality checks
+
+### E2E Snapshot Testing (VRT)
+
+```bash
+# Run server startup and snapshot capture together
+pnpm e2e
+
+# Or execute manually
+pnpm e2e:start-server        # Start server
+pnpm e2e:capture-snapshots   # Capture snapshots
+```
+
+**Do not commit locally captured snapshots** - they vary by environment. For PRs with UI changes, add the `vrt` label to auto-update snapshots in CI.
+
+### Build
+
+```bash
+# Full production build (frontend + backend)
+pnpm build
+
+# Separate builds
+pnpm build:frontend   # Vite → dist/static/
+pnpm build:backend    # esbuild → dist/main.js
+```
+
+### Internationalization (i18n)
+
+```bash
+# Extract new translation strings
+pnpm lingui:extract
+
+# Compile translations (required before build)
+pnpm lingui:compile
+```
+
+Translation files are in `src/i18n/locales/`. Currently supports English and Japanese.
 
 ## Key Directory Patterns
 
@@ -79,16 +123,18 @@ pnpm test
 ```typescript
 import { expect, test } from "vitest"
 import { Effect } from "effect"
-import { testPlatformLayer } from "@/testing/layers"
+import { testPlatformLayer } from "@/testing/layers/testPlatformLayer"
 import { yourEffect } from "./your-module"
 
 test("example", async () => {
   const result = await Effect.runPromise(
-    yourEffect.pipe(Effect.provide(testPlatformLayer))
+    yourEffect.pipe(Effect.provide(testPlatformLayer()))
   )
   expect(result).toBe(expectedValue)
 })
 ```
+
+Note: `testPlatformLayer` is a function that accepts optional overrides for `applicationContext`, `env`, and `userConfig`.
 
 **Avoid Node.js Built-ins**:
 - Use `FileSystem.FileSystem` instead of `node:fs`
