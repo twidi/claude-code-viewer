@@ -58,3 +58,6 @@ specs
 
 # e2e check
 temp-pack
+
+# jetbrain IDEs
+.idea
