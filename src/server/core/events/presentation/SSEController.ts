@@ -78,12 +78,23 @@ const LayerImpl = Effect.gen(function* () {
         );
       };
 
+      const onSchedulerJobsChanged = (
+        event: InternalEventDeclaration["schedulerJobsChanged"],
+      ) => {
+        Effect.runFork(
+          typeSafeSSE.writeSSE("schedulerJobsChanged", {
+            deletedJobId: event.deletedJobId,
+          }),
+        );
+      };
+
       yield* eventBus.on("sessionListChanged", onSessionListChanged);
       yield* eventBus.on("sessionChanged", onSessionChanged);
       yield* eventBus.on("agentSessionChanged", onAgentSessionChanged);
       yield* eventBus.on("sessionProcessChanged", onSessionProcessChanged);
       yield* eventBus.on("heartbeat", onHeartbeat);
       yield* eventBus.on("permissionRequested", onPermissionRequested);
+      yield* eventBus.on("schedulerJobsChanged", onSchedulerJobsChanged);
 
       const { connectionPromise } = adaptInternalEventToSSE(rawStream, {
         timeout: 5 /* min */ * 60 /* sec */ * 1000,
@@ -99,6 +110,10 @@ const LayerImpl = Effect.gen(function* () {
               );
               yield* eventBus.off("heartbeat", onHeartbeat);
               yield* eventBus.off("permissionRequested", onPermissionRequested);
+              yield* eventBus.off(
+                "schedulerJobsChanged",
+                onSchedulerJobsChanged,
+              );
             }),
           );
         },

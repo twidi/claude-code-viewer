@@ -3,6 +3,7 @@ import type { FC, PropsWithChildren } from "react";
 import {
   projectDetailQuery,
   recentSessionsQuery,
+  schedulerJobsQuery,
   sessionDetailQuery,
 } from "../../lib/api/queries";
 import { useServerEventListener } from "../../lib/sse/hook/useServerEventListener";
@@ -39,6 +40,12 @@ export const SSEEventListeners: FC<PropsWithChildren> = ({ children }) => {
           queryKey[3] === event.agentSessionId
         );
       },
+    });
+  });
+
+  useServerEventListener("schedulerJobsChanged", async () => {
+    await queryClient.invalidateQueries({
+      queryKey: schedulerJobsQuery.queryKey,
     });
   });
 

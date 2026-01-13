@@ -11,6 +11,7 @@ import {
 } from "effect";
 import { ulid } from "ulid";
 import type { InferEffect } from "../../../lib/effect/types";
+import { EventBus } from "../../events/services/EventBus";
 import { initializeConfig, readConfig, writeConfig } from "../config";
 import type {
   NewSchedulerJob,
@@ -34,6 +35,7 @@ class InvalidCronExpressionError extends Data.TaggedError(
 }> {}
 
 const LayerImpl = Effect.gen(function* () {
+  const eventBus = yield* EventBus;
   const fibersRef = yield* Ref.make<
     Map<string, Fiber.RuntimeFiber<unknown, unknown>>
   >(new Map());
@@ -77,10 +79,16 @@ const LayerImpl = Effect.gen(function* () {
       } else if (job.schedule.type === "reserved") {
         // For reserved jobs, skip scheduling if already executed
         if (job.lastRunStatus !== null) {
+          console.log(
+            `[Scheduler] Skipping reserved job ${job.id} - already executed`,
+          );
           return;
         }
 
         const delay = calculateReservedDelay(job, now);
+        console.log(
+          `[Scheduler] Reserved job ${job.id} delay: ${delay}ms (scheduled: ${job.schedule.reservedExecutionTime})`,
+        );
         const delayDuration = Duration.millis(delay);
 
         const fiber = yield* Effect.delay(
@@ -111,10 +119,24 @@ const LayerImpl = Effect.gen(function* () {
 
       // For reserved jobs, delete after execution without updating status
       if (job.schedule.type === "reserved") {
+        console.log(
+          `[Scheduler] Executing reserved job: ${job.name} (${job.id})`,
+        );
         const result = yield* executeJob(job).pipe(
           Effect.matchEffect({
-            onSuccess: () => Effect.void,
-            onFailure: () => Effect.void,
+            onSuccess: () => {
+              console.log(
+                `[Scheduler] Reserved job ${job.id} completed successfully`,
+              );
+              return Effect.void;
+            },
+            onFailure: (error) => {
+              console.error(
+                `[Scheduler] Reserved job ${job.id} failed:`,
+                error,
+              );
+              return Effect.void;
+            },
           }),
         );
         yield* Ref.update(runningJobsRef, (jobs) => {
@@ -133,6 +155,9 @@ const LayerImpl = Effect.gen(function* () {
             return Effect.void;
           }),
         );
+
+        // Notify frontend that the job was deleted
+        yield* eventBus.emit("schedulerJobsChanged", { deletedJobId: job.id });
 
         return result;
       }
@@ -201,11 +226,23 @@ const LayerImpl = Effect.gen(function* () {
     yield* initializeConfig;
     const config = yield* readConfig;
 
+    console.log(
+      `[Scheduler] Starting scheduler with ${config.jobs.length} jobs`,
+    );
+
     for (const job of config.jobs) {
       if (job.enabled) {
-        yield* startJob(job);
+        console.log(`[Scheduler] Starting job: ${job.name} (${job.id})`);
+        yield* startJob(job).pipe(
+          Effect.catchAll((error) => {
+            console.error(`[Scheduler] Failed to start job ${job.id}:`, error);
+            return Effect.void;
+          }),
+        );
       }
     }
+
+    console.log("[Scheduler] All jobs started");
   });
 
   const stopScheduler = Effect.gen(function* () {

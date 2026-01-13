@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { testPlatformLayer } from "../../testing/layers/testPlatformLayer";
 import { testProjectMetaServiceLayer } from "../../testing/layers/testProjectMetaServiceLayer";
 import { testProjectRepositoryLayer } from "../../testing/layers/testProjectRepositoryLayer";
+import { testSchedulerServiceLayer } from "../../testing/layers/testSchedulerServiceLayer";
 import { testSessionMetaServiceLayer } from "../../testing/layers/testSessionMetaServiceLayer";
 import { testSessionRepositoryLayer } from "../../testing/layers/testSessionRepositoryLayer";
 import { EventBus } from "../core/events/services/EventBus";
@@ -33,6 +34,7 @@ const allDependencies = Layer.mergeAll(
       firstUserMessage: null,
     }),
   }),
+  testSchedulerServiceLayer(),
   testPlatformLayer(),
 );
 

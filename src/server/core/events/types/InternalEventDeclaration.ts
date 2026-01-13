@@ -28,4 +28,8 @@ export type InternalEventDeclaration = {
   permissionRequested: {
     permissionRequest: PermissionRequest;
   };
+
+  schedulerJobsChanged: {
+    deletedJobId?: string;
+  };
 };

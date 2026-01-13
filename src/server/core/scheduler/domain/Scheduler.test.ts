@@ -7,6 +7,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { DEFAULT_LOCALE } from "../../../../lib/i18n/localeDetection";
 import { ClaudeCodeLifeCycleService } from "../../claude-code/services/ClaudeCodeLifeCycleService";
 import { ClaudeCodeSessionProcessService } from "../../claude-code/services/ClaudeCodeSessionProcessService";
+import { EventBus } from "../../events/services/EventBus";
 import { EnvService } from "../../platform/services/EnvService";
 import { UserConfigService } from "../../platform/services/UserConfigService";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
@@ -93,6 +94,7 @@ describe("SchedulerService", () => {
       NodeFileSystem.layer,
       NodePath.layer,
       NodeContext.layer,
+      EventBus.Live,
       mockSessionProcessService,
       mockLifeCycleService,
       mockProjectRepository,

@@ -4,6 +4,7 @@ import { FileWatcherService } from "../core/events/services/fileWatcher";
 import type { InternalEventDeclaration } from "../core/events/types/InternalEventDeclaration";
 import { ProjectRepository } from "../core/project/infrastructure/ProjectRepository";
 import { ProjectMetaService } from "../core/project/services/ProjectMetaService";
+import { SchedulerService } from "../core/scheduler/domain/Scheduler";
 import { SessionRepository } from "../core/session/infrastructure/SessionRepository";
 import { VirtualConversationDatabase } from "../core/session/infrastructure/VirtualConversationDatabase";
 import { SessionMetaService } from "../core/session/services/SessionMetaService";
@@ -27,6 +28,7 @@ export class InitializeService extends Context.Tag("InitializeService")<
       const projectMetaService = yield* ProjectMetaService;
       const sessionMetaService = yield* SessionMetaService;
       const virtualConversationDatabase = yield* VirtualConversationDatabase;
+      const schedulerService = yield* SchedulerService;
 
       // 状態管理用の Ref
       const listenersRef = yield* Ref.make<{
@@ -114,6 +116,17 @@ export class InitializeService extends Context.Tag("InitializeService")<
             Effect.catchAll(() => Effect.void),
             Effect.withSpan("initialize-cache"),
           );
+
+          // Start the scheduler to resume existing scheduled jobs
+          yield* schedulerService.startScheduler.pipe(
+            Effect.tap(() =>
+              Effect.sync(() => console.log("Scheduler started")),
+            ),
+            Effect.catchAll((error) => {
+              console.error("Failed to start scheduler:", error);
+              return Effect.void;
+            }),
+          );
         }).pipe(Effect.withSpan("start-initialization")) as Effect.Effect<void>;
       };
 
@@ -132,6 +145,7 @@ export class InitializeService extends Context.Tag("InitializeService")<
           }
 
           yield* Ref.set(listenersRef, {});
+          yield* schedulerService.stopScheduler;
           yield* fileWatcher.stop();
         });
 
