@@ -35,7 +35,7 @@ import type {
 import { useConfig } from "../../../../hooks/useConfig";
 import type { CommandCompletionRef } from "./CommandCompletion";
 import type { FileCompletionRef } from "./FileCompletion";
-import { processFile } from "./fileUtils";
+import { isSupportedMimeType, processFile } from "./fileUtils";
 import { InlineCompletion } from "./InlineCompletion";
 import { useDraftMessage } from "./useDraftMessage";
 
@@ -336,11 +336,11 @@ export const ChatInput: FC<ChatInputProps> = ({
     const files = e.clipboardData.files;
     if (files.length === 0) return;
 
-    const imageFiles = Array.from(files).filter((file) =>
-      file.type.startsWith("image/"),
+    const supportedFiles = Array.from(files).filter((file) =>
+      isSupportedMimeType(file.type),
     );
-    if (imageFiles.length > 0) {
-      addFiles(imageFiles);
+    if (supportedFiles.length > 0) {
+      addFiles(supportedFiles);
     }
   };
 
@@ -374,11 +374,11 @@ export const ChatInput: FC<ChatInputProps> = ({
     const files = e.dataTransfer.files;
     if (files.length === 0) return;
 
-    const imageFiles = Array.from(files).filter((file) =>
-      file.type.startsWith("image/"),
+    const supportedFiles = Array.from(files).filter((file) =>
+      isSupportedMimeType(file.type),
     );
-    if (imageFiles.length > 0) {
-      addFiles(imageFiles);
+    if (supportedFiles.length > 0) {
+      addFiles(supportedFiles);
     }
   };
 
