@@ -58,6 +58,11 @@ export interface ChatInputProps {
   buttonSize?: "sm" | "default" | "lg";
   enableScheduledSend?: boolean;
   baseSessionId?: string | null;
+  /**
+   * When true, messages will be automatically queued as scheduler jobs
+   * instead of being sent immediately. Used when a session is running.
+   */
+  autoQueueMessages?: boolean;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -73,6 +78,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   buttonSize = "lg",
   enableScheduledSend = false,
   baseSessionId = null,
+  autoQueueMessages = false,
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -176,7 +182,8 @@ export const ChatInput: FC<ChatInputProps> = ({
       }
     }
 
-    if (enableScheduledSend && sendMode === "scheduled") {
+    // Scheduled send - always available, creates a reserved job
+    if (sendMode === "scheduled") {
       // Create a scheduler job for scheduled send
       const match = scheduledTime.match(
         /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
@@ -227,6 +234,54 @@ export const ChatInput: FC<ChatInputProps> = ({
           i18n._({
             id: "chat.scheduled_send.failed",
             message: "Failed to schedule message",
+          }),
+          {
+            description: error instanceof Error ? error.message : undefined,
+          },
+        );
+      }
+    } else if (autoQueueMessages && baseSessionId) {
+      // Queue message when session is running
+      try {
+        await createSchedulerJob.mutateAsync({
+          name: i18n._({
+            id: "chat.queued_message.name",
+            message: "Queued message",
+          }),
+          schedule: {
+            type: "queued",
+            targetSessionId: baseSessionId,
+          },
+          message: {
+            content: message,
+            projectId,
+            baseSessionId,
+          },
+          enabled: true,
+        });
+
+        toast.success(
+          i18n._({
+            id: "chat.queued_message.success",
+            message: "Message queued",
+          }),
+          {
+            description: i18n._({
+              id: "chat.queued_message.success_description",
+              message:
+                "Your message will be sent when the current task completes",
+            }),
+          },
+        );
+
+        setMessage("");
+        setAttachedFiles([]);
+        clearDraft();
+      } catch (error) {
+        toast.error(
+          i18n._({
+            id: "chat.queued_message.failed",
+            message: "Failed to queue message",
           }),
           {
             description: error instanceof Error ? error.message : undefined,
@@ -451,49 +506,54 @@ export const ChatInput: FC<ChatInputProps> = ({
           )}
 
           <div className="flex flex-col gap-2 px-5 py-1 bg-muted/30 border-t border-border/40">
-            {enableScheduledSend && sendMode === "scheduled" && (
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                <Label htmlFor="send-mode-mobile" className="text-xs sr-only">
-                  <Trans id="chat.send_mode.label" />
-                </Label>
-                <Select
-                  value={sendMode}
-                  onValueChange={(value: "immediate" | "scheduled") =>
-                    setSendMode(value)
-                  }
-                  disabled={isPending || disabled}
-                >
-                  <SelectTrigger
-                    id="send-mode-mobile"
-                    className="h-8 w-full sm:w-[140px] text-xs"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="immediate">
-                      <Trans id="chat.send_mode.immediate" />
-                    </SelectItem>
-                    <SelectItem value="scheduled">
-                      <Trans id="chat.send_mode.scheduled" />
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <div className="flex items-center gap-1.5 flex-1">
-                  <Label htmlFor="scheduled-time" className="text-xs sr-only">
-                    <Trans id="chat.send_mode.scheduled_time" />
+            {(enableScheduledSend || autoQueueMessages) &&
+              sendMode === "scheduled" && (
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                  <Label htmlFor="send-mode-mobile" className="text-xs sr-only">
+                    <Trans id="chat.send_mode.label" />
                   </Label>
-                  <Input
-                    id="scheduled-time"
-                    type="datetime-local"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
+                  <Select
+                    value={sendMode}
+                    onValueChange={(value: "immediate" | "scheduled") =>
+                      setSendMode(value)
+                    }
                     disabled={isPending || disabled}
-                    className="h-8 w-full sm:w-[180px] text-xs"
-                  />
+                  >
+                    <SelectTrigger
+                      id="send-mode-mobile"
+                      className="h-8 w-full sm:w-[140px] text-xs"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate">
+                        {autoQueueMessages ? (
+                          <Trans id="chat.send_mode.queue" />
+                        ) : (
+                          <Trans id="chat.send_mode.immediate" />
+                        )}
+                      </SelectItem>
+                      <SelectItem value="scheduled">
+                        <Trans id="chat.send_mode.scheduled" />
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <Label htmlFor="scheduled-time" className="text-xs sr-only">
+                      <Trans id="chat.send_mode.scheduled_time" />
+                    </Label>
+                    <Input
+                      id="scheduled-time"
+                      type="datetime-local"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      disabled={isPending || disabled}
+                      className="h-8 w-full sm:w-[180px] text-xs"
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
@@ -532,53 +592,59 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                {enableScheduledSend && sendMode === "immediate" && (
-                  <div className="hidden sm:flex items-center gap-2">
-                    <Label
-                      htmlFor="send-mode-desktop"
-                      className="text-xs sr-only"
-                    >
-                      <Trans id="chat.send_mode.label" />
-                    </Label>
-                    <Select
-                      value={sendMode}
-                      onValueChange={(value: "immediate" | "scheduled") =>
-                        setSendMode(value)
-                      }
-                      disabled={isPending || disabled}
-                    >
-                      <SelectTrigger
-                        id="send-mode-desktop"
-                        className="h-8 w-[140px] text-xs"
+                {(enableScheduledSend || autoQueueMessages) &&
+                  sendMode === "immediate" && (
+                    <div className="hidden sm:flex items-center gap-2">
+                      <Label
+                        htmlFor="send-mode-desktop"
+                        className="text-xs sr-only"
                       >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="immediate">
-                          <Trans id="chat.send_mode.immediate" />
-                        </SelectItem>
-                        <SelectItem value="scheduled">
-                          <Trans id="chat.send_mode.scheduled" />
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                        <Trans id="chat.send_mode.label" />
+                      </Label>
+                      <Select
+                        value={sendMode}
+                        onValueChange={(value: "immediate" | "scheduled") =>
+                          setSendMode(value)
+                        }
+                        disabled={isPending || disabled}
+                      >
+                        <SelectTrigger
+                          id="send-mode-desktop"
+                          className="h-8 w-[140px] text-xs"
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="immediate">
+                            {autoQueueMessages ? (
+                              <Trans id="chat.send_mode.queue" />
+                            ) : (
+                              <Trans id="chat.send_mode.immediate" />
+                            )}
+                          </SelectItem>
+                          <SelectItem value="scheduled">
+                            <Trans id="chat.send_mode.scheduled" />
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
 
-                {enableScheduledSend && sendMode === "immediate" && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSendMode("scheduled")}
-                    disabled={isPending || disabled}
-                    className="sm:hidden gap-1.5"
-                  >
-                    <span className="text-xs">
-                      <Trans id="chat.send_mode.scheduled" />
-                    </span>
-                  </Button>
-                )}
+                {(enableScheduledSend || autoQueueMessages) &&
+                  sendMode === "immediate" && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSendMode("scheduled")}
+                      disabled={isPending || disabled}
+                      className="sm:hidden gap-1.5"
+                    >
+                      <span className="text-xs">
+                        <Trans id="chat.send_mode.scheduled" />
+                      </span>
+                    </Button>
+                  )}
 
                 <Button
                   onClick={handleSubmit}

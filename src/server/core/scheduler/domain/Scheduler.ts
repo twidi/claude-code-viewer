@@ -1,3 +1,4 @@
+import { CommandExecutor, FileSystem, Path } from "@effect/platform";
 import {
   Context,
   Cron,
@@ -11,15 +12,26 @@ import {
 } from "effect";
 import { ulid } from "ulid";
 import type { InferEffect } from "../../../lib/effect/types";
+import { ClaudeCodeLifeCycleService } from "../../claude-code/services/ClaudeCodeLifeCycleService";
 import { EventBus } from "../../events/services/EventBus";
-import { initializeConfig, readConfig, writeConfig } from "../config";
+import { CcvOptionsService } from "../../platform/services/CcvOptionsService";
+import {
+  initializeConfig,
+  readConfig,
+  SchedulerConfigBaseDir,
+  writeConfig,
+} from "../config";
 import type {
   NewSchedulerJob,
   SchedulerConfig,
   SchedulerJob,
   UpdateSchedulerJob,
 } from "../schema";
-import { calculateReservedDelay, executeJob } from "./Job";
+import {
+  calculateReservedDelay,
+  executeJob,
+  executeQueuedJobsWithService,
+} from "./Job";
 
 class SchedulerJobNotFoundError extends Data.TaggedError(
   "SchedulerJobNotFoundError",
@@ -36,10 +48,36 @@ class InvalidCronExpressionError extends Data.TaggedError(
 
 const LayerImpl = Effect.gen(function* () {
   const eventBus = yield* EventBus;
+  const lifeCycleService = yield* ClaudeCodeLifeCycleService;
+  const fs = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const baseDir = yield* SchedulerConfigBaseDir;
+  const commandExecutor = yield* CommandExecutor.CommandExecutor;
+  const ccvOptionsService = yield* CcvOptionsService;
   const fibersRef = yield* Ref.make<
     Map<string, Fiber.RuntimeFiber<unknown, unknown>>
   >(new Map());
   const runningJobsRef = yield* Ref.make<Set<string>>(new Set());
+
+  // Helper to provide all platform dependencies needed for scheduler operations
+  const withAllDependencies = <A, E>(
+    effect: Effect.Effect<
+      A,
+      E,
+      | FileSystem.FileSystem
+      | Path.Path
+      | SchedulerConfigBaseDir
+      | CommandExecutor.CommandExecutor
+      | CcvOptionsService
+    >,
+  ) =>
+    effect.pipe(
+      Effect.provideService(FileSystem.FileSystem, fs),
+      Effect.provideService(Path.Path, path),
+      Effect.provideService(SchedulerConfigBaseDir, baseDir),
+      Effect.provideService(CommandExecutor.CommandExecutor, commandExecutor),
+      Effect.provideService(CcvOptionsService, ccvOptionsService),
+    );
 
   const startJob = (job: SchedulerJob) =>
     Effect.gen(function* () {
@@ -230,7 +268,56 @@ const LayerImpl = Effect.gen(function* () {
       `[Scheduler] Starting scheduler with ${config.jobs.length} jobs`,
     );
 
-    for (const job of config.jobs) {
+    // Separate queued jobs from other jobs - queued jobs should be executed immediately on startup
+    const queuedJobs = config.jobs.filter(
+      (job) => job.schedule.type === "queued" && job.enabled,
+    );
+    const otherJobs = config.jobs.filter(
+      (job) => job.schedule.type !== "queued",
+    );
+
+    // Execute queued jobs on startup (server was restarted, session is no longer running)
+    // Note: Frontend will refetch scheduler jobs on SSE reconnection, so no need to emit events here
+    if (queuedJobs.length > 0) {
+      console.log(
+        `[Scheduler] Found ${queuedJobs.length} queued job(s) to execute on startup`,
+      );
+
+      for (const job of queuedJobs) {
+        console.log(
+          `[Scheduler] Executing queued job on startup: ${job.name} (${job.id})`,
+        );
+        yield* executeJob(job).pipe(
+          Effect.matchEffect({
+            onSuccess: () =>
+              Effect.gen(function* () {
+                console.log(
+                  `[Scheduler] Queued job ${job.id} executed successfully on startup`,
+                );
+                yield* deleteJobFromConfig(job.id).pipe(
+                  Effect.catchAll((error) => {
+                    console.error(
+                      `[Scheduler] Failed to delete queued job ${job.id} after execution:`,
+                      error,
+                    );
+                    return Effect.void;
+                  }),
+                );
+              }),
+            onFailure: (error) => {
+              console.error(
+                `[Scheduler] Failed to execute queued job ${job.id} on startup:`,
+                error,
+              );
+              return Effect.void;
+            },
+          }),
+        );
+      }
+    }
+
+    // Start other jobs (cron and reserved)
+    for (const job of otherJobs) {
       if (job.enabled) {
         console.log(`[Scheduler] Starting job: ${job.name} (${job.id})`);
         yield* startJob(job).pipe(
@@ -241,6 +328,20 @@ const LayerImpl = Effect.gen(function* () {
         );
       }
     }
+
+    // Listen for session process changes to trigger queued jobs
+    yield* eventBus.on("sessionProcessChanged", (event) => {
+      if (
+        event.changed.type === "paused" &&
+        event.changed.sessionId !== undefined
+      ) {
+        // Call the async version that handles the Effect internally
+        void executeQueuedJobsForSession({
+          sessionId: event.changed.sessionId,
+          sessionProcessId: event.changed.def.sessionProcessId,
+        });
+      }
+    });
 
     console.log("[Scheduler] All jobs started");
   });
@@ -378,6 +479,103 @@ const LayerImpl = Effect.gen(function* () {
       yield* deleteJobFromConfig(jobId);
     });
 
+  /**
+   * Execute all queued jobs for a session that just paused.
+   * This is an internal function that runs within the scheduler's context.
+   */
+  const executeQueuedJobsForSessionInternal = (options: {
+    sessionId: string;
+    sessionProcessId: string;
+  }) =>
+    withAllDependencies(
+      Effect.gen(function* () {
+        const { sessionId, sessionProcessId } = options;
+
+        const config = yield* readConfig.pipe(
+          Effect.catchTags({
+            ConfigFileNotFoundError: () =>
+              initializeConfig.pipe(Effect.map(() => ({ jobs: [] }))),
+            ConfigParseError: () =>
+              initializeConfig.pipe(Effect.map(() => ({ jobs: [] }))),
+          }),
+        );
+
+        // Find all queued jobs for this session
+        const queuedJobs = config.jobs.filter(
+          (job) =>
+            job.schedule.type === "queued" &&
+            job.schedule.targetSessionId === sessionId &&
+            job.enabled,
+        );
+
+        if (queuedJobs.length === 0) {
+          return;
+        }
+
+        console.log(
+          `[Scheduler] Found ${queuedJobs.length} queued job(s) for session ${sessionId}`,
+        );
+
+        // Execute all queued jobs as a single aggregated message
+        yield* executeQueuedJobsWithService({
+          jobs: queuedJobs,
+          sessionProcessId,
+          baseSessionId: sessionId,
+          lifeCycleService,
+        }).pipe(
+          Effect.matchEffect({
+            onSuccess: () => {
+              console.log(
+                `[Scheduler] Queued jobs for session ${sessionId} executed successfully`,
+              );
+              return Effect.void;
+            },
+            onFailure: (error) => {
+              console.error(
+                `[Scheduler] Failed to execute queued jobs for session ${sessionId}:`,
+                error,
+              );
+              return Effect.void;
+            },
+          }),
+        );
+
+        // Delete all executed queued jobs
+        for (const job of queuedJobs) {
+          yield* deleteJobFromConfig(job.id).pipe(
+            Effect.catchAll((error) => {
+              console.error(
+                `[Scheduler] Failed to delete queued job ${job.id}:`,
+                error,
+              );
+              return Effect.void;
+            }),
+          );
+          yield* eventBus.emit("schedulerJobsChanged", {
+            deletedJobId: job.id,
+          });
+        }
+      }),
+    );
+
+  /**
+   * Execute all queued jobs for a session - async version for callbacks.
+   * This wraps the internal function and handles errors.
+   */
+  const executeQueuedJobsForSession = async (options: {
+    sessionId: string;
+    sessionProcessId: string;
+  }): Promise<void> => {
+    try {
+      await Effect.runPromise(executeQueuedJobsForSessionInternal(options));
+    } catch (error) {
+      console.error(
+        `[Scheduler] Error executing queued jobs for session ${options.sessionId}:`,
+        error,
+      );
+    }
+  };
+
   return {
     startScheduler,
     stopScheduler,
@@ -385,6 +583,7 @@ const LayerImpl = Effect.gen(function* () {
     addJob,
     updateJob,
     deleteJob,
+    executeQueuedJobsForSession,
   };
 });
 

@@ -124,13 +124,28 @@ const SessionPageMainContent: FC<
   // Filter scheduler jobs related to this session
   const sessionScheduledJobs = useMemo(() => {
     if (!sessionId || !allSchedulerJobs) return [];
-    return allSchedulerJobs.filter(
-      (job) =>
-        job.message.baseSessionId === sessionId &&
-        job.message.projectId === projectId &&
-        job.schedule.type === "reserved" &&
-        job.lastRunStatus === null, // Only show jobs that haven't been executed yet
-    );
+    return allSchedulerJobs.filter((job) => {
+      // Only show jobs that haven't been executed yet
+      if (job.lastRunStatus !== null) return false;
+
+      // Reserved jobs: match by baseSessionId
+      if (job.schedule.type === "reserved") {
+        return (
+          job.message.baseSessionId === sessionId &&
+          job.message.projectId === projectId
+        );
+      }
+
+      // Queued jobs: match by targetSessionId
+      if (job.schedule.type === "queued") {
+        return (
+          job.schedule.targetSessionId === sessionId &&
+          job.message.projectId === projectId
+        );
+      }
+
+      return false;
+    });
   }, [allSchedulerJobs, sessionId, projectId]);
 
   const [previousConversationLength, setPreviousConversationLength] =

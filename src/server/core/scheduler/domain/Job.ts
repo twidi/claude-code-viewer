@@ -1,8 +1,60 @@
 import { Effect } from "effect";
-import { ClaudeCodeLifeCycleService } from "../../claude-code/services/ClaudeCodeLifeCycleService";
+import {
+  ClaudeCodeLifeCycleService,
+  type IClaudeCodeLifeCycleService,
+} from "../../claude-code/services/ClaudeCodeLifeCycleService";
 import { UserConfigService } from "../../platform/services/UserConfigService";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
 import type { SchedulerJob } from "../schema";
+
+interface QueuedMessage {
+  text: string;
+  createdAt: string;
+}
+
+/**
+ * Formats queued messages into a single string with appropriate context.
+ *
+ * Single message:
+ * [Note: While you were working, the user added a follow-up message:]
+ *
+ * <message text>
+ *
+ * Multiple messages:
+ * [Note: While you were working, the user added N follow-up messages:
+ *
+ * [follow-up message 1]
+ *
+ * <first message text>
+ *
+ * [follow-up message 2]
+ *
+ * <second message text>
+ */
+export function formatQueuedMessages(messages: QueuedMessage[]): string {
+  if (messages.length === 0) {
+    return "";
+  }
+
+  const [firstMessage] = messages;
+  if (messages.length === 1 && firstMessage) {
+    return `[Note: While you were working, the user added a follow-up message:]
+
+${firstMessage.text}`;
+  }
+
+  // Multiple messages
+  const header = `[Note: While you were working, the user added ${messages.length} follow-up messages:`;
+  const formattedMessages = messages.map((message, index) => {
+    return `[follow-up message ${index + 1}]
+
+${message.text}`;
+  });
+
+  return `${header}
+
+${formattedMessages.join("\n\n")}`;
+}
 
 export const executeJob = (job: SchedulerJob) =>
   Effect.gen(function* () {
@@ -68,3 +120,52 @@ export const calculateReservedDelay = (
 
   return Math.max(0, delay);
 };
+
+/**
+ * Execute queued jobs for a session that just paused.
+ * Aggregates all queued messages into a single formatted message
+ * and sends it via continueTask.
+ *
+ * This version takes the lifeCycleService as a parameter to avoid
+ * dependency issues when called from callbacks.
+ */
+export const executeQueuedJobsWithService = (options: {
+  jobs: SchedulerJob[];
+  sessionProcessId: string;
+  baseSessionId: string;
+  lifeCycleService: IClaudeCodeLifeCycleService;
+}) =>
+  Effect.gen(function* () {
+    const { jobs, sessionProcessId, baseSessionId, lifeCycleService } = options;
+
+    if (jobs.length === 0) {
+      return;
+    }
+
+    // Sort jobs by createdAt to maintain order
+    const sortedJobs = [...jobs].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+
+    // Format all messages into a single aggregated message
+    const formattedMessage = formatQueuedMessages(
+      sortedJobs.map((job) => ({
+        text: job.message.content,
+        createdAt: job.createdAt,
+      })),
+    );
+
+    console.log(
+      `[Scheduler] Executing ${jobs.length} queued job(s) for session ${baseSessionId}`,
+    );
+
+    // Use continueTask to resume the paused session
+    yield* lifeCycleService.continueTask({
+      sessionProcessId,
+      baseSessionId,
+      input: {
+        text: formattedMessage,
+      },
+    });
+  });

@@ -8,7 +8,7 @@ import {
   useRef,
 } from "react";
 import type { SSEEvent } from "../../../types/sse";
-import { projectListQuery } from "../../api/queries";
+import { projectListQuery, schedulerJobsQuery } from "../../api/queries";
 import { callSSE } from "../callSSE";
 import {
   type EventListener,
@@ -32,6 +32,9 @@ export const ServerEventsProvider: FC<PropsWithChildren> = ({ children }) => {
         // open 時にまとめて invalidate する
         await queryClient.invalidateQueries({
           queryKey: projectListQuery.queryKey,
+        });
+        await queryClient.invalidateQueries({
+          queryKey: schedulerJobsQuery.queryKey,
         });
       },
     });

@@ -149,6 +149,12 @@ export const SchedulerTab: FC<{ projectId: string; sessionId: string }> = ({
       const date = new Date(job.schedule.reservedExecutionTime);
       return `Reserved: ${date.toLocaleString()}`;
     }
+    if (job.schedule.type === "queued") {
+      return i18n._({
+        id: "scheduler.schedule.queued",
+        message: "Queued: Waiting for session to pause",
+      });
+    }
     return "Unknown schedule type";
   };
 

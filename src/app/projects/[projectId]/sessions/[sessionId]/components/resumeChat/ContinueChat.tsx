@@ -100,7 +100,7 @@ export const ContinueChat: FC<{
         buttonSize="default"
         enableScheduledSend={!isRunning}
         baseSessionId={sessionId}
-        disabled={isRunning}
+        autoQueueMessages={isRunning}
       />
     </div>
   );

@@ -1,6 +1,10 @@
 import { describe, expect, test } from "vitest";
 import type { SchedulerJob } from "../schema";
-import { calculateReservedDelay, shouldExecuteJob } from "./Job";
+import {
+  calculateReservedDelay,
+  formatQueuedMessages,
+  shouldExecuteJob,
+} from "./Job";
 
 describe("shouldExecuteJob", () => {
   test("returns false when job is disabled", () => {
@@ -161,6 +165,114 @@ describe("calculateReservedDelay", () => {
 
     expect(() => calculateReservedDelay(job, new Date())).toThrow(
       "Job schedule type must be reserved",
+    );
+  });
+});
+
+describe("shouldExecuteJob with queued type", () => {
+  test("returns true for enabled queued job", () => {
+    const job: SchedulerJob = {
+      id: "test-job",
+      name: "Test Queued Job",
+      schedule: {
+        type: "queued",
+        targetSessionId: "session-123",
+      },
+      message: { content: "test", projectId: "proj-1", baseSessionId: null },
+      enabled: true,
+      createdAt: "2025-10-25T00:00:00Z",
+      lastRunAt: null,
+      lastRunStatus: null,
+    };
+
+    expect(shouldExecuteJob(job, new Date())).toBe(true);
+  });
+
+  test("returns false for disabled queued job", () => {
+    const job: SchedulerJob = {
+      id: "test-job",
+      name: "Test Queued Job",
+      schedule: {
+        type: "queued",
+        targetSessionId: "session-123",
+      },
+      message: { content: "test", projectId: "proj-1", baseSessionId: null },
+      enabled: false,
+      createdAt: "2025-10-25T00:00:00Z",
+      lastRunAt: null,
+      lastRunStatus: null,
+    };
+
+    expect(shouldExecuteJob(job, new Date())).toBe(false);
+  });
+});
+
+describe("formatQueuedMessages", () => {
+  test("returns empty string for empty messages array", () => {
+    expect(formatQueuedMessages([])).toBe("");
+  });
+
+  test("formats single message correctly", () => {
+    const messages = [
+      {
+        text: "Hello, this is a test message",
+        createdAt: "2025-10-25T00:00:00Z",
+      },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result).toBe(
+      `[Note: While you were working, the user added a follow-up message:]
+
+Hello, this is a test message`,
+    );
+  });
+
+  test("formats multiple messages correctly", () => {
+    const messages = [
+      { text: "First message", createdAt: "2025-10-25T00:00:00Z" },
+      { text: "Second message", createdAt: "2025-10-25T00:01:00Z" },
+      { text: "Third message", createdAt: "2025-10-25T00:02:00Z" },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result).toBe(
+      `[Note: While you were working, the user added 3 follow-up messages:
+
+[follow-up message 1]
+
+First message
+
+[follow-up message 2]
+
+Second message
+
+[follow-up message 3]
+
+Third message`,
+    );
+  });
+
+  test("formats two messages correctly", () => {
+    const messages = [
+      { text: "Message one", createdAt: "2025-10-25T00:00:00Z" },
+      { text: "Message two", createdAt: "2025-10-25T00:01:00Z" },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result).toBe(
+      `[Note: While you were working, the user added 2 follow-up messages:
+
+[follow-up message 1]
+
+Message one
+
+[follow-up message 2]
+
+Message two`,
     );
   });
 });

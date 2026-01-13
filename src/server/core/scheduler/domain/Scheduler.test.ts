@@ -8,6 +8,7 @@ import { DEFAULT_LOCALE } from "../../../../lib/i18n/localeDetection";
 import { ClaudeCodeLifeCycleService } from "../../claude-code/services/ClaudeCodeLifeCycleService";
 import { ClaudeCodeSessionProcessService } from "../../claude-code/services/ClaudeCodeSessionProcessService";
 import { EventBus } from "../../events/services/EventBus";
+import { CcvOptionsService } from "../../platform/services/CcvOptionsService";
 import { EnvService } from "../../platform/services/EnvService";
 import { UserConfigService } from "../../platform/services/UserConfigService";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
@@ -69,6 +70,11 @@ describe("SchedulerService", () => {
     getEnv: () => Effect.succeed(undefined),
   } as never);
 
+  const mockCcvOptionsService = Layer.succeed(CcvOptionsService, {
+    loadCliOptions: () => Effect.void,
+    getCcvOptions: () => Effect.succeed(undefined),
+  } as never);
+
   let testConfigBaseDir: Layer.Layer<SchedulerConfigBaseDir>;
   let testLayer: Layer.Layer<
     | import("@effect/platform").FileSystem.FileSystem
@@ -79,6 +85,7 @@ describe("SchedulerService", () => {
     | ProjectRepository
     | UserConfigService
     | EnvService
+    | CcvOptionsService
     | SchedulerConfigBaseDir
     | SchedulerService
   >;
@@ -100,6 +107,7 @@ describe("SchedulerService", () => {
       mockProjectRepository,
       mockUserConfigService,
       mockEnvService,
+      mockCcvOptionsService,
       testConfigBaseDir,
     );
 

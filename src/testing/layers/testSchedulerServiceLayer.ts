@@ -10,11 +10,16 @@ export const testSchedulerServiceLayer = (options?: {
   jobs?: SchedulerJob[];
   startScheduler?: () => Effect.Effect<void>;
   stopScheduler?: () => Effect.Effect<void>;
+  executeQueuedJobsForSession?: (options: {
+    sessionId: string;
+    sessionProcessId: string;
+  }) => Promise<void>;
 }) => {
   const {
     jobs = [],
     startScheduler = () => Effect.void,
     stopScheduler = () => Effect.void,
+    executeQueuedJobsForSession = async () => {},
   } = options ?? {};
 
   return Layer.mock(SchedulerService, {
@@ -55,5 +60,6 @@ export const testSchedulerServiceLayer = (options?: {
         lastRunStatus: null,
       }),
     deleteJob: (_jobId: string) => Effect.succeed(undefined),
+    executeQueuedJobsForSession,
   });
 };

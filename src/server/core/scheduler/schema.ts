@@ -15,9 +15,15 @@ export const reservedScheduleSchema = z.object({
   reservedExecutionTime: z.iso.datetime(),
 });
 
+export const queuedScheduleSchema = z.object({
+  type: z.literal("queued"),
+  targetSessionId: z.string(), // Session to watch for running → paused transition
+});
+
 export const scheduleSchema = z.discriminatedUnion("type", [
   cronScheduleSchema,
   reservedScheduleSchema,
+  queuedScheduleSchema,
 ]);
 
 // Message configuration
@@ -50,6 +56,7 @@ export const schedulerConfigSchema = z.object({
 // Type exports
 export type CronSchedule = z.infer<typeof cronScheduleSchema>;
 export type ReservedSchedule = z.infer<typeof reservedScheduleSchema>;
+export type QueuedSchedule = z.infer<typeof queuedScheduleSchema>;
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type MessageConfig = z.infer<typeof messageConfigSchema>;
 export type JobStatus = z.infer<typeof jobStatusSchema>;

@@ -49,7 +49,9 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   const { _, i18n } = useLingui();
 
   const [name, setName] = useState("");
-  const [scheduleType, setScheduleType] = useState<"cron" | "reserved">("cron");
+  const [scheduleType, setScheduleType] = useState<
+    "cron" | "reserved" | "queued"
+  >("cron");
   const [cronExpression, setCronExpression] = useState("0 9 * * *");
   const [reservedDateTime, setReservedDateTime] = useState(() => {
     const now = new Date();
@@ -105,43 +107,47 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   }, [job]);
 
   const handleSubmit = () => {
+    // Determine the schedule based on type
+    let schedule: NewSchedulerJob["schedule"];
+
+    if (scheduleType === "cron") {
+      schedule = {
+        type: "cron",
+        expression: cronExpression,
+        concurrencyPolicy,
+      };
+    } else if (scheduleType === "reserved") {
+      // datetime-local returns "YYYY-MM-DDTHH:mm" in local time
+      // We need to treat this as local time and convert to UTC
+      const match = reservedDateTime.match(
+        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
+      );
+      if (!match) {
+        throw new Error("Invalid datetime format");
+      }
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+      const hours = Number(match[4]);
+      const minutes = Number(match[5]);
+      const localDate = new Date(year, month - 1, day, hours, minutes);
+      schedule = {
+        type: "reserved",
+        reservedExecutionTime: localDate.toISOString(),
+      };
+    } else {
+      // Queued jobs should not be created/edited via this dialog
+      // but we handle it for type safety - use the original job's schedule
+      if (job?.schedule.type === "queued") {
+        schedule = job.schedule;
+      } else {
+        throw new Error("Invalid schedule type");
+      }
+    }
+
     const newJob: NewSchedulerJob = {
       name,
-      schedule:
-        scheduleType === "cron"
-          ? {
-              type: "cron",
-              expression: cronExpression,
-              concurrencyPolicy,
-            }
-          : {
-              type: "reserved",
-              // datetime-local returns "YYYY-MM-DDTHH:mm" in local time
-              // We need to treat this as local time and convert to UTC
-              reservedExecutionTime: (() => {
-                // datetime-local format: "YYYY-MM-DDTHH:mm"
-                // Parse as local time and convert to ISO string (UTC)
-                const match = reservedDateTime.match(
-                  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
-                );
-                if (!match) {
-                  throw new Error("Invalid datetime format");
-                }
-                const year = Number(match[1]);
-                const month = Number(match[2]);
-                const day = Number(match[3]);
-                const hours = Number(match[4]);
-                const minutes = Number(match[5]);
-                const localDate = new Date(
-                  year,
-                  month - 1,
-                  day,
-                  hours,
-                  minutes,
-                );
-                return localDate.toISOString();
-              })(),
-            },
+      schedule,
       message: {
         content: messageContent,
         projectId,
@@ -212,25 +218,33 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
             <Label>
               <Trans id="scheduler.form.schedule_type" />
             </Label>
-            <Select
-              value={scheduleType}
-              onValueChange={(value: "cron" | "reserved") =>
-                setScheduleType(value)
-              }
-              disabled={isSubmitting}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cron">
-                  <Trans id="scheduler.form.schedule_type.cron" />
-                </SelectItem>
-                <SelectItem value="reserved">
-                  <Trans id="scheduler.form.schedule_type.reserved" />
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            {scheduleType === "queued" ? (
+              <div className="rounded-lg border border-amber-500/50 bg-amber-50 dark:bg-amber-950/30 p-3">
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  <Trans id="scheduler.form.queued_notice" />
+                </p>
+              </div>
+            ) : (
+              <Select
+                value={scheduleType}
+                onValueChange={(value: "cron" | "reserved") =>
+                  setScheduleType(value)
+                }
+                disabled={isSubmitting}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cron">
+                    <Trans id="scheduler.form.schedule_type.cron" />
+                  </SelectItem>
+                  <SelectItem value="reserved">
+                    <Trans id="scheduler.form.schedule_type.reserved" />
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Schedule Configuration */}
@@ -239,7 +253,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
               value={cronExpression}
               onChange={setCronExpression}
             />
-          ) : (
+          ) : scheduleType === "reserved" ? (
             <div className="space-y-2">
               <Label htmlFor="reserved-datetime">
                 <Trans id="scheduler.form.reserved_time" />
@@ -255,7 +269,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
                 <Trans id="scheduler.form.reserved_time.hint" />
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* Message Content */}
           <div className="space-y-2">

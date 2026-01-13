@@ -84,7 +84,6 @@ export class InitializeService extends Context.Tag("InitializeService")<
                   event.changed.sessionId,
                 ),
               );
-              return;
             }
           };
 

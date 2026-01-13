@@ -87,13 +87,16 @@ export const startServer = async (options: CliOptions) => {
       Effect.provide(AuthMiddleware.Live),
     )
     .pipe(
+      /** Domain - Services with cross-dependencies */
+      Effect.provide(SchedulerService.Live),
+    )
+    .pipe(
       /** Domain */
       Effect.provide(ClaudeCodeLifeCycleService.Live),
       Effect.provide(ClaudeCodePermissionService.Live),
       Effect.provide(ClaudeCodeSessionProcessService.Live),
       Effect.provide(ClaudeCodeService.Live),
       Effect.provide(GitService.Live),
-      Effect.provide(SchedulerService.Live),
       Effect.provide(SchedulerConfigBaseDir.Live),
       Effect.provide(SearchService.Live),
     )

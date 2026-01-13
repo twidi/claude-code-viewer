@@ -27,7 +27,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        153
+        170
       ]
     ],
     "translation": "サイドバーを閉じる"
@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        425
+        478
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        519
+        577
       ]
     ],
     "translation": "添付"
@@ -350,22 +350,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        531
+        589
       ]
     ],
     "translation": "オートコンプリート有効"
-  },
-  "chat.button.queue": {
-    "message": "Queue",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        607
-      ]
-    ],
-    "translation": "キューに追加"
   },
   "chat.button.start": {
     "placeholders": {},
@@ -384,7 +372,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        388
+        441
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -395,11 +383,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        235
+        247
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        626
+        638
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
@@ -423,7 +411,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        243
+        66
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -439,7 +427,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        236
+        59
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -455,7 +443,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        249
+        72
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -500,138 +488,53 @@
     ],
     "translation": "メッセージを入力... （/でコマンド、@でファイル、Shift+Enterで送信）"
   },
-  "chat.queue.clear_all": {
-    "message": "Clear all",
+  "chat.queued_message.failed": {
+    "message": "Failed to queue message",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        164
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        282
       ]
     ],
-    "translation": "すべてクリア"
+    "translation": ""
   },
-  "chat.queue.cleared": {
-    "message": "Queued messages cleared",
+  "chat.queued_message.name": {
+    "message": "Queued message",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        226
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        247
       ]
     ],
-    "translation": "キューに入ったメッセージをクリアしました"
+    "translation": ""
   },
-  "chat.queue.edit": {
-    "message": "Edit message",
+  "chat.queued_message.success": {
+    "message": "Message queued",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        130
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        264
       ]
     ],
-    "translation": "メッセージを編集"
+    "translation": ""
   },
-  "chat.queue.files_not_supported": {
+  "chat.queued_message.success_description": {
+    "message": "Your message will be sent when the current task completes",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        87
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        269
       ]
     ],
-    "translation": "キューされたメッセージではファイル添付はサポートされていません"
-  },
-  "chat.queue.message_queued": {
-    "placeholders": {
-      "count": [
-        "newCount"
-      ]
-    },
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        95
-      ]
-    ],
-    "translation": "メッセージがキューに追加されました ({count})"
-  },
-  "chat.queue.pending_indicator": {
-    "message": "{count} message(s) queued",
-    "placeholders": {
-      "count": [
-        "messages.length"
-      ]
-    },
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        73
-      ]
-    ],
-    "translation": "{count}件のメッセージがキューに入っています"
-  },
-  "chat.queue.remove": {
-    "message": "Remove message",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        142
-      ]
-    ],
-    "translation": "メッセージを削除"
-  },
-  "chat.queue.send_failed": {
-    "message": "Failed to send queued messages",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        154
-      ],
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        166
-      ]
-    ],
-    "translation": "キューされたメッセージの送信に失敗しました"
-  },
-  "chat.queue.send_now": {
-    "message": "Send now",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        170
-      ]
-    ],
-    "translation": "今すぐ送信"
-  },
-  "chat.queue.sending_queued": {
-    "placeholders": {
-      "count": [
-        "messages.length"
-      ]
-    },
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        127
-      ]
-    ],
-    "translation": "{count}件のキューされたメッセージを送信中..."
+    "translation": ""
   },
   "chat.resume": {
     "placeholders": {},
@@ -651,7 +554,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        229
+        234
       ]
     ],
     "translation": "メッセージの予約に失敗しました"
@@ -663,7 +566,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        212
+        217
       ]
     ],
     "translation": "メッセージを予約しました"
@@ -675,7 +578,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        217
+        222
       ]
     ],
     "translation": "スケジューラタブで確認・管理できます"
@@ -686,7 +589,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        289
+        98
       ]
     ],
     "translation": "送信"
@@ -697,11 +600,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        476
+        533
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        560
+        622
       ]
     ],
     "translation": "今すぐ送信"
@@ -712,14 +615,29 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        459
+        513
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        543
+        602
       ]
     ],
     "translation": "送信モード"
+  },
+  "chat.send_mode.queue": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        531
+      ],
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        620
+      ]
+    ],
+    "translation": "キューに追加"
   },
   "chat.send_mode.scheduled": {
     "placeholders": {},
@@ -727,15 +645,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        479
+        537
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        563
+        626
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        580
+        644
       ]
     ],
     "translation": "予約送信"
@@ -746,7 +664,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        486
+        544
       ]
     ],
     "translation": "送信予定時刻"
@@ -757,7 +675,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        599
+        663
       ]
     ],
     "translation": "処理中..."
@@ -774,21 +692,16 @@
     "translation": "キャンセル"
   },
   "common.cancel": {
-    "message": "Cancel",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        115
-      ],
-      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        348
+        362
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        334
+        340
       ]
     ],
     "translation": "キャンセル"
@@ -799,7 +712,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        359
+        373
       ]
     ],
     "translation": "作成"
@@ -810,7 +723,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        344
+        350
       ]
     ],
     "translation": "削除"
@@ -821,7 +734,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        342
+        348
       ]
     ],
     "translation": "削除中..."
@@ -871,22 +784,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        175
+        181
       ]
     ],
     "translation": "再読み込み"
-  },
-  "common.save": {
-    "message": "Save",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/QueuedMessagesPanel.tsx",
-        108
-      ]
-    ],
-    "translation": "保存"
   },
   "common.saving": {
     "placeholders": {},
@@ -894,7 +795,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        355
+        369
       ]
     ],
     "translation": "保存中..."
@@ -905,7 +806,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        357
+        371
       ]
     ],
     "translation": "更新"
@@ -916,11 +817,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        319
+        331
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        464
+        476
       ]
     ],
     "translation": "ブランチ"
@@ -942,7 +843,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        427
+        439
       ]
     ],
     "translation": "メタデータ"
@@ -1000,7 +901,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        433
+        445
       ]
     ],
     "translation": "プロジェクトパス"
@@ -1035,11 +936,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        334
+        346
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        451
+        463
       ]
     ],
     "translation": "セッションID"
@@ -1947,7 +1848,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        189
+        195
       ]
     ],
     "translation": "ジョブを作成"
@@ -1958,7 +1859,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        322
+        328
       ]
     ],
     "translation": "このスケジューラジョブを削除してもよろしいですか？この操作は取り消せません。"
@@ -1969,7 +1870,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        319
+        325
       ]
     ],
     "translation": "スケジューラジョブを削除"
@@ -1980,7 +1881,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        170
+        176
       ]
     ],
     "translation": "Claude Codeにメッセージを送信するスケジュールジョブを設定します"
@@ -1991,7 +1892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        166
+        172
       ]
     ],
     "translation": "スケジュールジョブを作成"
@@ -2002,7 +1903,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        164
+        170
       ]
     ],
     "translation": "スケジュールジョブを編集"
@@ -2017,7 +1918,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        211
+        217
       ]
     ],
     "translation": "スケジューラジョブの読み込みに失敗しました: {error}"
@@ -2028,7 +1929,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        317
+        331
       ]
     ],
     "translation": "同時実行ポリシー"
@@ -2039,7 +1940,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        334
+        348
       ]
     ],
     "translation": "実行中でも実行する"
@@ -2050,7 +1951,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        331
+        345
       ]
     ],
     "translation": "実行中の場合はスキップ"
@@ -2061,7 +1962,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        179
+        185
       ]
     ],
     "translation": "有効化"
@@ -2072,7 +1973,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        182
+        188
       ]
     ],
     "translation": "このスケジュールジョブを有効または無効にします"
@@ -2083,7 +1984,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        263
+        277
       ]
     ],
     "translation": "メッセージ内容"
@@ -2095,7 +1996,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        282
+        296
       ]
     ],
     "translation": "補完機能付きメッセージ入力 (/でコマンド、@でファイル)"
@@ -2106,7 +2007,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        309
+        323
       ]
     ],
     "translation": "/でコマンド補完、@でファイル補完"
@@ -2118,7 +2019,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        274
+        288
       ]
     ],
     "translation": "Claude Codeに送信するメッセージを入力... (/でコマンド補完、@でファイル補完)"
@@ -2129,10 +2030,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        196
+        202
       ]
     ],
     "translation": "ジョブ名"
+  },
+  "scheduler.form.queued_notice": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
+        224
+      ]
+    ],
+    "translation": ""
   },
   "scheduler.form.reserved_time": {
     "placeholders": {},
@@ -2140,7 +2052,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        245
+        259
       ]
     ],
     "translation": "実行予定日時"
@@ -2151,7 +2063,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        255
+        269
       ]
     ],
     "translation": "指定した日時に一度だけ実行されます。実行後は自動的に削除されます"
@@ -2162,7 +2074,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        213
+        219
       ]
     ],
     "translation": "スケジュールタイプ"
@@ -2173,7 +2085,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        227
+        240
       ]
     ],
     "translation": "定期実行 (Cron)"
@@ -2184,7 +2096,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        230
+        243
       ]
     ],
     "translation": "予約実行"
@@ -2267,7 +2179,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        276
+        282
       ]
     ],
     "translation": "最終実行"
@@ -2278,10 +2190,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        220
+        226
       ]
     ],
     "translation": "スケジューラジョブがありません"
+  },
+  "scheduler.schedule.queued": {
+    "message": "Queued: Waiting for session to pause",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
+        153
+      ]
+    ],
+    "translation": ""
   },
   "scheduler.status.disabled": {
     "placeholders": {},
@@ -2289,7 +2213,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        244
+        250
       ]
     ],
     "translation": "無効"
@@ -2300,7 +2224,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        242
+        248
       ]
     ],
     "translation": "有効"
@@ -2311,7 +2235,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        166
+        172
       ]
     ],
     "translation": "スケジューラ"
@@ -2322,7 +2246,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        579
+        591
       ]
     ],
     "translation": "現在のトークン数"
@@ -2333,7 +2257,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        555
+        567
       ]
     ],
     "translation": "コンテキストウィンドウ"
@@ -2344,7 +2268,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        588
+        600
       ]
     ],
     "translation": "最大トークン数"
@@ -2355,7 +2279,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        364
+        376
       ]
     ],
     "translation": "コンテキストウィンドウ使用量"
@@ -2377,7 +2301,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        388
+        400
       ]
     ],
     "translation": "一時停止"
@@ -2388,7 +2312,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        379
+        391
       ]
     ],
     "translation": "実行中"
@@ -2399,7 +2323,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        521
+        533
       ]
     ],
     "translation": "キャッシュ作成"
@@ -2410,7 +2334,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        535
+        547
       ]
     ],
     "translation": "キャッシュ読込"
@@ -2421,7 +2345,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        493
+        505
       ]
     ],
     "translation": "入力トークン"
@@ -2432,7 +2356,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        478
+        490
       ]
     ],
     "translation": "セッションコスト"
@@ -2443,7 +2367,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        507
+        519
       ]
     ],
     "translation": "出力トークン"
@@ -2454,7 +2378,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        485
+        497
       ]
     ],
     "translation": "合計"
@@ -2465,7 +2389,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        629
+        641
       ]
     ],
     "translation": ""
@@ -2476,10 +2400,32 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        643
+        655
       ]
     ],
     "translation": "Claude Codeが処理中..."
+  },
+  "session.queued_messages.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        37
+      ]
+    ],
+    "translation": "キュー中のメッセージ"
+  },
+  "session.queued_messages.waiting": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        40
+      ]
+    ],
+    "translation": "セッションの一時停止を待機中"
   },
   "session.scheduled_messages.disabled": {
     "placeholders": {},
@@ -2487,21 +2433,14 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        61
-      ]
-    ],
-    "translation": ""
-  },
-  "session.scheduled_messages.message_label": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
+        54
+      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        66
+        103
       ]
     ],
-    "translation": ""
+    "translation": "無効"
   },
   "session.scheduled_messages.title": {
     "placeholders": {},
@@ -2509,10 +2448,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        27
+        69
       ]
     ],
-    "translation": ""
+    "translation": "予約メッセージ"
   },
   "session.status.paused": {
     "placeholders": {},
@@ -2579,7 +2518,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        295
+        307
       ]
     ],
     "translation": "このプロジェクトのセッションを表示"
@@ -2726,7 +2665,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        102
+        119
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -2796,7 +2735,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        117
+        134
       ]
     ],
     "translation": "通知"
@@ -2917,7 +2856,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        110
+        127
       ]
     ],
     "translation": "セッション表示"
@@ -2972,7 +2911,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        249
+        314
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -3053,7 +2992,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        177
+        194
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
@@ -3066,6 +3005,10 @@
     "placeholders": {},
     "comments": [],
     "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
+        243
+      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
         82
@@ -3083,7 +3026,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        226
+        267
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
@@ -3097,6 +3040,10 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
+        291
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
         98
       ]
@@ -3109,7 +3056,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        202
+        219
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
@@ -3124,7 +3071,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        271
+        336
       ]
     ],
     "translation": "システム情報を表示"
