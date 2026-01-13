@@ -1,17 +1,142 @@
 import { Trans, useLingui } from "@lingui/react";
-import { CalendarClockIcon, ClockIcon } from "lucide-react";
-import type { FC } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  CalendarClockIcon,
+  ClockIcon,
+  EditIcon,
+  TrashIcon,
+} from "lucide-react";
+import { type FC, useState } from "react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import type { SchedulerJob } from "@/server/core/scheduler/schema";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  useDeleteSchedulerJob,
+  useUpdateSchedulerJob,
+} from "@/hooks/useScheduler";
+import { projectListQuery } from "@/lib/api/queries";
+import type {
+  EnrichedSchedulerJob,
+  NewSchedulerJob,
+  SchedulerJob,
+} from "@/server/core/scheduler/schema";
+import { SchedulerJobDialog } from "../scheduler/SchedulerJobDialog";
 
 type ScheduledMessageNoticeProps = {
   scheduledJobs: SchedulerJob[];
+  projectId: string;
+  sessionId: string;
+  projectName: string;
 };
 
 export const ScheduledMessageNotice: FC<ScheduledMessageNoticeProps> = ({
   scheduledJobs,
+  projectId,
+  sessionId,
+  projectName,
 }) => {
   const { i18n } = useLingui();
+
+  // Dialog states
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingJob, setEditingJob] = useState<EnrichedSchedulerJob | null>(
+    null,
+  );
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
+
+  // API hooks
+  const { data: projectsData } = useQuery({
+    queryKey: projectListQuery.queryKey,
+    queryFn: projectListQuery.queryFn,
+  });
+  const updateJob = useUpdateSchedulerJob();
+  const deleteJob = useDeleteSchedulerJob();
+
+  const handleEditClick = (job: SchedulerJob) => {
+    // Convert SchedulerJob to EnrichedSchedulerJob for the dialog
+    const enrichedJob: EnrichedSchedulerJob = {
+      ...job,
+      projectName,
+    };
+    setEditingJob(enrichedJob);
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdateJob = (updatedJob: NewSchedulerJob) => {
+    if (!editingJob) return;
+
+    updateJob.mutate(
+      {
+        id: editingJob.id,
+        updates: updatedJob,
+      },
+      {
+        onSuccess: () => {
+          toast.success(
+            i18n._({
+              id: "scheduler.job.updated",
+              message: "Job updated successfully",
+            }),
+          );
+          setEditDialogOpen(false);
+          setEditingJob(null);
+        },
+        onError: (error) => {
+          toast.error(
+            i18n._({
+              id: "scheduler.job.update_failed",
+              message: "Failed to update job",
+            }),
+            {
+              description: error.message,
+            },
+          );
+        },
+      },
+    );
+  };
+
+  const handleDeleteClick = (jobId: string) => {
+    setDeletingJobId(jobId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!deletingJobId) return;
+
+    deleteJob.mutate(deletingJobId, {
+      onSuccess: () => {
+        toast.success(
+          i18n._({
+            id: "scheduler.job.deleted",
+            message: "Job deleted successfully",
+          }),
+        );
+        setDeleteDialogOpen(false);
+        setDeletingJobId(null);
+      },
+      onError: (error) => {
+        toast.error(
+          i18n._({
+            id: "scheduler.job.delete_failed",
+            message: "Failed to delete job",
+          }),
+          {
+            description: error.message,
+          },
+        );
+      },
+    });
+  };
 
   // Separate reserved and queued jobs
   const reservedJobs = scheduledJobs.filter(
@@ -54,6 +179,24 @@ export const ScheduledMessageNotice: FC<ScheduledMessageNoticeProps> = ({
                       <Trans id="session.scheduled_messages.disabled" />
                     </Badge>
                   )}
+                  <div className="flex gap-1 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0"
+                      onClick={() => handleEditClick(job)}
+                    >
+                      <EditIcon className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                      onClick={() => handleDeleteClick(job.id)}
+                    >
+                      <TrashIcon className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -103,6 +246,24 @@ export const ScheduledMessageNotice: FC<ScheduledMessageNoticeProps> = ({
                           <Trans id="session.scheduled_messages.disabled" />
                         </Badge>
                       )}
+                      <div className="flex gap-1 ml-auto">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => handleEditClick(job)}
+                        >
+                          <EditIcon className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteClick(job.id)}
+                        >
+                          <TrashIcon className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
                       {job.message.content}
@@ -114,6 +275,59 @@ export const ScheduledMessageNotice: FC<ScheduledMessageNoticeProps> = ({
           </div>
         )}
       </div>
+
+      {/* Edit Dialog */}
+      <SchedulerJobDialog
+        open={editDialogOpen}
+        onOpenChange={(open) => {
+          setEditDialogOpen(open);
+          if (!open) setEditingJob(null);
+        }}
+        job={editingJob}
+        projectId={projectId}
+        projectName={projectName}
+        projects={projectsData?.projects ?? []}
+        currentSessionId={sessionId}
+        onSubmit={handleUpdateJob}
+        isSubmitting={updateJob.isPending}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <Trans id="scheduler.delete_dialog.title" />
+            </DialogTitle>
+            <DialogDescription>
+              <Trans id="scheduler.delete_dialog.description" />
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteDialogOpen(false);
+                setDeletingJobId(null);
+              }}
+              disabled={deleteJob.isPending}
+            >
+              <Trans id="common.cancel" />
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={deleteJob.isPending}
+            >
+              {deleteJob.isPending ? (
+                <Trans id="common.deleting" />
+              ) : (
+                <Trans id="common.delete" />
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

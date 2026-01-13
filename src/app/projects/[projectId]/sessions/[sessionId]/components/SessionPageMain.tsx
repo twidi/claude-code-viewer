@@ -626,6 +626,7 @@ const SessionPageMainContent: FC<
               getToolResult={getToolResult}
               projectId={projectId}
               sessionId={sessionId ?? ""}
+              projectName={projectName}
               scheduledJobs={sessionScheduledJobs}
             />
             {!isExistingSession && (

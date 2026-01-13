@@ -123,6 +123,7 @@ type ConversationListProps = {
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   projectId: string;
   sessionId: string;
+  projectName: string;
   scheduledJobs: SchedulerJob[];
 };
 
@@ -131,6 +132,7 @@ export const ConversationList: FC<ConversationListProps> = ({
   getToolResult,
   projectId,
   sessionId,
+  projectName,
   scheduledJobs,
 }) => {
   const validConversations = useMemo(
@@ -321,7 +323,12 @@ export const ConversationList: FC<ConversationListProps> = ({
           ];
         })}
       </ul>
-      <ScheduledMessageNotice scheduledJobs={scheduledJobs} />
+      <ScheduledMessageNotice
+        scheduledJobs={scheduledJobs}
+        projectId={projectId}
+        sessionId={sessionId}
+        projectName={projectName}
+      />
     </>
   );
 };
