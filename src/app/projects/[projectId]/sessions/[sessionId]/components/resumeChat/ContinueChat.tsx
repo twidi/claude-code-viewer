@@ -82,6 +82,8 @@ export const ContinueChat: FC<{
             content: input.text,
             projectId,
             baseSessionId: sessionId,
+            images: input.images,
+            documents: input.documents,
           },
           enabled: true,
         });

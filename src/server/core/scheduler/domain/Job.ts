@@ -1,4 +1,8 @@
 import { Effect } from "effect";
+import type {
+  DocumentBlockParam,
+  ImageBlockParam,
+} from "../../claude-code/schema";
 import {
   ClaudeCodeLifeCycleService,
   type IClaudeCodeLifeCycleService,
@@ -10,50 +14,149 @@ import type { SchedulerJob } from "../schema";
 interface QueuedMessage {
   text: string;
   createdAt: string;
+  images?: ImageBlockParam[];
+  documents?: DocumentBlockParam[];
+}
+
+interface FormattedQueuedMessage {
+  text: string;
+  images: ImageBlockParam[];
+  documents: DocumentBlockParam[];
 }
 
 /**
- * Formats queued messages into a single string with appropriate context.
+ * Gets the media type from an image or document block.
+ */
+function getMediaType(block: ImageBlockParam | DocumentBlockParam): string {
+  return block.source.media_type;
+}
+
+/**
+ * Formats the attachment info line for a follow-up message.
+ * Returns the line to display, or null if not needed.
+ *
+ * @param messageImages - Images attached to this specific message
+ * @param messageDocuments - Documents attached to this specific message
+ * @param startIndex - The starting index for attachments (1-based)
+ * @param hasAnyAttachments - Whether any message in the batch has attachments
+ */
+function formatAttachmentInfo(
+  messageImages: ImageBlockParam[],
+  messageDocuments: DocumentBlockParam[],
+  startIndex: number,
+  hasAnyAttachments: boolean,
+): string | null {
+  const attachments = [...messageImages, ...messageDocuments];
+
+  if (attachments.length === 0) {
+    // Only show "No attachments" if at least one other message has attachments
+    return hasAnyAttachments ? "No attachments included." : null;
+  }
+
+  const attachmentDescriptions = attachments.map((block, i) => {
+    const index = startIndex + i;
+    const mediaType = getMediaType(block);
+    return `#${index} (${mediaType})`;
+  });
+
+  return `Attachments included: ${attachmentDescriptions.join(", ")}`;
+}
+
+/**
+ * Formats queued messages into a single message with aggregated attachments.
  *
  * Single message:
  * [Note: While you were working, the user added a follow-up message:]
  *
  * <message text>
  *
- * Multiple messages:
+ * Multiple messages (with attachments):
  * [Note: While you were working, the user added N follow-up messages:
  *
- * [follow-up message 1]
+ * --- Follow-up message 1 ---
+ * Attachments included: #1 (image/png), #2 (application/pdf)
  *
  * <first message text>
  *
- * [follow-up message 2]
+ * --- Follow-up message 2 ---
+ * No attachments included.
  *
  * <second message text>
  */
-export function formatQueuedMessages(messages: QueuedMessage[]): string {
+export function formatQueuedMessages(
+  messages: QueuedMessage[],
+): FormattedQueuedMessage {
   if (messages.length === 0) {
-    return "";
+    return { text: "", images: [], documents: [] };
+  }
+
+  // Aggregate all attachments
+  const allImages: ImageBlockParam[] = [];
+  const allDocuments: DocumentBlockParam[] = [];
+  for (const message of messages) {
+    if (message.images) {
+      allImages.push(...message.images);
+    }
+    if (message.documents) {
+      allDocuments.push(...message.documents);
+    }
   }
 
   const [firstMessage] = messages;
   if (messages.length === 1 && firstMessage) {
-    return `[Note: While you were working, the user added a follow-up message:]
+    return {
+      text: `[Note: While you were working, the user added a follow-up message:]
 
-${firstMessage.text}`;
+${firstMessage.text}`,
+      images: allImages,
+      documents: allDocuments,
+    };
   }
 
   // Multiple messages
-  const header = `[Note: While you were working, the user added ${messages.length} follow-up messages:`;
-  const formattedMessages = messages.map((message, index) => {
-    return `[follow-up message ${index + 1}]
+  const hasAnyAttachments = allImages.length > 0 || allDocuments.length > 0;
 
-${message.text}`;
+  // Count how many follow-ups have attachments
+  const followUpsWithAttachments = messages.filter(
+    (m) => (m.images?.length ?? 0) > 0 || (m.documents?.length ?? 0) > 0,
+  ).length;
+
+  // Add clarification note only when 2+ follow-ups have attachments (to avoid ambiguity)
+  const attachmentNote =
+    followUpsWithAttachments >= 2
+      ? " Attachment references in each follow-up refer only to that follow-up's attachments."
+      : "";
+
+  const header = `[Note: While you were working, the user added ${messages.length} follow-up messages.${attachmentNote}]`;
+
+  let currentAttachmentIndex = 1;
+  const formattedMessages = messages.map((message, index) => {
+    const messageImages = message.images ?? [];
+    const messageDocuments = message.documents ?? [];
+    const attachmentCount = messageImages.length + messageDocuments.length;
+
+    const attachmentInfo = formatAttachmentInfo(
+      messageImages,
+      messageDocuments,
+      currentAttachmentIndex,
+      hasAnyAttachments,
+    );
+
+    currentAttachmentIndex += attachmentCount;
+
+    const attachmentLine = attachmentInfo ? `${attachmentInfo}\n\n` : "";
+
+    return `--- Follow-up message ${index + 1} ---
+${attachmentLine}${message.text}`;
   });
 
-  return `${header}
+  return {
+    text: `${header}
 
-${formattedMessages.join("\n\n")}`;
+${formattedMessages.join("\n\n")}`,
+    images: allImages,
+    documents: allDocuments,
+  };
 }
 
 export const executeJob = (job: SchedulerJob) =>
@@ -148,11 +251,13 @@ export const executeQueuedJobsWithService = (options: {
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
     );
 
-    // Format all messages into a single aggregated message
-    const formattedMessage = formatQueuedMessages(
+    // Format all messages into a single aggregated message with attachments
+    const formatted = formatQueuedMessages(
       sortedJobs.map((job) => ({
         text: job.message.content,
         createdAt: job.createdAt,
+        images: job.message.images,
+        documents: job.message.documents,
       })),
     );
 
@@ -165,7 +270,10 @@ export const executeQueuedJobsWithService = (options: {
       sessionProcessId,
       baseSessionId,
       input: {
-        text: formattedMessage,
+        text: formatted.text,
+        images: formatted.images.length > 0 ? formatted.images : undefined,
+        documents:
+          formatted.documents.length > 0 ? formatted.documents : undefined,
       },
     });
   });

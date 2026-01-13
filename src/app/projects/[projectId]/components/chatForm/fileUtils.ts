@@ -4,6 +4,27 @@ import {
   mediaTypeSchema,
 } from "../../../../../server/core/claude-code/schema";
 
+/** Supported image MIME types for attachments */
+export const SUPPORTED_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+] as const;
+
+/** Supported document MIME types for attachments */
+export const SUPPORTED_DOCUMENT_TYPES = ["application/pdf"] as const;
+
+/** Supported text MIME types for attachments */
+export const SUPPORTED_TEXT_TYPES = ["text/plain"] as const;
+
+/** All supported MIME types for attachments */
+export const SUPPORTED_MIME_TYPES = [
+  ...SUPPORTED_IMAGE_TYPES,
+  ...SUPPORTED_DOCUMENT_TYPES,
+  ...SUPPORTED_TEXT_TYPES,
+] as const;
+
 export type FileType = "text" | "image" | "pdf";
 
 /**
@@ -23,20 +44,7 @@ export const determineFileType = (mimeType: string): FileType => {
  * Check if MIME type is supported
  */
 export const isSupportedMimeType = (mimeType: string): boolean => {
-  const supportedImageTypes = [
-    "image/png",
-    "image/jpeg",
-    "image/gif",
-    "image/webp",
-  ];
-  const supportedDocumentTypes = ["application/pdf"];
-  const supportedTextTypes = ["text/plain"];
-
-  return (
-    supportedImageTypes.includes(mimeType) ||
-    supportedDocumentTypes.includes(mimeType) ||
-    supportedTextTypes.includes(mimeType)
-  );
+  return (SUPPORTED_MIME_TYPES as readonly string[]).includes(mimeType);
 };
 
 /**

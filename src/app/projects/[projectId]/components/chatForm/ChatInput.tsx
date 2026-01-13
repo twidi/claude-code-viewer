@@ -5,7 +5,6 @@ import {
   PaperclipIcon,
   SendIcon,
   SparklesIcon,
-  XIcon,
 } from "lucide-react";
 import {
   type FC,
@@ -16,6 +15,7 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { AttachmentList } from "../../../../../components/AttachmentList";
 import { Button } from "../../../../../components/ui/button";
 import { Input } from "../../../../../components/ui/input";
 import { Label } from "../../../../../components/ui/label";
@@ -307,12 +307,7 @@ export const ChatInput: FC<ChatInputProps> = ({
     const files = e.target.files;
     if (!files) return;
 
-    const newFiles = Array.from(files).map((file) => ({
-      file,
-      id: `${file.name}-${Date.now()}-${Math.random()}`,
-    }));
-
-    setAttachedFiles((prev) => [...prev, ...newFiles]);
+    addFiles(Array.from(files));
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -330,6 +325,18 @@ export const ChatInput: FC<ChatInputProps> = ({
       id: `${file.name}-${Date.now()}-${Math.random()}`,
     }));
     setAttachedFiles((prev) => [...prev, ...newFiles]);
+
+    // Switch to immediate mode if in scheduled mode (scheduled send doesn't support attachments)
+    if (sendMode === "scheduled") {
+      setSendMode("immediate");
+      toast.info(
+        i18n._({
+          id: "chat.send_mode.switched_to_immediate",
+          message:
+            "Switched to immediate send (scheduled send doesn't support attachments)",
+        }),
+      );
+    }
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
@@ -562,23 +569,14 @@ export const ChatInput: FC<ChatInputProps> = ({
           </div>
 
           {attachedFiles.length > 0 && (
-            <div className="px-5 py-3 flex flex-wrap gap-2 border-t border-border/40">
-              {attachedFiles.map(({ file, id }) => (
-                <div
-                  key={id}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg text-sm"
-                >
-                  <span className="truncate max-w-[200px]">{file.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveFile(id)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                    disabled={isPending}
-                  >
-                    <XIcon className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+            <div className="px-5 py-3 border-t border-border/40">
+              <AttachmentList
+                existingAttachments={[]}
+                newFiles={attachedFiles}
+                onRemoveExisting={() => {}}
+                onRemoveNew={handleRemoveFile}
+                disabled={isPending}
+              />
             </div>
           )}
 
@@ -691,8 +689,18 @@ export const ChatInput: FC<ChatInputProps> = ({
                           <SelectItem value="immediate">
                             <Trans id="chat.send_mode.immediate" />
                           </SelectItem>
-                          <SelectItem value="scheduled">
-                            <Trans id="chat.send_mode.scheduled" />
+                          <SelectItem
+                            value="scheduled"
+                            disabled={attachedFiles.length > 0}
+                          >
+                            {attachedFiles.length > 0 ? (
+                              <Trans
+                                id="chat.send_mode.scheduled_disabled_with_attachments"
+                                message="Scheduled (not available with attachments)"
+                              />
+                            ) : (
+                              <Trans id="chat.send_mode.scheduled" />
+                            )}
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -706,8 +714,15 @@ export const ChatInput: FC<ChatInputProps> = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => setSendMode("scheduled")}
-                      disabled={isPending || disabled}
+                      disabled={
+                        isPending || disabled || attachedFiles.length > 0
+                      }
                       className="sm:hidden gap-1.5"
+                      title={
+                        attachedFiles.length > 0
+                          ? "Scheduled send not available with attachments"
+                          : undefined
+                      }
                     >
                       <span className="text-xs">
                         <Trans id="chat.send_mode.scheduled" />

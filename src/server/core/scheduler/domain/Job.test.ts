@@ -208,8 +208,9 @@ describe("shouldExecuteJob with queued type", () => {
 });
 
 describe("formatQueuedMessages", () => {
-  test("returns empty string for empty messages array", () => {
-    expect(formatQueuedMessages([])).toBe("");
+  test("returns empty object for empty messages array", () => {
+    const result = formatQueuedMessages([]);
+    expect(result).toEqual({ text: "", images: [], documents: [] });
   });
 
   test("formats single message correctly", () => {
@@ -222,11 +223,13 @@ describe("formatQueuedMessages", () => {
 
     const result = formatQueuedMessages(messages);
 
-    expect(result).toBe(
+    expect(result.text).toBe(
       `[Note: While you were working, the user added a follow-up message:]
 
 Hello, this is a test message`,
     );
+    expect(result.images).toEqual([]);
+    expect(result.documents).toEqual([]);
   });
 
   test("formats multiple messages correctly", () => {
@@ -238,21 +241,20 @@ Hello, this is a test message`,
 
     const result = formatQueuedMessages(messages);
 
-    expect(result).toBe(
-      `[Note: While you were working, the user added 3 follow-up messages:
+    expect(result.text).toBe(
+      `[Note: While you were working, the user added 3 follow-up messages.]
 
-[follow-up message 1]
-
+--- Follow-up message 1 ---
 First message
 
-[follow-up message 2]
-
+--- Follow-up message 2 ---
 Second message
 
-[follow-up message 3]
-
+--- Follow-up message 3 ---
 Third message`,
     );
+    expect(result.images).toEqual([]);
+    expect(result.documents).toEqual([]);
   });
 
   test("formats two messages correctly", () => {
@@ -263,16 +265,121 @@ Third message`,
 
     const result = formatQueuedMessages(messages);
 
-    expect(result).toBe(
-      `[Note: While you were working, the user added 2 follow-up messages:
+    expect(result.text).toBe(
+      `[Note: While you were working, the user added 2 follow-up messages.]
 
-[follow-up message 1]
-
+--- Follow-up message 1 ---
 Message one
 
-[follow-up message 2]
-
+--- Follow-up message 2 ---
 Message two`,
     );
+  });
+
+  test("formats single message with attachments correctly", () => {
+    const image = {
+      type: "image" as const,
+      source: {
+        type: "base64" as const,
+        media_type: "image/png" as const,
+        data: "base64data",
+      },
+    };
+    const messages = [
+      {
+        text: "Check this image",
+        createdAt: "2025-10-25T00:00:00Z",
+        images: [image],
+      },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result.text).toBe(
+      `[Note: While you were working, the user added a follow-up message:]
+
+Check this image`,
+    );
+    expect(result.images).toEqual([image]);
+    expect(result.documents).toEqual([]);
+  });
+
+  test("formats multiple messages with attachments correctly", () => {
+    const image1 = {
+      type: "image" as const,
+      source: {
+        type: "base64" as const,
+        media_type: "image/png" as const,
+        data: "image1data",
+      },
+    };
+    const image2 = {
+      type: "image" as const,
+      source: {
+        type: "base64" as const,
+        media_type: "image/jpeg" as const,
+        data: "image2data",
+      },
+    };
+    const document1 = {
+      type: "document" as const,
+      source: {
+        type: "base64" as const,
+        media_type: "application/pdf" as const,
+        data: "pdfdata",
+      },
+    };
+
+    const messages = [
+      {
+        text: "First message with images",
+        createdAt: "2025-10-25T00:00:00Z",
+        images: [image1, image2],
+      },
+      {
+        text: "Second message without attachments",
+        createdAt: "2025-10-25T00:01:00Z",
+      },
+      {
+        text: "Third message with document",
+        createdAt: "2025-10-25T00:02:00Z",
+        documents: [document1],
+      },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result.text).toBe(
+      `[Note: While you were working, the user added 3 follow-up messages. Attachment references in each follow-up refer only to that follow-up's attachments.]
+
+--- Follow-up message 1 ---
+Attachments included: #1 (image/png), #2 (image/jpeg)
+
+First message with images
+
+--- Follow-up message 2 ---
+No attachments included.
+
+Second message without attachments
+
+--- Follow-up message 3 ---
+Attachments included: #3 (application/pdf)
+
+Third message with document`,
+    );
+    expect(result.images).toEqual([image1, image2]);
+    expect(result.documents).toEqual([document1]);
+  });
+
+  test("does not mention attachments when no message has any", () => {
+    const messages = [
+      { text: "First message", createdAt: "2025-10-25T00:00:00Z" },
+      { text: "Second message", createdAt: "2025-10-25T00:01:00Z" },
+    ];
+
+    const result = formatQueuedMessages(messages);
+
+    expect(result.text).not.toContain("attachment");
+    expect(result.text).not.toContain("Attachments");
   });
 });

@@ -29,6 +29,7 @@ import type {
   SchedulerJob,
 } from "@/server/core/scheduler/schema";
 import { SchedulerJobDialog } from "../scheduler/SchedulerJobDialog";
+import { AttachedDocument, AttachedImage } from "./AttachedContent";
 
 type ScheduledMessageNoticeProps = {
   scheduledJobs: SchedulerJob[];
@@ -166,39 +167,65 @@ export const ScheduledMessageNotice: FC<ScheduledMessageNoticeProps> = ({
               </span>
             </div>
             <div className="space-y-2">
-              {queuedJobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="flex items-center gap-2 p-3 bg-white dark:bg-gray-900 rounded border border-amber-100 dark:border-amber-900"
-                >
-                  <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 flex-1">
-                    {job.message.content}
-                  </p>
-                  {!job.enabled && (
-                    <Badge variant="outline" className="text-xs shrink-0">
-                      <Trans id="session.scheduled_messages.disabled" />
-                    </Badge>
-                  )}
-                  <div className="flex gap-1 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0"
-                      onClick={() => handleEditClick(job)}
-                    >
-                      <EditIcon className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-0 text-destructive hover:text-destructive"
-                      onClick={() => handleDeleteClick(job.id)}
-                    >
-                      <TrashIcon className="w-3 h-3" />
-                    </Button>
+              {queuedJobs.map((job) => {
+                const hasAttachments =
+                  (job.message.images && job.message.images.length > 0) ||
+                  (job.message.documents && job.message.documents.length > 0);
+
+                return (
+                  <div
+                    key={job.id}
+                    className="flex flex-col gap-2 p-3 bg-white dark:bg-gray-900 rounded border border-amber-100 dark:border-amber-900"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 flex-1">
+                        {job.message.content}
+                      </p>
+                      {!job.enabled && (
+                        <Badge variant="outline" className="text-xs shrink-0">
+                          <Trans id="session.scheduled_messages.disabled" />
+                        </Badge>
+                      )}
+                      <div className="flex gap-1 shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0"
+                          onClick={() => handleEditClick(job)}
+                        >
+                          <EditIcon className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteClick(job.id)}
+                        >
+                          <TrashIcon className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    {hasAttachments && (
+                      <div className="space-y-2 pt-1 border-t border-amber-100 dark:border-amber-900">
+                        {job.message.images?.map((image, index) => (
+                          <AttachedImage
+                            key={`${job.id}-image-${index}`}
+                            image={image}
+                            variant="compact"
+                          />
+                        ))}
+                        {job.message.documents?.map((document, index) => (
+                          <AttachedDocument
+                            key={`${job.id}-document-${index}`}
+                            document={document}
+                            variant="compact"
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

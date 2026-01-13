@@ -12,7 +12,7 @@ export type MediaType = z.infer<typeof mediaTypeSchema>;
 /**
  * Schema for image block parameter
  */
-const imageBlockSchema = z.object({
+export const imageBlockSchema = z.object({
   type: z.literal("image"),
   source: z.object({
     type: z.literal("base64"),
@@ -26,7 +26,7 @@ export type ImageBlockParam = z.infer<typeof imageBlockSchema>;
 /**
  * Schema for document block parameter
  */
-const documentBlockSchema = z.object({
+export const documentBlockSchema = z.object({
   type: z.literal("document"),
   source: z.union([
     z.object({

@@ -1,8 +1,15 @@
 import { Trans, useLingui } from "@lingui/react";
 import { FolderIcon } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
+import { processFile } from "@/app/projects/[projectId]/components/chatForm/fileUtils";
 import { InlineCompletion } from "@/app/projects/[projectId]/components/chatForm/InlineCompletion";
 import { useMessageCompletion } from "@/app/projects/[projectId]/components/chatForm/useMessageCompletion";
+import { AttachButton } from "@/components/AttachButton";
+import {
+  AttachmentList,
+  type ExistingAttachment,
+  type NewFileAttachment,
+} from "@/components/AttachmentList";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +31,10 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import type {
+  DocumentBlockParam,
+  ImageBlockParam,
+} from "@/server/core/claude-code/schema";
 import type {
   EnrichedSchedulerJob,
   NewSchedulerJob,
@@ -79,6 +90,12 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
     "skip",
   );
 
+  // Attachment state
+  const [existingAttachments, setExistingAttachments] = useState<
+    ExistingAttachment[]
+  >([]);
+  const [newFiles, setNewFiles] = useState<NewFileAttachment[]>([]);
+
   // Message completion hook
   const completion = useMessageCompletion();
 
@@ -103,6 +120,29 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       }
       setMessageContent(job.message.content);
       setEnabled(job.enabled);
+
+      // Initialize attachments from job
+      const attachments: ExistingAttachment[] = [];
+      if (job.message.images) {
+        for (const image of job.message.images) {
+          attachments.push({
+            type: "image",
+            data: image,
+            id: `existing-image-${Math.random().toString(36).slice(2)}`,
+          });
+        }
+      }
+      if (job.message.documents) {
+        for (const doc of job.message.documents) {
+          attachments.push({
+            type: "document",
+            data: doc,
+            id: `existing-doc-${Math.random().toString(36).slice(2)}`,
+          });
+        }
+      }
+      setExistingAttachments(attachments);
+      setNewFiles([]);
     } else {
       // Reset form for new job
       setName("");
@@ -120,10 +160,28 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       setMessageContent("");
       setEnabled(true);
       setConcurrencyPolicy("skip");
+      setExistingAttachments([]);
+      setNewFiles([]);
     }
   }, [job, projectId]);
 
-  const handleSubmit = () => {
+  const handleFilesSelected = (files: File[]) => {
+    const newAttachments = files.map((file) => ({
+      file,
+      id: `new-${file.name}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    }));
+    setNewFiles((prev) => [...prev, ...newAttachments]);
+  };
+
+  const handleRemoveExisting = (id: string) => {
+    setExistingAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const handleRemoveNew = (id: string) => {
+    setNewFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const handleSubmit = async () => {
     // Determine the schedule based on type
     let schedule: NewSchedulerJob["schedule"];
 
@@ -162,6 +220,46 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       }
     }
 
+    // Process new files into blocks
+    const newImages: ImageBlockParam[] = [];
+    const newDocuments: DocumentBlockParam[] = [];
+
+    for (const { file } of newFiles) {
+      const result = await processFile(file);
+      if (result === null) continue;
+
+      if (result.type === "image") {
+        newImages.push(result.block);
+      } else if (result.type === "document") {
+        newDocuments.push(result.block);
+      } else if (result.type === "text") {
+        newDocuments.push({
+          type: "document",
+          source: {
+            type: "text",
+            media_type: "text/plain",
+            data: result.content,
+          },
+        });
+      }
+    }
+
+    // Combine existing and new attachments
+    const existingImages = existingAttachments
+      .filter(
+        (a): a is ExistingAttachment & { type: "image" } => a.type === "image",
+      )
+      .map((a) => a.data);
+    const existingDocs = existingAttachments
+      .filter(
+        (a): a is ExistingAttachment & { type: "document" } =>
+          a.type === "document",
+      )
+      .map((a) => a.data);
+
+    const finalImages = [...existingImages, ...newImages];
+    const finalDocuments = [...existingDocs, ...newDocuments];
+
     const newJob: NewSchedulerJob = {
       name,
       schedule,
@@ -170,6 +268,8 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
         projectId: selectedProjectId,
         // Preserve baseSessionId when editing, null for new jobs
         baseSessionId: job?.message.baseSessionId ?? null,
+        images: finalImages.length > 0 ? finalImages : undefined,
+        documents: finalDocuments.length > 0 ? finalDocuments : undefined,
       },
       enabled,
     };
@@ -371,6 +471,24 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
             <p className="text-xs text-muted-foreground">
               <Trans id="scheduler.form.message.hint" />
             </p>
+          </div>
+
+          {/* Attachments */}
+          <div className="space-y-2">
+            <Label>
+              <Trans id="scheduler.form.attachments" />
+            </Label>
+            <AttachmentList
+              existingAttachments={existingAttachments}
+              newFiles={newFiles}
+              onRemoveExisting={handleRemoveExisting}
+              onRemoveNew={handleRemoveNew}
+              disabled={isSubmitting}
+            />
+            <AttachButton
+              onFilesSelected={handleFilesSelected}
+              disabled={isSubmitting}
+            />
           </div>
 
           {/* Concurrency Policy (only for cron schedules) */}

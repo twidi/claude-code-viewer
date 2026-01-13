@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { documentBlockSchema, imageBlockSchema } from "../claude-code/schema";
 
 // Concurrency policy (for cron jobs only)
 export const concurrencyPolicySchema = z.enum(["skip", "run"]);
@@ -31,6 +32,8 @@ export const messageConfigSchema = z.object({
   content: z.string(),
   projectId: z.string(),
   baseSessionId: z.string().nullable(),
+  images: z.array(imageBlockSchema).optional(),
+  documents: z.array(documentBlockSchema).optional(),
 });
 
 // Job status
