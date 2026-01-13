@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        478
+        430
       ]
     ],
     "translation": "Message input with completion support"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        577
+        525
       ]
     ],
     "translation": "Attach"
@@ -350,7 +350,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        589
+        537
       ]
     ],
     "translation": "Autocomplete Active"
@@ -372,10 +372,46 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        441
+        393
       ]
     ],
     "translation": "Failed to send message. Please try again."
+  },
+  "chat.message.abort_failed": {
+    "message": "Failed to stop session",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        131
+      ]
+    ],
+    "translation": "Failed to stop session"
+  },
+  "chat.message.inject_failed": {
+    "message": "Failed to send message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        123
+      ]
+    ],
+    "translation": "Failed to send message"
+  },
+  "chat.message.injected": {
+    "message": "Message sent to Claude",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        64
+      ]
+    ],
+    "translation": "Message sent to Claude"
   },
   "chat.modal.title": {
     "placeholders": {},
@@ -387,7 +423,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        638
+        639
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
@@ -411,7 +447,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        66
+        180
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -427,7 +463,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        59
+        173
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -443,7 +479,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        72
+        186
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -488,26 +524,14 @@
     ],
     "translation": "Type your message... (Start with / for commands, @ for files, Shift+Enter to send)"
   },
-  "chat.queued_message.failed": {
-    "message": "Failed to queue message",
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        282
-      ]
-    ],
-    "translation": "Failed to queue message"
-  },
   "chat.queued_message.name": {
     "message": "Queued message",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        247
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        73
       ]
     ],
     "translation": "Queued message"
@@ -518,8 +542,8 @@
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        264
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        89
       ]
     ],
     "translation": "Message queued"
@@ -530,8 +554,8 @@
     "comments": [],
     "origin": [
       [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        269
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        94
       ]
     ],
     "translation": "Your message will be sent when the current task completes"
@@ -589,7 +613,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        98
+        213
       ]
     ],
     "translation": "Send"
@@ -600,11 +624,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        533
+        482
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        622
+        567
       ]
     ],
     "translation": "Send Now"
@@ -615,29 +639,14 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        513
+        465
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        602
+        550
       ]
     ],
     "translation": "Send Mode"
-  },
-  "chat.send_mode.queue": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        531
-      ],
-      [
-        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        620
-      ]
-    ],
-    "translation": "Queue Now"
   },
   "chat.send_mode.scheduled": {
     "placeholders": {},
@@ -645,15 +654,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        537
+        485
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        626
+        570
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        644
+        588
       ]
     ],
     "translation": "Schedule Send"
@@ -664,10 +673,106 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        544
+        492
       ]
     ],
     "translation": "Scheduled Send Time"
+  },
+  "chat.send_options.abort.description": {
+    "message": "Abort current session and restart with your message. Progress may be lost.",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        161
+      ]
+    ],
+    "translation": "Abort current session and restart with your message. Progress may be lost."
+  },
+  "chat.send_options.abort.label": {
+    "message": "Abort & Send",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        153
+      ]
+    ],
+    "translation": "Abort & Send"
+  },
+  "chat.send_options.description": {
+    "message": "Claude is currently working. How would you like to proceed?",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        49
+      ]
+    ],
+    "translation": "Claude is currently working. How would you like to proceed?"
+  },
+  "chat.send_options.inject.description": {
+    "message": "Claude will read this at the next opportunity while continuing to work. Due to a bug in the Claude Agent SDK, Claude may receive the message twice and it won't appear in the conversation.",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        86
+      ]
+    ],
+    "translation": "Claude will read this at the next opportunity while continuing to work. Due to a bug in the Claude Agent SDK, Claude may receive the message twice and it won't appear in the conversation."
+  },
+  "chat.send_options.inject.label": {
+    "message": "Send Now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        79
+      ]
+    ],
+    "translation": "Send Now"
+  },
+  "chat.send_options.queue.description": {
+    "message": "Your message will be sent when Claude finishes the current task.",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        123
+      ]
+    ],
+    "translation": "Your message will be sent when Claude finishes the current task."
+  },
+  "chat.send_options.queue.label": {
+    "message": "Queue for Later",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        116
+      ]
+    ],
+    "translation": "Queue for Later"
+  },
+  "chat.send_options.title": {
+    "message": "How would you like to send this message?",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        43
+      ]
+    ],
+    "translation": "How would you like to send this message?"
   },
   "chat.status.processing": {
     "placeholders": {},
@@ -675,7 +780,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        663
+        607
       ]
     ],
     "translation": "Processing..."
@@ -692,19 +797,40 @@
     "translation": "Cancel"
   },
   "common.cancel": {
+    "message": "Cancel",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        315
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        410
+        411
+      ],
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        177
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        427
+        429
       ]
     ],
     "translation": "common.cancel"
+  },
+  "common.confirm": {
+    "message": "Confirm",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        183
+      ]
+    ],
+    "translation": "Confirm"
   },
   "common.create": {
     "placeholders": {},
@@ -712,7 +838,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        421
+        422
       ]
     ],
     "translation": "Create"
@@ -722,8 +848,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        325
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        437
+        439
       ]
     ],
     "translation": "Delete"
@@ -733,8 +863,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        323
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        435
+        437
       ]
     ],
     "translation": "Deleting..."
@@ -784,7 +918,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        228
+        230
       ]
     ],
     "translation": "Reload"
@@ -795,7 +929,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        417
+        418
       ]
     ],
     "translation": "Saving..."
@@ -806,7 +940,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        419
+        420
       ]
     ],
     "translation": "Update"
@@ -1848,7 +1982,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        242
+        244
       ]
     ],
     "translation": "Create Job"
@@ -1858,8 +1992,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        303
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        415
+        417
       ]
     ],
     "translation": "Are you sure you want to delete this scheduler job? This action cannot be undone."
@@ -1869,8 +2007,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        300
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        412
+        414
       ]
     ],
     "translation": "Delete Scheduler Job"
@@ -1881,7 +2023,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        193
+        194
       ]
     ],
     "translation": "Configure a scheduled job to send messages to Claude Code"
@@ -1892,7 +2034,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        189
+        190
       ]
     ],
     "translation": "Create Scheduled Job"
@@ -1903,7 +2045,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        187
+        188
       ]
     ],
     "translation": "Edit Scheduled Job"
@@ -1918,22 +2060,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        290
+        292
       ]
     ],
     "translation": "Failed to load scheduler jobs: {error}"
   },
   "scheduler.filter.all_projects": {
-    "translation": "All projects",
     "message": "All projects",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        264
+        266
       ]
-    ]
+    ],
+    "translation": "All projects"
   },
   "scheduler.form.concurrency_policy": {
     "placeholders": {},
@@ -1941,7 +2083,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        379
+        380
       ]
     ],
     "translation": "Concurrency Policy"
@@ -1952,7 +2094,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        396
+        397
       ]
     ],
     "translation": "Run even if already running"
@@ -1963,7 +2105,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        393
+        394
       ]
     ],
     "translation": "Skip if already running"
@@ -1974,7 +2116,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        233
+        234
       ]
     ],
     "translation": "Enable"
@@ -1985,7 +2127,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        236
+        237
       ]
     ],
     "translation": "Enable or disable this scheduled job"
@@ -1996,7 +2138,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        325
+        326
       ]
     ],
     "translation": "Message Content"
@@ -2008,7 +2150,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        344
+        345
       ]
     ],
     "translation": "Message input with completion support (/ for commands, @ for files)"
@@ -2019,7 +2161,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        371
+        372
       ]
     ],
     "translation": "/ for command completion, @ for file completion"
@@ -2031,7 +2173,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        336
+        337
       ]
     ],
     "translation": "Type message to send to Claude Code... (/ for commands, @ for files)"
@@ -2042,7 +2184,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        250
+        251
       ]
     ],
     "translation": "Job Name"
@@ -2053,7 +2195,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        203
+        204
       ]
     ],
     "translation": "Project:"
@@ -2064,7 +2206,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        272
+        273
       ]
     ],
     "translation": "scheduler.form.queued_notice"
@@ -2075,7 +2217,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        307
+        308
       ]
     ],
     "translation": "Scheduled Execution Time"
@@ -2086,7 +2228,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        317
+        318
       ]
     ],
     "translation": "Will be executed once at the specified date and time, then automatically deleted"
@@ -2097,7 +2239,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        267
+        268
       ]
     ],
     "translation": "Schedule Type"
@@ -2108,7 +2250,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        288
+        289
       ]
     ],
     "translation": "Recurring (Cron)"
@@ -2119,7 +2261,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        291
+        292
       ]
     ],
     "translation": "One-time Execution"
@@ -2131,7 +2273,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        107
+        109
       ]
     ],
     "translation": "Failed to create job"
@@ -2143,7 +2285,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        98
+        100
       ]
     ],
     "translation": "Job created successfully"
@@ -2154,8 +2296,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        129
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        169
+        171
       ]
     ],
     "translation": "Failed to delete job"
@@ -2166,8 +2312,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        119
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        159
+        161
       ]
     ],
     "translation": "Job deleted successfully"
@@ -2178,8 +2328,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        95
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        140
+        142
       ]
     ],
     "translation": "Failed to update job"
@@ -2190,8 +2344,12 @@
     "comments": [],
     "origin": [
       [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
+        85
+      ],
+      [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        130
+        132
       ]
     ],
     "translation": "Job updated successfully"
@@ -2202,7 +2360,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        367
+        369
       ]
     ],
     "translation": "Last Run"
@@ -2213,21 +2371,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        299
+        301
       ]
     ],
     "translation": "No scheduler jobs"
   },
   "scheduler.no_jobs_for_project": {
-    "translation": "No scheduled jobs for this project",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        305
+        307
       ]
-    ]
+    ],
+    "translation": "No scheduled jobs for this project"
   },
   "scheduler.schedule.queued": {
     "message": "Queued: Waiting for session to pause",
@@ -2236,7 +2394,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        200
+        202
       ]
     ],
     "translation": "Queued: Waiting for session to pause"
@@ -2247,7 +2405,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        329
+        331
       ]
     ],
     "translation": "Disabled"
@@ -2258,7 +2416,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        327
+        329
       ]
     ],
     "translation": "Enabled"
@@ -2269,7 +2427,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        219
+        221
       ]
     ],
     "translation": "Scheduler"
@@ -2423,7 +2581,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        641
+        642
       ]
     ],
     "translation": "session.empty_state.description"
@@ -2434,7 +2592,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        655
+        656
       ]
     ],
     "translation": "Claude Code is processing..."
@@ -2445,7 +2603,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        37
+        162
       ]
     ],
     "translation": "Queued Messages"
@@ -2456,7 +2614,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        40
+        165
       ]
     ],
     "translation": "waiting for session to pause"
@@ -2467,11 +2625,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        54
+        179
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        103
+        246
       ]
     ],
     "translation": "Disabled"
@@ -2482,7 +2640,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ScheduledMessageNotice.tsx",
-        69
+        212
       ]
     ],
     "translation": "Scheduled Messages"

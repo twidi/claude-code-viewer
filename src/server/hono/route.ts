@@ -547,6 +547,32 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           },
         )
 
+        // inject message into running session (streaming input)
+        .post(
+          "/api/cc/session-processes/:sessionProcessId/inject",
+          zValidator("json", userMessageInputSchema),
+          async (c) => {
+            const { sessionProcessId } = c.req.param();
+            const input = c.req.valid("json");
+
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.injectMessage({
+                  sessionProcessId,
+                  input,
+                }),
+              );
+              return c.json({ success: true });
+            } catch (error) {
+              const message =
+                error instanceof Error
+                  ? error.message
+                  : "Failed to inject message";
+              return c.json({ success: false, error: message }, 400);
+            }
+          },
+        )
+
         /**
          * ClaudeCodePermissionController Routes
          */

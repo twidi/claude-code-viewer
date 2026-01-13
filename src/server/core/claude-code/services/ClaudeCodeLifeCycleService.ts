@@ -486,12 +486,52 @@ const LayerImpl = Effect.gen(function* () {
       }
     });
 
+  /**
+   * Inject a message into a running session process.
+   * The message will be sent to the agent via stdin streaming.
+   * Only works for processes that are actively running (not paused/completed).
+   */
+  const injectMessage = (options: {
+    sessionProcessId: string;
+    input: UserMessageInput;
+  }): Effect.Effect<void, Error> =>
+    Effect.gen(function* () {
+      const currentProcess = yield* sessionProcessService
+        .getSessionProcess(options.sessionProcessId)
+        .pipe(
+          Effect.catchTag("SessionProcessNotFoundError", () =>
+            Effect.succeed(null),
+          ),
+        );
+
+      // Process not found
+      if (currentProcess === null) {
+        return yield* Effect.fail(
+          new Error("Cannot inject message: session process not found"),
+        );
+      }
+
+      // Can only inject into running processes (not paused/completed)
+      if (
+        currentProcess.type === "paused" ||
+        currentProcess.type === "completed"
+      ) {
+        return yield* Effect.fail(
+          new Error("Cannot inject message: session is not running"),
+        );
+      }
+
+      // Inject via message generator
+      currentProcess.def.setNextMessage(options.input);
+    });
+
   return {
     continueTask,
     startTask,
     stopTask,
     abortTask,
     abortAllTasks,
+    injectMessage,
     getPublicSessionProcesses,
   };
 });

@@ -59,10 +59,10 @@ export interface ChatInputProps {
   enableScheduledSend?: boolean;
   baseSessionId?: string | null;
   /**
-   * When true, messages will be automatically queued as scheduler jobs
-   * instead of being sent immediately. Used when a session is running.
+   * When true, shows the send mode dropdown with "Queue Now" instead of "Send Now".
+   * The actual queuing behavior is handled by the parent via onSubmit.
    */
-  autoQueueMessages?: boolean;
+  showQueueOption?: boolean;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -78,7 +78,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   buttonSize = "lg",
   enableScheduledSend = false,
   baseSessionId = null,
-  autoQueueMessages = false,
+  showQueueOption = false,
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -234,54 +234,6 @@ export const ChatInput: FC<ChatInputProps> = ({
           i18n._({
             id: "chat.scheduled_send.failed",
             message: "Failed to schedule message",
-          }),
-          {
-            description: error instanceof Error ? error.message : undefined,
-          },
-        );
-      }
-    } else if (autoQueueMessages && baseSessionId) {
-      // Queue message when session is running
-      try {
-        await createSchedulerJob.mutateAsync({
-          name: i18n._({
-            id: "chat.queued_message.name",
-            message: "Queued message",
-          }),
-          schedule: {
-            type: "queued",
-            targetSessionId: baseSessionId,
-          },
-          message: {
-            content: message,
-            projectId,
-            baseSessionId,
-          },
-          enabled: true,
-        });
-
-        toast.success(
-          i18n._({
-            id: "chat.queued_message.success",
-            message: "Message queued",
-          }),
-          {
-            description: i18n._({
-              id: "chat.queued_message.success_description",
-              message:
-                "Your message will be sent when the current task completes",
-            }),
-          },
-        );
-
-        setMessage("");
-        setAttachedFiles([]);
-        clearDraft();
-      } catch (error) {
-        toast.error(
-          i18n._({
-            id: "chat.queued_message.failed",
-            message: "Failed to queue message",
           }),
           {
             description: error instanceof Error ? error.message : undefined,
@@ -506,7 +458,7 @@ export const ChatInput: FC<ChatInputProps> = ({
           )}
 
           <div className="flex flex-col gap-2 px-5 py-1 bg-muted/30 border-t border-border/40">
-            {(enableScheduledSend || autoQueueMessages) &&
+            {(enableScheduledSend || showQueueOption) &&
               sendMode === "scheduled" && (
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
                   <Label htmlFor="send-mode-mobile" className="text-xs sr-only">
@@ -527,11 +479,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="immediate">
-                        {autoQueueMessages ? (
-                          <Trans id="chat.send_mode.queue" />
-                        ) : (
-                          <Trans id="chat.send_mode.immediate" />
-                        )}
+                        <Trans id="chat.send_mode.immediate" />
                       </SelectItem>
                       <SelectItem value="scheduled">
                         <Trans id="chat.send_mode.scheduled" />
@@ -592,7 +540,7 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                {(enableScheduledSend || autoQueueMessages) &&
+                {(enableScheduledSend || showQueueOption) &&
                   sendMode === "immediate" && (
                     <div className="hidden sm:flex items-center gap-2">
                       <Label
@@ -616,11 +564,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="immediate">
-                            {autoQueueMessages ? (
-                              <Trans id="chat.send_mode.queue" />
-                            ) : (
-                              <Trans id="chat.send_mode.immediate" />
-                            )}
+                            <Trans id="chat.send_mode.immediate" />
                           </SelectItem>
                           <SelectItem value="scheduled">
                             <Trans id="chat.send_mode.scheduled" />
@@ -630,7 +574,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                     </div>
                   )}
 
-                {(enableScheduledSend || autoQueueMessages) &&
+                {(enableScheduledSend || showQueueOption) &&
                   sendMode === "immediate" && (
                     <Button
                       type="button"
