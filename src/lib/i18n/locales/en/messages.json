@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        430
+        555
       ]
     ],
     "translation": "Message input with completion support"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        525
+        650
       ]
     ],
     "translation": "Attach"
@@ -350,7 +350,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        537
+        662
       ]
     ],
     "translation": "Autocomplete Active"
@@ -372,7 +372,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        393
+        497
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -384,7 +384,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        131
+        135
       ]
     ],
     "translation": "Failed to stop session"
@@ -396,7 +396,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        123
+        127
       ]
     ],
     "translation": "Failed to send message"
@@ -447,7 +447,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        180
+        184
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -463,7 +463,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        173
+        177
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -479,7 +479,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        186
+        190
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -578,7 +578,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        234
+        279
       ]
     ],
     "translation": "Failed to schedule message"
@@ -590,7 +590,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        217
+        262
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -602,7 +602,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        222
+        267
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -613,7 +613,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        213
+        217
       ]
     ],
     "translation": "Send"
@@ -624,11 +624,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        482
+        607
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        567
+        692
       ]
     ],
     "translation": "Send Now"
@@ -639,11 +639,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        465
+        590
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        550
+        675
       ]
     ],
     "translation": "Send Mode"
@@ -654,15 +654,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        485
+        610
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        570
+        695
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        588
+        713
       ]
     ],
     "translation": "Schedule Send"
@@ -673,7 +673,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        492
+        617
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -780,7 +780,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        607
+        732
       ]
     ],
     "translation": "Processing..."
@@ -1652,6 +1652,72 @@
     ],
     "translation": "Beep"
   },
+  "notification.browser.denied": {
+    "translation": "Notifications blocked by browser",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        164
+      ]
+    ]
+  },
+  "notification.browser.description": {
+    "translation": "Receive browser notifications when tasks complete while the app is in the background",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        171
+      ]
+    ]
+  },
+  "notification.browser.disabled": {
+    "translation": "Disabled",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        157
+      ]
+    ]
+  },
+  "notification.browser.enable": {
+    "translation": "Enable notifications",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        142
+      ]
+    ]
+  },
+  "notification.browser.enabled": {
+    "translation": "Enabled",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        155
+      ]
+    ]
+  },
+  "notification.browser.label": {
+    "translation": "Browser notifications",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/NotificationSettings.tsx",
+        131
+      ]
+    ]
+  },
   "notification.chime": {
     "placeholders": {},
     "comments": [],
@@ -1669,7 +1735,7 @@
     "origin": [
       [
         "src/components/NotificationSettings.tsx",
-        97
+        122
       ]
     ],
     "translation": "Select sound to play when Claude Code task completes"
@@ -1713,7 +1779,7 @@
     "origin": [
       [
         "src/components/NotificationSettings.tsx",
-        90
+        115
       ]
     ],
     "translation": "Test"

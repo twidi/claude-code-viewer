@@ -1,11 +1,18 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { projectListQuery } from "@/lib/api/queries";
 import {
+  browserNotificationsEnabledAtom,
   notificationSettingsAtom,
   soundNotificationsEnabledAtom,
 } from "@/lib/atoms/notifications";
-import { playNotificationSound } from "@/lib/notifications";
+import {
+  playNotificationSound,
+  sendBrowserNotification,
+} from "@/lib/notifications";
+import type { Project } from "@/server/core/types";
 import type { PublicSessionProcess } from "@/types/session-process";
 
 /**
@@ -20,22 +27,62 @@ import type { PublicSessionProcess } from "@/types/session-process";
 export const useGlobalSessionTransitions = (
   sessionProcesses: PublicSessionProcess[],
 ) => {
+  const queryClient = useQueryClient();
   const settings = useAtomValue(notificationSettingsAtom);
   const soundEnabled = useAtomValue(soundNotificationsEnabledAtom);
+  const browserNotificationsEnabled = useAtomValue(
+    browserNotificationsEnabledAtom,
+  );
 
   // Track previous statuses by sessionId (not processId) to detect transitions
   // This is important because processId changes when we auto-send queued messages
   const prevStatusesRef = useRef<Map<string, "running" | "paused">>(new Map());
 
-  const handleSessionCompleted = useCallback(() => {
-    // Show toast
-    toast.success("Task completed");
+  const getProjectName = useCallback(
+    (projectId: string): string | undefined => {
+      const data = queryClient.getQueryData<{ projects: Project[] }>(
+        projectListQuery.queryKey,
+      );
+      return (
+        data?.projects?.find((p) => p.id === projectId)?.meta.projectName ??
+        undefined
+      );
+    },
+    [queryClient],
+  );
 
-    // Play notification sound if enabled
-    if (soundEnabled) {
-      playNotificationSound(settings.soundType);
-    }
-  }, [soundEnabled, settings.soundType]);
+  const handleSessionCompleted = useCallback(
+    (process: PublicSessionProcess) => {
+      const projectName = getProjectName(process.projectId);
+
+      // Show toast only if app is visible
+      if (!document.hidden) {
+        toast.success("Task completed");
+      }
+
+      // Play notification sound if enabled
+      if (soundEnabled) {
+        playNotificationSound(settings.soundType);
+      }
+
+      // Send browser notification if app is in background
+      if (document.hidden && browserNotificationsEnabled) {
+        sendBrowserNotification({
+          title: "Claude Code Viewer",
+          body: projectName
+            ? `Task completed in ${projectName}`
+            : "Task completed",
+          tag: process.sessionId,
+        });
+      }
+    },
+    [
+      getProjectName,
+      soundEnabled,
+      browserNotificationsEnabled,
+      settings.soundType,
+    ],
+  );
 
   useEffect(() => {
     const prevStatuses = prevStatusesRef.current;
@@ -47,7 +94,7 @@ export const useGlobalSessionTransitions = (
 
       // Detect transition from running to paused
       if (prevStatus === "running" && currentStatus === "paused") {
-        handleSessionCompleted();
+        handleSessionCompleted(process);
       }
 
       // Update tracked status
