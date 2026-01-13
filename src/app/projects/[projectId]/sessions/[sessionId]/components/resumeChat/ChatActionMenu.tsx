@@ -13,6 +13,8 @@ import {
 import type { FC } from "react";
 import { useConfig } from "@/app/hooks/useConfig";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { useBrowserPreview } from "../../../../../../../hooks/useBrowserPreview";
 import type {
@@ -50,12 +52,21 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   const { i18n } = useLingui();
   const navigate = useNavigate();
   const { openPreview } = useBrowserPreview();
-  const { config } = useConfig();
+  const { config, updateConfig } = useConfig();
   const { isFlagEnabled } = useFeatureFlags();
   const isToolApprovalAvailable = isFlagEnabled("tool-approval");
   // Use session process permission mode if available, otherwise fall back to global config
   const permissionMode =
     sessionProcess?.permissionMode ?? config?.permissionMode ?? "default";
+
+  const fullView = !(config?.simplifiedView ?? false);
+
+  const handleFullViewChange = (checked: boolean) => {
+    updateConfig({
+      ...config,
+      simplifiedView: !checked,
+    });
+  };
 
   const handleStartNewChat = () => {
     navigate({
@@ -104,6 +115,19 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
         >
           <GlobeIcon className="w-3.5 h-3.5" />
         </Button>
+        <div className="flex items-center gap-1.5 h-7 px-2 text-xs bg-muted/20 rounded-lg border border-border/40">
+          <Switch
+            id="full-view-toggle"
+            checked={fullView}
+            onCheckedChange={handleFullViewChange}
+          />
+          <Label
+            htmlFor="full-view-toggle"
+            className="text-xs cursor-pointer select-none"
+          >
+            <Trans id="control.full_view" />
+          </Label>
+        </div>
         <Button
           type="button"
           variant="ghost"

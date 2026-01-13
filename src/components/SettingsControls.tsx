@@ -42,6 +42,7 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
   const permissionModeId = useId();
   const localeId = useId();
   const themeId = useId();
+  const simplifiedViewId = useId();
   const { config, updateConfig } = useConfig();
   const queryClient = useQueryClient();
   const { theme } = useTheme();
@@ -127,6 +128,14 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
     const newConfig = {
       ...config,
       theme: value,
+    };
+    updateConfig(newConfig);
+  };
+
+  const handleSimplifiedViewChange = async () => {
+    const newConfig = {
+      ...config,
+      simplifiedView: !config?.simplifiedView,
     };
     updateConfig(newConfig);
   };
@@ -349,6 +358,27 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
           </p>
         )}
       </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id={simplifiedViewId}
+          checked={config?.simplifiedView}
+          onCheckedChange={handleSimplifiedViewChange}
+        />
+        {showLabels && (
+          <label
+            htmlFor={simplifiedViewId}
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            <Trans id="settings.display.simplified_view" />
+          </label>
+        )}
+      </div>
+      {showDescriptions && (
+        <p className="text-xs text-muted-foreground mt-1 ml-6">
+          <Trans id="settings.display.simplified_view.description" />
+        </p>
+      )}
     </div>
   );
 };

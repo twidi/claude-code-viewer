@@ -1,10 +1,13 @@
 import type { FC } from "react";
+import { useConfig } from "@/app/hooks/useConfig";
 import type {
   Conversation,
   SidechainConversation,
 } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
+import type { AssistantMessageContent } from "@/lib/conversation-schema/message/AssistantMessageSchema";
 import { AssistantConversationContent } from "./AssistantConversationContent";
+import { CollapsedAssistantContent } from "./CollapsedAssistantContent";
 import { FileHistorySnapshotConversationContent } from "./FileHistorySnapshotConversationContent";
 import { MetaConversationContent } from "./MetaConversationContent";
 import { QueueOperationConversationContent } from "./QueueOperationConversationContent";
@@ -12,6 +15,36 @@ import { SummaryConversationContent } from "./SummaryConversationContent";
 import { SystemConversationContent } from "./SystemConversationContent";
 import { TurnDuration } from "./TurnDuration";
 import { UserConversationContent } from "./UserConversationContent";
+
+type ContentGroup = {
+  type: "text" | "collapsed";
+  contents: AssistantMessageContent[];
+};
+
+function groupAssistantContent(
+  contents: AssistantMessageContent[],
+): ContentGroup[] {
+  const groups: ContentGroup[] = [];
+  let currentCollapsed: AssistantMessageContent[] = [];
+
+  for (const content of contents) {
+    if (content.type === "text") {
+      if (currentCollapsed.length > 0) {
+        groups.push({ type: "collapsed", contents: currentCollapsed });
+        currentCollapsed = [];
+      }
+      groups.push({ type: "text", contents: [content] });
+    } else {
+      currentCollapsed.push(content);
+    }
+  }
+
+  if (currentCollapsed.length > 0) {
+    groups.push({ type: "collapsed", contents: currentCollapsed });
+  }
+
+  return groups;
+}
 
 export const ConversationItem: FC<{
   conversation: Conversation;
@@ -36,6 +69,8 @@ export const ConversationItem: FC<{
   projectId,
   sessionId,
 }) => {
+  const { config } = useConfig();
+  const simplifiedView = config?.simplifiedView ?? false;
   if (conversation.type === "summary") {
     return (
       <SummaryConversationContent>
@@ -91,6 +126,57 @@ export const ConversationItem: FC<{
 
   if (conversation.type === "assistant") {
     const turnDuration = getTurnDuration(conversation.uuid);
+
+    // In simplified view, group content: show text directly, collapse others
+    if (simplifiedView) {
+      const groups = groupAssistantContent(conversation.message.content);
+
+      // Don't render anything if no groups
+      if (groups.length === 0) {
+        return null;
+      }
+
+      return (
+        <ul className="w-full">
+          {groups.map((group, index) => {
+            const firstContent = group.contents[0];
+            if (firstContent === undefined) {
+              return null;
+            }
+            return (
+              <li key={`group-${index}-${group.type}`}>
+                {group.type === "text" ? (
+                  <AssistantConversationContent
+                    content={firstContent}
+                    getToolResult={getToolResult}
+                    getAgentIdForToolUse={getAgentIdForToolUse}
+                    getSidechainConversationByPrompt={
+                      getSidechainConversationByPrompt
+                    }
+                    getSidechainConversations={getSidechainConversations}
+                    projectId={projectId}
+                    sessionId={sessionId}
+                  />
+                ) : (
+                  <CollapsedAssistantContent
+                    contents={group.contents}
+                    getToolResult={getToolResult}
+                    getAgentIdForToolUse={getAgentIdForToolUse}
+                    getSidechainConversationByPrompt={
+                      getSidechainConversationByPrompt
+                    }
+                    getSidechainConversations={getSidechainConversations}
+                    projectId={projectId}
+                    sessionId={sessionId}
+                  />
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      );
+    }
+
     return (
       <div className="w-full">
         <ul className="w-full">

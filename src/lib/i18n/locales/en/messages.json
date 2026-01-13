@@ -126,7 +126,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        192
+        201
       ]
     ],
     "translation": "Select enter key behavior"
@@ -137,7 +137,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        303
+        312
       ]
     ],
     "translation": "Select language"
@@ -148,7 +148,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        260
+        269
       ]
     ],
     "translation": "Select permission mode"
@@ -159,7 +159,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        227
+        236
       ]
     ],
     "translation": "Select search hotkey"
@@ -170,7 +170,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        332
+        341
       ]
     ],
     "translation": "Select theme"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        657
+        648
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +354,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        669
+        660
       ]
     ],
     "translation": "Autocomplete Active"
@@ -628,11 +628,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        614
+        605
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        699
+        690
       ]
     ],
     "translation": "Send Now"
@@ -643,11 +643,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        597
+        588
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        682
+        673
       ]
     ],
     "translation": "Send Mode"
@@ -658,30 +658,30 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        617
+        608
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        711
+        702
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        737
+        728
       ]
     ],
     "translation": "Schedule Send"
   },
   "chat.send_mode.scheduled_disabled_with_attachments": {
-    "translation": "Scheduled (not available with attachments)",
     "message": "Scheduled (not available with attachments)",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        706
+        697
       ]
-    ]
+    ],
+    "translation": "Scheduled (not available with attachments)"
   },
   "chat.send_mode.scheduled_time": {
     "placeholders": {},
@@ -689,13 +689,12 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        624
+        615
       ]
     ],
     "translation": "Scheduled Send Time"
   },
   "chat.send_mode.switched_to_immediate": {
-    "translation": "Switched to immediate send (scheduled send doesn't support attachments)",
     "message": "Switched to immediate send (scheduled send doesn't support attachments)",
     "placeholders": {},
     "comments": [],
@@ -704,7 +703,8 @@
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
         333
       ]
-    ]
+    ],
+    "translation": "Switched to immediate send (scheduled send doesn't support attachments)"
   },
   "chat.send_options.abort.description": {
     "message": "Abort current session and restart with your message. Progress may be lost.",
@@ -808,7 +808,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        756
+        747
       ]
     ],
     "translation": "Processing..."
@@ -988,13 +988,24 @@
     ],
     "translation": "Branch"
   },
+  "control.full_view": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        128
+      ]
+    ],
+    "translation": "Full view"
+  },
   "control.git": {
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        89
+        100
       ]
     ],
     "translation": "Git"
@@ -1016,7 +1027,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        121
+        145
       ]
     ],
     "translation": "New"
@@ -1028,7 +1039,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        114
+        138
       ]
     ],
     "translation": "New Chat"
@@ -1040,7 +1051,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        100
+        111
       ]
     ],
     "translation": "Open Browser"
@@ -1052,7 +1063,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        82
+        93
       ]
     ],
     "translation": "Open Git Dialog"
@@ -1075,7 +1086,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        148
+        172
       ]
     ],
     "translation": "Scroll to Bottom"
@@ -1087,7 +1098,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        132
+        156
       ]
     ],
     "translation": "Scroll to Top"
@@ -1109,7 +1120,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ConversationList.tsx",
-        106
+        179
       ]
     ],
     "translation": "Raw Data: "
@@ -1120,7 +1131,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ConversationList.tsx",
-        99
+        172
       ]
     ],
     "translation": "Report This Issue"
@@ -1131,7 +1142,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ConversationList.tsx",
-        74
+        147
       ]
     ],
     "translation": "Schema Error"
@@ -1142,7 +1153,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ConversationList.tsx",
-        89
+        162
       ]
     ],
     "translation": "Schema Validation Error"
@@ -1153,7 +1164,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/conversationList/ConversationList.tsx",
-        92
+        165
       ]
     ],
     "translation": "Failed to parse this conversation entry. This may be due to format changes or parsing issues."
@@ -2168,7 +2179,6 @@
     "translation": "All projects"
   },
   "scheduler.form.attachments": {
-    "translation": "Attachments",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2176,7 +2186,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
         479
       ]
-    ]
+    ],
+    "translation": "Attachments"
   },
   "scheduler.form.concurrency_policy": {
     "placeholders": {},
@@ -2583,7 +2594,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        184
+        208
       ]
     ],
     "translation": "Abort"
@@ -2919,13 +2930,35 @@
     ],
     "translation": "Display and behavior settings"
   },
+  "settings.display.simplified_view": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        373
+      ]
+    ],
+    "translation": "Simplified View"
+  },
+  "settings.display.simplified_view.description": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        379
+      ]
+    ],
+    "translation": "Hide tool calls, system messages, and other non-essential content from conversations"
+  },
   "settings.input.enter_key_behavior": {
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        184
+        193
       ]
     ],
     "translation": "Enter Key Behavior"
@@ -2936,7 +2969,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        202
+        211
       ]
     ],
     "translation": "Send with Command+Enter"
@@ -2947,7 +2980,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        208
+        217
       ]
     ],
     "translation": "Select Enter key behavior for message input"
@@ -2958,7 +2991,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        199
+        208
       ]
     ],
     "translation": "Send with Enter"
@@ -2969,7 +3002,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        196
+        205
       ]
     ],
     "translation": "Send with Shift+Enter (Default)"
@@ -2980,7 +3013,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        219
+        228
       ]
     ],
     "translation": "Search Hotkey"
@@ -2991,7 +3024,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        234
+        243
       ]
     ],
     "translation": "Command+K"
@@ -3002,7 +3035,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        231
+        240
       ]
     ],
     "translation": "Ctrl+K"
@@ -3013,7 +3046,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        240
+        249
       ]
     ],
     "translation": "Select the hotkey to open search dialog"
@@ -3039,7 +3072,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        295
+        304
       ]
     ],
     "translation": "Language"
@@ -3050,7 +3083,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        319
+        328
       ]
     ],
     "translation": "Select your preferred language"
@@ -3061,7 +3094,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        310
+        319
       ]
     ],
     "translation": "English"
@@ -3072,7 +3105,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        307
+        316
       ]
     ],
     "translation": "Japanese"
@@ -3083,7 +3116,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        313
+        322
       ]
     ],
     "translation": "Chinese (Simplified)"
@@ -3105,7 +3138,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        251
+        260
       ]
     ],
     "translation": "Permission Mode"
@@ -3116,7 +3149,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        267
+        276
       ]
     ],
     "translation": "Accept Edits (Auto-approve file edits)"
@@ -3127,7 +3160,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        270
+        279
       ]
     ],
     "translation": "Bypass Permissions (No prompts)"
@@ -3138,7 +3171,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        264
+        273
       ]
     ],
     "translation": "Default (Confirm Permissions)"
@@ -3149,7 +3182,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        279
+        288
       ]
     ],
     "translation": "Control how file operation permission requests are handled"
@@ -3160,7 +3193,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        273
+        282
       ]
     ],
     "translation": "Plan Mode (Planning only)"
@@ -3171,7 +3204,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        284
+        293
       ]
     ],
     "translation": "This feature is not available in your Claude Code version. All tools are automatically approved."
@@ -3226,7 +3259,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        147
+        156
       ]
     ],
     "translation": "Hide Sessions Without User Messages"
@@ -3237,7 +3270,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        153
+        162
       ]
     ],
     "translation": "Show only sessions that contain user commands or messages"
@@ -3248,7 +3281,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        168
+        177
       ]
     ],
     "translation": "Unify Sessions with Same Title"
@@ -3259,7 +3292,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        174
+        183
       ]
     ],
     "translation": "When multiple sessions have the same title, show only the latest session"
@@ -3285,7 +3318,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        327
+        336
       ]
     ],
     "translation": "Theme"
@@ -3296,7 +3329,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        339
+        348
       ]
     ],
     "translation": "Dark"
@@ -3307,7 +3340,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        348
+        357
       ]
     ],
     "translation": "Select your preferred color theme"
@@ -3318,7 +3351,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        336
+        345
       ]
     ],
     "translation": "Light"
@@ -3329,7 +3362,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        342
+        351
       ]
     ],
     "translation": "System"
