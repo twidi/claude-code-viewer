@@ -168,7 +168,8 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       message: {
         content: messageContent,
         projectId: selectedProjectId,
-        baseSessionId: null,
+        // Preserve baseSessionId when editing, null for new jobs
+        baseSessionId: job?.message.baseSessionId ?? null,
       },
       enabled,
     };
