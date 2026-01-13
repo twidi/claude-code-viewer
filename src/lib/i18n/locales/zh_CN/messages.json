@@ -27,7 +27,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        170
+        176
       ]
     ],
     "translation": "关闭侧边栏"
@@ -697,11 +697,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        362
+        410
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        340
+        427
       ]
     ],
     "translation": "取消"
@@ -712,7 +712,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        373
+        421
       ]
     ],
     "translation": "创建"
@@ -723,7 +723,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        350
+        437
       ]
     ],
     "translation": "删除"
@@ -734,7 +734,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        348
+        435
       ]
     ],
     "translation": "删除中..."
@@ -784,7 +784,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        181
+        228
       ]
     ],
     "translation": "刷新"
@@ -795,7 +795,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        369
+        417
       ]
     ],
     "translation": "保存中..."
@@ -806,7 +806,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        371
+        419
       ]
     ],
     "translation": "更新"
@@ -1848,7 +1848,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        195
+        242
       ]
     ],
     "translation": "创建任务"
@@ -1859,7 +1859,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        328
+        415
       ]
     ],
     "translation": "确定要删除此定时任务吗?此操作无法撤销。"
@@ -1870,7 +1870,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        325
+        412
       ]
     ],
     "translation": "删除定时任务"
@@ -1881,7 +1881,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        176
+        193
       ]
     ],
     "translation": "配置定时任务以向 Claude Code 发送消息"
@@ -1892,7 +1892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        172
+        189
       ]
     ],
     "translation": "创建定时任务"
@@ -1903,7 +1903,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        170
+        187
       ]
     ],
     "translation": "编辑定时任务"
@@ -1918,10 +1918,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        217
+        290
       ]
     ],
     "translation": "加载定时任务失败:{error}"
+  },
+  "scheduler.filter.all_projects": {
+    "translation": "所有项目",
+    "message": "All projects",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
+        264
+      ]
+    ]
   },
   "scheduler.form.concurrency_policy": {
     "placeholders": {},
@@ -1929,7 +1941,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        331
+        379
       ]
     ],
     "translation": "并发策略"
@@ -1940,7 +1952,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        348
+        396
       ]
     ],
     "translation": "即使已在运行也执行"
@@ -1951,7 +1963,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        345
+        393
       ]
     ],
     "translation": "如果已在运行则跳过"
@@ -1962,7 +1974,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        185
+        233
       ]
     ],
     "translation": "启用"
@@ -1973,7 +1985,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        188
+        236
       ]
     ],
     "translation": "启用或禁用此定时任务"
@@ -1984,7 +1996,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        277
+        325
       ]
     ],
     "translation": "消息内容"
@@ -1996,7 +2008,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        296
+        344
       ]
     ],
     "translation": "带补全支持的消息输入(输入 / 使用命令,@ 使用文件)"
@@ -2007,7 +2019,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        323
+        371
       ]
     ],
     "translation": "输入 / 获取命令补全,@ 获取文件补全"
@@ -2019,7 +2031,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        288
+        336
       ]
     ],
     "translation": "输入要发送给 Claude Code 的消息...(输入 / 使用命令,@ 使用文件)"
@@ -2030,10 +2042,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        202
+        250
       ]
     ],
     "translation": "任务名称"
+  },
+  "scheduler.form.project": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
+        203
+      ]
+    ],
+    "translation": "项目:"
   },
   "scheduler.form.queued_notice": {
     "placeholders": {},
@@ -2041,7 +2064,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        224
+        272
       ]
     ],
     "translation": ""
@@ -2052,7 +2075,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        259
+        307
       ]
     ],
     "translation": "预定执行时间"
@@ -2063,7 +2086,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        269
+        317
       ]
     ],
     "translation": "将在指定的日期和时间执行一次,然后自动删除"
@@ -2074,7 +2097,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        219
+        267
       ]
     ],
     "translation": "调度类型"
@@ -2085,7 +2108,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        240
+        288
       ]
     ],
     "translation": "循环执行(Cron)"
@@ -2096,7 +2119,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        243
+        291
       ]
     ],
     "translation": "一次性执行"
@@ -2108,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        60
+        107
       ]
     ],
     "translation": "创建任务失败"
@@ -2120,7 +2143,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        51
+        98
       ]
     ],
     "translation": "任务创建成功"
@@ -2132,7 +2155,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        122
+        169
       ]
     ],
     "translation": "删除任务失败"
@@ -2144,7 +2167,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        112
+        159
       ]
     ],
     "translation": "任务删除成功"
@@ -2156,7 +2179,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        93
+        140
       ]
     ],
     "translation": "更新任务失败"
@@ -2168,7 +2191,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        83
+        130
       ]
     ],
     "translation": "任务更新成功"
@@ -2179,7 +2202,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        282
+        367
       ]
     ],
     "translation": "上次运行"
@@ -2190,10 +2213,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        226
+        299
       ]
     ],
     "translation": "暂无定时任务"
+  },
+  "scheduler.no_jobs_for_project": {
+    "translation": "该项目暂无定时任务",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
+        305
+      ]
+    ]
   },
   "scheduler.schedule.queued": {
     "message": "Queued: Waiting for session to pause",
@@ -2202,7 +2236,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        153
+        200
       ]
     ],
     "translation": ""
@@ -2213,7 +2247,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        250
+        329
       ]
     ],
     "translation": "已禁用"
@@ -2224,7 +2258,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        248
+        327
       ]
     ],
     "translation": "已启用"
@@ -2235,7 +2269,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        172
+        219
       ]
     ],
     "translation": "定时任务"
@@ -2665,7 +2699,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        119
+        125
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -2735,7 +2769,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        134
+        140
       ]
     ],
     "translation": "通知"
@@ -2856,7 +2890,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        127
+        133
       ]
     ],
     "translation": "会话显示"
@@ -2911,7 +2945,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        314
+        320
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -2992,11 +3026,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        194
+        200
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        129
+        135
       ]
     ],
     "translation": "返回项目列表"
@@ -3007,11 +3041,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        243
+        249
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        82
+        84
       ],
       [
         "src/app/projects/page.tsx",
@@ -3026,11 +3060,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        267
+        273
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        92
+        94
       ]
     ],
     "translation": "显示 MCP 服务器设置"
@@ -3041,11 +3075,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        291
+        297
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        98
+        100
       ]
     ],
     "translation": "显示定时任务"
@@ -3056,11 +3090,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        219
+        225
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        69
+        71
       ]
     ],
     "translation": "显示会话列表"
@@ -3071,7 +3105,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        336
+        342
       ]
     ],
     "translation": "显示系统信息"

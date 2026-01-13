@@ -1,17 +1,36 @@
 import { Context, Effect, Layer } from "effect";
 import type { ControllerResponse } from "../../../lib/effect/toEffectResponse";
 import type { InferEffect } from "../../../lib/effect/types";
+import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
 import { SchedulerService } from "../domain/Scheduler";
-import type { NewSchedulerJob, UpdateSchedulerJob } from "../schema";
+import type {
+  EnrichedSchedulerJob,
+  NewSchedulerJob,
+  UpdateSchedulerJob,
+} from "../schema";
 
 const LayerImpl = Effect.gen(function* () {
   const schedulerService = yield* SchedulerService;
+  const projectRepository = yield* ProjectRepository;
 
   const getJobs = () =>
     Effect.gen(function* () {
       const jobs = yield* schedulerService.getJobs();
+
+      // Get all projects to build a lookup map
+      const { projects } = yield* projectRepository.getProjects();
+      const projectNameMap = new Map(
+        projects.map((p) => [p.id, p.meta.projectName]),
+      );
+
+      // Enrich jobs with project info
+      const enrichedJobs: EnrichedSchedulerJob[] = jobs.map((job) => ({
+        ...job,
+        projectName: projectNameMap.get(job.message.projectId) ?? null,
+      }));
+
       return {
-        response: jobs,
+        response: enrichedJobs,
         status: 200,
       } as const satisfies ControllerResponse;
     });

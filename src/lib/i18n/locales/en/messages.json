@@ -27,7 +27,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        170
+        176
       ]
     ],
     "translation": "Close Sidebar"
@@ -697,11 +697,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        362
+        410
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        340
+        427
       ]
     ],
     "translation": "common.cancel"
@@ -712,7 +712,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        373
+        421
       ]
     ],
     "translation": "Create"
@@ -723,7 +723,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        350
+        437
       ]
     ],
     "translation": "Delete"
@@ -734,7 +734,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        348
+        435
       ]
     ],
     "translation": "Deleting..."
@@ -784,7 +784,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        181
+        228
       ]
     ],
     "translation": "Reload"
@@ -795,7 +795,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        369
+        417
       ]
     ],
     "translation": "Saving..."
@@ -806,7 +806,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        371
+        419
       ]
     ],
     "translation": "Update"
@@ -1848,7 +1848,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        195
+        242
       ]
     ],
     "translation": "Create Job"
@@ -1859,7 +1859,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        328
+        415
       ]
     ],
     "translation": "Are you sure you want to delete this scheduler job? This action cannot be undone."
@@ -1870,7 +1870,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        325
+        412
       ]
     ],
     "translation": "Delete Scheduler Job"
@@ -1881,7 +1881,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        176
+        193
       ]
     ],
     "translation": "Configure a scheduled job to send messages to Claude Code"
@@ -1892,7 +1892,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        172
+        189
       ]
     ],
     "translation": "Create Scheduled Job"
@@ -1903,7 +1903,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        170
+        187
       ]
     ],
     "translation": "Edit Scheduled Job"
@@ -1918,10 +1918,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        217
+        290
       ]
     ],
     "translation": "Failed to load scheduler jobs: {error}"
+  },
+  "scheduler.filter.all_projects": {
+    "translation": "All projects",
+    "message": "All projects",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
+        264
+      ]
+    ]
   },
   "scheduler.form.concurrency_policy": {
     "placeholders": {},
@@ -1929,7 +1941,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        331
+        379
       ]
     ],
     "translation": "Concurrency Policy"
@@ -1940,7 +1952,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        348
+        396
       ]
     ],
     "translation": "Run even if already running"
@@ -1951,7 +1963,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        345
+        393
       ]
     ],
     "translation": "Skip if already running"
@@ -1962,7 +1974,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        185
+        233
       ]
     ],
     "translation": "Enable"
@@ -1973,7 +1985,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        188
+        236
       ]
     ],
     "translation": "Enable or disable this scheduled job"
@@ -1984,7 +1996,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        277
+        325
       ]
     ],
     "translation": "Message Content"
@@ -1996,7 +2008,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        296
+        344
       ]
     ],
     "translation": "Message input with completion support (/ for commands, @ for files)"
@@ -2007,7 +2019,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        323
+        371
       ]
     ],
     "translation": "/ for command completion, @ for file completion"
@@ -2019,7 +2031,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        288
+        336
       ]
     ],
     "translation": "Type message to send to Claude Code... (/ for commands, @ for files)"
@@ -2030,10 +2042,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        202
+        250
       ]
     ],
     "translation": "Job Name"
+  },
+  "scheduler.form.project": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
+        203
+      ]
+    ],
+    "translation": "Project:"
   },
   "scheduler.form.queued_notice": {
     "placeholders": {},
@@ -2041,7 +2064,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        224
+        272
       ]
     ],
     "translation": "scheduler.form.queued_notice"
@@ -2052,7 +2075,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        259
+        307
       ]
     ],
     "translation": "Scheduled Execution Time"
@@ -2063,7 +2086,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        269
+        317
       ]
     ],
     "translation": "Will be executed once at the specified date and time, then automatically deleted"
@@ -2074,7 +2097,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        219
+        267
       ]
     ],
     "translation": "Schedule Type"
@@ -2085,7 +2108,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        240
+        288
       ]
     ],
     "translation": "Recurring (Cron)"
@@ -2096,7 +2119,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/scheduler/SchedulerJobDialog.tsx",
-        243
+        291
       ]
     ],
     "translation": "One-time Execution"
@@ -2108,7 +2131,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        60
+        107
       ]
     ],
     "translation": "Failed to create job"
@@ -2120,7 +2143,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        51
+        98
       ]
     ],
     "translation": "Job created successfully"
@@ -2132,7 +2155,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        122
+        169
       ]
     ],
     "translation": "Failed to delete job"
@@ -2144,7 +2167,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        112
+        159
       ]
     ],
     "translation": "Job deleted successfully"
@@ -2156,7 +2179,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        93
+        140
       ]
     ],
     "translation": "Failed to update job"
@@ -2168,7 +2191,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        83
+        130
       ]
     ],
     "translation": "Job updated successfully"
@@ -2179,7 +2202,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        282
+        367
       ]
     ],
     "translation": "Last Run"
@@ -2190,10 +2213,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        226
+        299
       ]
     ],
     "translation": "No scheduler jobs"
+  },
+  "scheduler.no_jobs_for_project": {
+    "translation": "No scheduled jobs for this project",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
+        305
+      ]
+    ]
   },
   "scheduler.schedule.queued": {
     "message": "Queued: Waiting for session to pause",
@@ -2202,7 +2236,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        153
+        200
       ]
     ],
     "translation": "Queued: Waiting for session to pause"
@@ -2213,7 +2247,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        250
+        329
       ]
     ],
     "translation": "Disabled"
@@ -2224,7 +2258,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        248
+        327
       ]
     ],
     "translation": "Enabled"
@@ -2235,7 +2269,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
-        172
+        219
       ]
     ],
     "translation": "Scheduler"
@@ -2665,7 +2699,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        119
+        125
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -2735,7 +2769,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        134
+        140
       ]
     ],
     "translation": "Notifications"
@@ -2856,7 +2890,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        127
+        133
       ]
     ],
     "translation": "Session Display"
@@ -2911,7 +2945,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        314
+        320
       ],
       [
         "src/components/GlobalSidebar.tsx",
@@ -2992,11 +3026,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        194
+        200
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        129
+        135
       ]
     ],
     "translation": "Back to Projects"
@@ -3007,11 +3041,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        243
+        249
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        82
+        84
       ],
       [
         "src/app/projects/page.tsx",
@@ -3026,11 +3060,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        267
+        273
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        92
+        94
       ]
     ],
     "translation": "Show MCP Server Settings"
@@ -3041,11 +3075,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        291
+        297
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        98
+        100
       ]
     ],
     "translation": "Show Scheduler Jobs"
@@ -3056,11 +3090,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        219
+        225
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionSidebar.tsx",
-        69
+        71
       ]
     ],
     "translation": "Show Session List"
@@ -3071,7 +3105,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/MobileSidebar.tsx",
-        336
+        342
       ]
     ],
     "translation": "Show System Information"

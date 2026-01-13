@@ -32,6 +32,7 @@ import type { Tab } from "./schema";
 interface MobileSidebarProps {
   currentSessionId: string;
   projectId: string;
+  projectName: string;
   isOpen: boolean;
   onClose: () => void;
   initialTab: Tab;
@@ -41,6 +42,7 @@ interface MobileSidebarProps {
 export const MobileSidebar: FC<MobileSidebarProps> = ({
   currentSessionId,
   projectId,
+  projectName,
   isOpen,
   onClose,
   initialTab,
@@ -107,7 +109,11 @@ export const MobileSidebar: FC<MobileSidebarProps> = ({
         return <McpTab projectId={projectId} />;
       case "scheduler":
         return (
-          <SchedulerTab projectId={projectId} sessionId={currentSessionId} />
+          <SchedulerTab
+            projectId={projectId}
+            sessionId={currentSessionId}
+            projectName={projectName}
+          />
         );
       case "settings":
         return (

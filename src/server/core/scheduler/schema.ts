@@ -64,6 +64,13 @@ export type ConcurrencyPolicy = z.infer<typeof concurrencyPolicySchema>;
 export type SchedulerJob = z.infer<typeof schedulerJobSchema>;
 export type SchedulerConfig = z.infer<typeof schedulerConfigSchema>;
 
+// Enriched job with project info (for API responses)
+export const enrichedSchedulerJobSchema = schedulerJobSchema.extend({
+  projectName: z.string().nullable(),
+});
+
+export type EnrichedSchedulerJob = z.infer<typeof enrichedSchedulerJobSchema>;
+
 // New job creation schema (without runtime fields)
 export const newSchedulerJobSchema = schedulerJobSchema
   .omit({

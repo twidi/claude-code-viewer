@@ -1,7 +1,9 @@
 import { Trans, useLingui } from "@lingui/react";
+import { FolderIcon } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
 import { InlineCompletion } from "@/app/projects/[projectId]/components/chatForm/InlineCompletion";
 import { useMessageCompletion } from "@/app/projects/[projectId]/components/chatForm/useMessageCompletion";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,16 +25,26 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type {
+  EnrichedSchedulerJob,
   NewSchedulerJob,
-  SchedulerJob,
 } from "@/server/core/scheduler/schema";
 import { CronExpressionBuilder } from "./CronExpressionBuilder";
+
+/** Minimal project info needed for the project selector */
+type ProjectOption = {
+  id: string;
+  meta: {
+    projectName: string | null;
+  };
+};
 
 export interface SchedulerJobDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  job: SchedulerJob | null;
+  job: EnrichedSchedulerJob | null;
   projectId: string;
+  projectName: string;
+  projects: ProjectOption[];
   currentSessionId: string;
   onSubmit: (job: NewSchedulerJob) => void;
   isSubmitting?: boolean;
@@ -43,12 +55,15 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   onOpenChange,
   job,
   projectId,
+  projectName,
+  projects,
   onSubmit,
   isSubmitting = false,
 }) => {
   const { _, i18n } = useLingui();
 
   const [name, setName] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId);
   const [scheduleType, setScheduleType] = useState<
     "cron" | "reserved" | "queued"
   >("cron");
@@ -71,6 +86,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   useEffect(() => {
     if (job) {
       setName(job.name);
+      setSelectedProjectId(job.message.projectId);
       setScheduleType(job.schedule.type);
       if (job.schedule.type === "cron") {
         setCronExpression(job.schedule.expression);
@@ -90,6 +106,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
     } else {
       // Reset form for new job
       setName("");
+      setSelectedProjectId(projectId);
       setScheduleType("cron");
       setCronExpression("0 9 * * *");
       const now = new Date();
@@ -104,7 +121,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       setEnabled(true);
       setConcurrencyPolicy("skip");
     }
-  }, [job]);
+  }, [job, projectId]);
 
   const handleSubmit = () => {
     // Determine the schedule based on type
@@ -150,7 +167,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       schedule,
       message: {
         content: messageContent,
-        projectId,
+        projectId: selectedProjectId,
         baseSessionId: null,
       },
       enabled,
@@ -178,6 +195,37 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Project Selection (create mode) or Info (edit mode) */}
+          <div className="flex items-center gap-2 rounded-lg border p-3 bg-muted/50">
+            <FolderIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="text-sm text-muted-foreground flex-shrink-0">
+                <Trans id="scheduler.form.project" />
+              </span>
+              {job ? (
+                <Badge variant="secondary" className="truncate">
+                  {job.projectName ?? projectName}
+                </Badge>
+              ) : (
+                <Select
+                  value={selectedProjectId}
+                  onValueChange={setSelectedProjectId}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger className="flex-1 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.meta.projectName ?? project.id}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
           {/* Enabled Toggle */}
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">

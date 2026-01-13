@@ -28,6 +28,7 @@ import { type Tab, tabSchema } from "./schema";
 export const SessionSidebar: FC<{
   currentSessionId?: string;
   projectId: string;
+  projectName: string;
   className?: string;
   isMobileOpen?: boolean;
   onMobileOpenChange?: (open: boolean) => void;
@@ -35,6 +36,7 @@ export const SessionSidebar: FC<{
 }> = ({
   currentSessionId,
   projectId,
+  projectName,
   className,
   isMobileOpen = false,
   onMobileOpenChange,
@@ -97,11 +99,15 @@ export const SessionSidebar: FC<{
         icon: CalendarClockIcon,
         title: <Trans id="sidebar.show.scheduler.jobs" />,
         content: (
-          <SchedulerTab projectId={projectId} sessionId={activeSessionId} />
+          <SchedulerTab
+            projectId={projectId}
+            sessionId={activeSessionId}
+            projectName={projectName}
+          />
         ),
       },
     ],
-    [activeSessionId, projectId],
+    [activeSessionId, projectId, projectName],
   );
 
   return (
@@ -139,6 +145,7 @@ export const SessionSidebar: FC<{
       <MobileSidebar
         currentSessionId={activeSessionId}
         projectId={projectId}
+        projectName={projectName}
         isOpen={isMobileOpen}
         onClose={() => onMobileOpenChange?.(false)}
         initialTab={initialTab}

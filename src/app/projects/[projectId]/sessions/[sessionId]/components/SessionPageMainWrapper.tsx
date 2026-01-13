@@ -29,6 +29,7 @@ export const SessionPageMainWrapper: FC<{
   const project = firstPage.project;
 
   const projectPath = project.meta.projectPath ?? project.claudeProjectPath;
+  const projectName = project.meta.projectName ?? "Untitled Project";
   const currentBranch = revisionsData?.success
     ? revisionsData.data.currentBranch?.name
     : undefined;
@@ -39,6 +40,7 @@ export const SessionPageMainWrapper: FC<{
         <SessionSidebar
           currentSessionId={sessionId}
           projectId={projectId}
+          projectName={projectName}
           isMobileOpen={isMobileSidebarOpen}
           onMobileOpenChange={setIsMobileSidebarOpen}
           initialTab={tab}
@@ -53,7 +55,7 @@ export const SessionPageMainWrapper: FC<{
           projectPath={projectPath}
           currentBranch={currentBranch}
           revisionsData={revisionsData}
-          projectName={project.meta.projectName ?? "Untitled Project"}
+          projectName={projectName}
         />
       </Suspense>
     </>
