@@ -10,12 +10,14 @@ import {
 } from "@/components/ui/collapsible";
 import type { Conversation } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
+import type { AssistantMessageContent } from "@/lib/conversation-schema/message/AssistantMessageSchema";
 import type { UserMessageContent } from "@/lib/conversation-schema/message/UserMessageSchema";
 import { calculateDuration } from "@/lib/date/formatDuration";
 import type { SchedulerJob } from "@/server/core/scheduler/schema";
 import type { ErrorJsonl } from "../../../../../../../server/core/types";
 import { useSidechain } from "../../hooks/useSidechain";
-import { CollapsedConversations } from "./CollapsedConversations";
+import { AssistantConversationContent } from "./AssistantConversationContent";
+import { CollapsedContents } from "./CollapsedContents";
 import { ConversationItem } from "./ConversationItem";
 import { ScheduledMessageNotice } from "./ScheduledMessageNotice";
 
@@ -25,11 +27,12 @@ export type AssistantConversation = Extract<
 >;
 
 /**
- * Check if an assistant message has any text content
+ * A content item with its source conversation UUID for keying
  */
-const hasTextContent = (conversation: Conversation): boolean => {
-  if (conversation.type !== "assistant") return false;
-  return conversation.message.content.some((c) => c.type === "text");
+export type ContentWithUuid = {
+  content: AssistantMessageContent;
+  uuid: string;
+  contentIndex: number;
 };
 
 /**
@@ -48,45 +51,98 @@ const isToolResultContent = (
   );
 };
 
-type ConversationGroup =
-  | { type: "single"; conversation: Conversation | ErrorJsonl }
-  | { type: "collapsed"; conversations: AssistantConversation[] };
+/**
+ * Simplified view element types:
+ * - user: A user message (not tool_result)
+ * - text: A single text content from an assistant message
+ * - collapsed: A group of non-text contents from assistant messages
+ */
+type SimplifiedViewElement =
+  | {
+      type: "user";
+      conversation: Extract<Conversation, { type: "user" }>;
+    }
+  | {
+      type: "text";
+      content: AssistantMessageContent;
+      uuid: string;
+      contentIndex: number;
+    }
+  | {
+      type: "collapsed";
+      contents: ContentWithUuid[];
+    };
 
 /**
- * Group consecutive assistant messages that have no text content
+ * Add a non-text content to the last collapsed group if it exists,
+ * otherwise create a new collapsed group
  */
-const groupConversationsForSimplifiedView = (
+const addToOrCreateCollapsedElement = (
+  elements: SimplifiedViewElement[],
+  content: AssistantMessageContent,
+  uuid: string,
+  contentIndex: number,
+): void => {
+  const lastElement = elements[elements.length - 1];
+  if (lastElement?.type === "collapsed") {
+    // Merge with existing collapsed group
+    lastElement.contents.push({ content, uuid, contentIndex });
+  } else {
+    // Create new collapsed group
+    elements.push({
+      type: "collapsed",
+      contents: [{ content, uuid, contentIndex }],
+    });
+  }
+};
+
+/**
+ * Build simplified view elements from filtered conversations.
+ * - User messages become "user" elements
+ * - Assistant text contents become "text" elements
+ * - Assistant non-text contents (tools, thinking) are grouped into "collapsed" elements
+ *
+ * Non-text contents from messages with text are grouped with non-text contents
+ * from subsequent messages, ensuring proper grouping even in live mode.
+ */
+const buildSimplifiedViewElements = (
   conversations: (Conversation | ErrorJsonl)[],
-): ConversationGroup[] => {
-  const groups: ConversationGroup[] = [];
-  let currentCollapsed: AssistantConversation[] = [];
+): SimplifiedViewElement[] => {
+  const elements: SimplifiedViewElement[] = [];
 
   for (const conv of conversations) {
-    // Errors and non-assistant messages break the collapsed group
-    if (conv.type === "x-error" || conv.type !== "assistant") {
-      if (currentCollapsed.length > 0) {
-        groups.push({ type: "collapsed", conversations: currentCollapsed });
-        currentCollapsed = [];
+    // Skip errors
+    if (conv.type === "x-error") continue;
+
+    // Handle user messages
+    if (conv.type === "user") {
+      elements.push({ type: "user", conversation: conv });
+      continue;
+    }
+
+    // Handle assistant messages - split into text and non-text contents
+    if (conv.type === "assistant") {
+      for (let i = 0; i < conv.message.content.length; i++) {
+        const content = conv.message.content[i];
+        if (content === undefined) continue;
+
+        if (content.type === "text") {
+          // Text content becomes its own element
+          elements.push({
+            type: "text",
+            content,
+            uuid: conv.uuid,
+            contentIndex: i,
+          });
+        } else {
+          // Non-text content goes into collapsed group
+          addToOrCreateCollapsedElement(elements, content, conv.uuid, i);
+        }
       }
-      groups.push({ type: "single", conversation: conv });
-    } else if (hasTextContent(conv)) {
-      // Assistant with text content breaks the collapsed group
-      if (currentCollapsed.length > 0) {
-        groups.push({ type: "collapsed", conversations: currentCollapsed });
-        currentCollapsed = [];
-      }
-      groups.push({ type: "single", conversation: conv });
-    } else {
-      // Assistant without text content - add to collapsed group
-      currentCollapsed.push(conv);
     }
   }
 
-  if (currentCollapsed.length > 0) {
-    groups.push({ type: "collapsed", conversations: currentCollapsed });
-  }
-
-  return groups;
+  return elements;
 };
 
 /**
@@ -245,12 +301,12 @@ export const ConversationList: FC<ConversationListProps> = ({
     });
   }, [conversations, simplifiedView]);
 
-  // In simplified view, group consecutive assistant messages that have no text content
-  const groupedConversations = useMemo(() => {
+  // In simplified view, build elements with proper content grouping
+  const simplifiedViewElements = useMemo(() => {
     if (!simplifiedView) {
       return null;
     }
-    return groupConversationsForSimplifiedView(filteredConversations);
+    return buildSimplifiedViewElements(filteredConversations);
   }, [filteredConversations, simplifiedView]);
   const {
     isRootSidechain,
@@ -417,23 +473,55 @@ export const ConversationList: FC<ConversationListProps> = ({
     );
   };
 
-  // Render grouped conversations in simplified view
-  if (simplifiedView && groupedConversations) {
+  // Render simplified view with properly grouped elements
+  if (simplifiedView && simplifiedViewElements) {
     return (
       <>
         <ul>
-          {groupedConversations.map((group) => {
-            if (group.type === "collapsed") {
-              const firstConv = group.conversations[0];
+          {simplifiedViewElements.map((element, index) => {
+            if (element.type === "user") {
+              return renderConversation(element.conversation);
+            }
+
+            if (element.type === "text") {
+              // Render text content directly
+              return (
+                <li
+                  key={`text-${element.uuid}-${element.contentIndex}`}
+                  className="w-full flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300"
+                >
+                  <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
+                    <ul className="w-full">
+                      <li>
+                        <AssistantConversationContent
+                          content={element.content}
+                          getToolResult={getToolResult}
+                          getAgentIdForToolUse={getAgentIdForToolUse}
+                          getSidechainConversationByPrompt={
+                            getSidechainConversationByPrompt
+                          }
+                          getSidechainConversations={getSidechainConversations}
+                          projectId={projectId}
+                          sessionId={sessionId}
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              );
+            }
+
+            if (element.type === "collapsed") {
+              const firstContent = element.contents[0];
               const key =
-                firstConv !== undefined
-                  ? `collapsed-${firstConv.uuid}`
-                  : `collapsed-empty`;
+                firstContent !== undefined
+                  ? `collapsed-${firstContent.uuid}-${firstContent.contentIndex}`
+                  : `collapsed-${index}`;
               return (
                 <li key={key} className="w-full flex justify-start">
                   <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
-                    <CollapsedConversations
-                      conversations={group.conversations}
+                    <CollapsedContents
+                      contents={element.contents}
                       getToolResult={getToolResult}
                       getAgentIdForToolUse={getAgentIdForToolUse}
                       getSidechainConversations={getSidechainConversations}
@@ -447,7 +535,8 @@ export const ConversationList: FC<ConversationListProps> = ({
                 </li>
               );
             }
-            return renderConversation(group.conversation);
+
+            return null;
           })}
         </ul>
         <ScheduledMessageNotice

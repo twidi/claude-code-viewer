@@ -5,9 +5,7 @@ import type {
   SidechainConversation,
 } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
-import type { AssistantMessageContent } from "@/lib/conversation-schema/message/AssistantMessageSchema";
 import { AssistantConversationContent } from "./AssistantConversationContent";
-import { CollapsedAssistantContent } from "./CollapsedAssistantContent";
 import { FileHistorySnapshotConversationContent } from "./FileHistorySnapshotConversationContent";
 import { MetaConversationContent } from "./MetaConversationContent";
 import { QueueOperationConversationContent } from "./QueueOperationConversationContent";
@@ -15,36 +13,6 @@ import { SummaryConversationContent } from "./SummaryConversationContent";
 import { SystemConversationContent } from "./SystemConversationContent";
 import { TurnDuration } from "./TurnDuration";
 import { UserConversationContent } from "./UserConversationContent";
-
-type ContentGroup = {
-  type: "text" | "collapsed";
-  contents: AssistantMessageContent[];
-};
-
-function groupAssistantContent(
-  contents: AssistantMessageContent[],
-): ContentGroup[] {
-  const groups: ContentGroup[] = [];
-  let currentCollapsed: AssistantMessageContent[] = [];
-
-  for (const content of contents) {
-    if (content.type === "text") {
-      if (currentCollapsed.length > 0) {
-        groups.push({ type: "collapsed", contents: currentCollapsed });
-        currentCollapsed = [];
-      }
-      groups.push({ type: "text", contents: [content] });
-    } else {
-      currentCollapsed.push(content);
-    }
-  }
-
-  if (currentCollapsed.length > 0) {
-    groups.push({ type: "collapsed", contents: currentCollapsed });
-  }
-
-  return groups;
-}
 
 export const ConversationItem: FC<{
   conversation: Conversation;
@@ -127,52 +95,34 @@ export const ConversationItem: FC<{
   if (conversation.type === "assistant") {
     const turnDuration = getTurnDuration(conversation.uuid);
 
-    // In simplified view, group content: show text directly, collapse others
+    // In simplified view, only show text content - tools are handled at ConversationList level
     if (simplifiedView) {
-      const groups = groupAssistantContent(conversation.message.content);
+      const textContents = conversation.message.content.filter(
+        (c) => c.type === "text",
+      );
 
-      // Don't render anything if no groups
-      if (groups.length === 0) {
+      // Don't render anything if no text content
+      if (textContents.length === 0) {
         return null;
       }
 
       return (
         <ul className="w-full">
-          {groups.map((group, index) => {
-            const firstContent = group.contents[0];
-            if (firstContent === undefined) {
-              return null;
-            }
-            return (
-              <li key={`group-${index}-${group.type}`}>
-                {group.type === "text" ? (
-                  <AssistantConversationContent
-                    content={firstContent}
-                    getToolResult={getToolResult}
-                    getAgentIdForToolUse={getAgentIdForToolUse}
-                    getSidechainConversationByPrompt={
-                      getSidechainConversationByPrompt
-                    }
-                    getSidechainConversations={getSidechainConversations}
-                    projectId={projectId}
-                    sessionId={sessionId}
-                  />
-                ) : (
-                  <CollapsedAssistantContent
-                    contents={group.contents}
-                    getToolResult={getToolResult}
-                    getAgentIdForToolUse={getAgentIdForToolUse}
-                    getSidechainConversationByPrompt={
-                      getSidechainConversationByPrompt
-                    }
-                    getSidechainConversations={getSidechainConversations}
-                    projectId={projectId}
-                    sessionId={sessionId}
-                  />
-                )}
-              </li>
-            );
-          })}
+          {textContents.map((content) => (
+            <li key={content.toString()}>
+              <AssistantConversationContent
+                content={content}
+                getToolResult={getToolResult}
+                getAgentIdForToolUse={getAgentIdForToolUse}
+                getSidechainConversationByPrompt={
+                  getSidechainConversationByPrompt
+                }
+                getSidechainConversations={getSidechainConversations}
+                projectId={projectId}
+                sessionId={sessionId}
+              />
+            </li>
+          ))}
         </ul>
       );
     }

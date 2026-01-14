@@ -6,11 +6,11 @@ import {
 } from "@/components/ui/collapsible";
 import type { SidechainConversation } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
-import type { AssistantMessageContent } from "@/lib/conversation-schema/message/AssistantMessageSchema";
 import { AssistantConversationContent } from "./AssistantConversationContent";
+import type { ContentWithUuid } from "./ConversationList";
 
-type CollapsedAssistantContentProps = {
-  contents: AssistantMessageContent[];
+type CollapsedContentsProps = {
+  contents: ContentWithUuid[];
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   getAgentIdForToolUse: (toolUseId: string) => string | undefined;
   getSidechainConversationByPrompt: (
@@ -21,7 +21,7 @@ type CollapsedAssistantContentProps = {
   sessionId: string;
 };
 
-export const CollapsedAssistantContent: FC<CollapsedAssistantContentProps> = ({
+export const CollapsedContents: FC<CollapsedContentsProps> = ({
   contents,
   getToolResult,
   getAgentIdForToolUse,
@@ -31,6 +31,10 @@ export const CollapsedAssistantContent: FC<CollapsedAssistantContentProps> = ({
   sessionId,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  if (contents.length === 0) {
+    return null;
+  }
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -44,8 +48,8 @@ export const CollapsedAssistantContent: FC<CollapsedAssistantContentProps> = ({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <ul className="w-full border-l-2 border-muted ml-1 pl-2 mt-1">
-          {contents.map((content) => (
-            <li key={content.toString()}>
+          {contents.map(({ content, uuid, contentIndex }) => (
+            <li key={`${uuid}-${contentIndex}`} className="w-full">
               <AssistantConversationContent
                 content={content}
                 getToolResult={getToolResult}
