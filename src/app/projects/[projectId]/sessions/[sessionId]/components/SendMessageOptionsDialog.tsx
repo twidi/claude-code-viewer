@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/react";
-import { AlertTriangleIcon, LoaderIcon } from "lucide-react";
-import { type FC, useState } from "react";
+import { AlertTriangleIcon, CheckCircleIcon, LoaderIcon } from "lucide-react";
+import type { FC } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,6 +21,12 @@ export interface SendMessageOptionsDialogProps {
   onOpenChange: (open: boolean) => void;
   onConfirm: (option: SendMessageOption) => void;
   isLoading: boolean;
+  /** When true, shows the "session became available" UI instead of the normal options */
+  sessionBecameAvailable?: boolean;
+  /** Called when user clicks "Send Now" in sessionBecameAvailable mode */
+  onSendNow?: () => void;
+  /** Called when user clicks "Cancel" in sessionBecameAvailable mode (restores message) */
+  onCancelWithRestore?: () => void;
 }
 
 export const SendMessageOptionsDialog: FC<SendMessageOptionsDialogProps> = ({
@@ -27,6 +34,9 @@ export const SendMessageOptionsDialog: FC<SendMessageOptionsDialogProps> = ({
   onOpenChange,
   onConfirm,
   isLoading,
+  sessionBecameAvailable = false,
+  onSendNow,
+  onCancelWithRestore,
 }) => {
   const [selectedOption, setSelectedOption] =
     useState<SendMessageOption>("inject");
@@ -35,6 +45,63 @@ export const SendMessageOptionsDialog: FC<SendMessageOptionsDialogProps> = ({
     onConfirm(selectedOption);
   };
 
+  // Session became available mode - simpler UI
+  if (sessionBecameAvailable) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              <Trans
+                id="chat.send_options.session_available.title"
+                message="Session is now available"
+              />
+            </DialogTitle>
+            <DialogDescription>
+              <Trans
+                id="chat.send_options.session_available.description"
+                message="Claude finished while you were choosing. Would you like to send your message now?"
+              />
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            {!isLoading && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onCancelWithRestore}
+              >
+                <Trans
+                  id="chat.send_options.session_available.cancel"
+                  message="No, keep editing"
+                />
+              </Button>
+            )}
+            <Button type="button" onClick={onSendNow} disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <LoaderIcon className="h-4 w-4 animate-spin" />
+                  <Trans
+                    id="chat.send_options.session_available.sending"
+                    message="Sending..."
+                  />
+                </>
+              ) : (
+                <Trans
+                  id="chat.send_options.session_available.send"
+                  message="Send now"
+                />
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Normal mode - show all options
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">

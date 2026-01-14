@@ -70,6 +70,16 @@ export interface ChatInputProps {
    * The actual queuing behavior is handled by the parent via onSubmit.
    */
   showQueueOption?: boolean;
+  /**
+   * Message to restore to the input (e.g., when user cancels a dialog).
+   * When set, the message text will be populated into the input.
+   */
+  restoredMessage?: MessageInput | null;
+  /**
+   * Callback when the restored message has been applied.
+   * Parent should clear restoredMessage after this is called.
+   */
+  onMessageRestored?: () => void;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -86,6 +96,8 @@ export const ChatInput: FC<ChatInputProps> = ({
   enableScheduledSend = false,
   baseSessionId = null,
   showQueueOption = false,
+  restoredMessage = null,
+  onMessageRestored,
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -163,6 +175,17 @@ export const ChatInput: FC<ChatInputProps> = ({
     // Set initial height to minHeight value
     textarea.style.height = `${minHeightValue}px`;
   }, [minHeightValue]);
+
+  // Restore message when restoredMessage prop is set
+  useEffect(() => {
+    if (restoredMessage) {
+      setMessage(restoredMessage.text);
+      setDraft(restoredMessage.text);
+      // TODO: Also restore images/documents if needed
+      onMessageRestored?.();
+      textareaRef.current?.focus();
+    }
+  }, [restoredMessage, onMessageRestored, setDraft]);
 
   // Global drag listeners to detect when files are dragged anywhere on the page
   useEffect(() => {

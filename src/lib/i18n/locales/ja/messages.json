@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        634
+        657
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        720
+        743
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +354,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        732
+        755
       ]
     ],
     "translation": "オートコンプリート有効"
@@ -376,7 +376,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        576
+        599
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -388,7 +388,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        137
+        159
       ]
     ],
     "translation": "セッションの停止に失敗しました"
@@ -400,7 +400,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        129
+        151
       ]
     ],
     "translation": "メッセージの送信に失敗しました"
@@ -412,10 +412,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        64
+        81
       ]
     ],
     "translation": "メッセージをClaudeに送信しました"
+  },
+  "chat.message.send_failed": {
+    "message": "Failed to send message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        188
+      ]
+    ],
+    "translation": ""
   },
   "chat.modal.title": {
     "placeholders": {},
@@ -451,7 +463,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        190
+        252
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -467,7 +479,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        183
+        245
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -483,7 +495,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        196
+        258
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -535,7 +547,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        73
+        90
       ]
     ],
     "translation": ""
@@ -547,7 +559,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        91
+        108
       ]
     ],
     "translation": ""
@@ -559,7 +571,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        96
+        113
       ]
     ],
     "translation": ""
@@ -582,7 +594,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        292
+        315
       ]
     ],
     "translation": "メッセージの予約に失敗しました"
@@ -594,7 +606,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        275
+        298
       ]
     ],
     "translation": "メッセージを予約しました"
@@ -606,7 +618,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        280
+        303
       ]
     ],
     "translation": "スケジューラタブで確認・管理できます"
@@ -617,7 +629,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        226
+        288
       ]
     ],
     "translation": "送信"
@@ -628,11 +640,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        677
+        700
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        785
       ]
     ],
     "translation": "今すぐ送信"
@@ -643,11 +655,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        660
+        683
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        745
+        768
       ]
     ],
     "translation": "送信モード"
@@ -658,15 +670,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        680
+        703
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        774
+        797
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        800
+        823
       ]
     ],
     "translation": "予約送信"
@@ -678,7 +690,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        769
+        792
       ]
     ],
     "translation": ""
@@ -689,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        687
+        710
       ]
     ],
     "translation": "送信予定時刻"
@@ -701,11 +713,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        347
+        370
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        454
+        477
       ]
     ],
     "translation": ""
@@ -717,7 +729,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        161
+        228
       ]
     ],
     "translation": "現在のセッションを中止し、新しいメッセージで再開します。進捗が失われる可能性があります。"
@@ -729,7 +741,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        153
+        220
       ]
     ],
     "translation": "中止して送信"
@@ -741,7 +753,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        49
+        116
       ]
     ],
     "translation": "Claudeは現在作業中です。どのように進めますか？"
@@ -753,7 +765,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        86
+        153
       ]
     ],
     "translation": "Claudeは作業を続けながら、次の機会にこのメッセージを読みます。Claude Agent SDKのバグにより、Claudeがメッセージを2回受信する可能性があり、会話には表示されません。"
@@ -765,7 +777,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        79
+        146
       ]
     ],
     "translation": "今すぐ送信"
@@ -777,7 +789,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        123
+        190
       ]
     ],
     "translation": "Claudeが現在のタスクを完了したときにメッセージが送信されます。"
@@ -789,10 +801,70 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        116
+        183
       ]
     ],
     "translation": "後で送信"
+  },
+  "chat.send_options.session_available.cancel": {
+    "message": "No, keep editing",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        76
+      ]
+    ],
+    "translation": "いいえ、編集を続ける"
+  },
+  "chat.send_options.session_available.description": {
+    "message": "Claude finished while you were choosing. Would you like to send your message now?",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        62
+      ]
+    ],
+    "translation": "選択中にClaudeが完了しました。今すぐメッセージを送信しますか？"
+  },
+  "chat.send_options.session_available.send": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        92
+      ]
+    ],
+    "translation": "今すぐ送信"
+  },
+  "chat.send_options.session_available.sending": {
+    "translation": "送信中...",
+    "message": "Sending...",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        86
+      ]
+    ]
+  },
+  "chat.send_options.session_available.title": {
+    "message": "Session is now available",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        56
+      ]
+    ],
+    "translation": "セッションが利用可能になりました"
   },
   "chat.send_options.title": {
     "message": "How would you like to send this message?",
@@ -801,7 +873,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        43
+        110
       ]
     ],
     "translation": "このメッセージをどのように送信しますか？"
@@ -812,7 +884,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        819
+        842
       ]
     ],
     "translation": "処理中..."
@@ -843,7 +915,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        177
+        244
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
@@ -859,7 +931,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        183
+        250
       ]
     ],
     "translation": ""
@@ -2726,7 +2798,6 @@
     "translation": "合計"
   },
   "session.creating.description": {
-    "translation": "セッションを初期化しています。しばらくお待ちください...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2734,10 +2805,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         726
       ]
-    ]
+    ],
+    "translation": "セッションを初期化しています。しばらくお待ちください..."
   },
   "session.creating.title": {
-    "translation": "セッション作成中",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2745,7 +2816,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         723
       ]
-    ]
+    ],
+    "translation": "セッション作成中"
   },
   "session.empty_state.description": {
     "placeholders": {},

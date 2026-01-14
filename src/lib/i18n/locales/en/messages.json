@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        634
+        657
       ]
     ],
     "translation": "Message input with completion support"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        720
+        743
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +354,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        732
+        755
       ]
     ],
     "translation": "Autocomplete Active"
@@ -376,7 +376,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        576
+        599
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -388,7 +388,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        137
+        159
       ]
     ],
     "translation": "Failed to stop session"
@@ -400,7 +400,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        129
+        151
       ]
     ],
     "translation": "Failed to send message"
@@ -412,10 +412,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        64
+        81
       ]
     ],
     "translation": "Message sent to Claude"
+  },
+  "chat.message.send_failed": {
+    "message": "Failed to send message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        188
+      ]
+    ],
+    "translation": "Failed to send message"
   },
   "chat.modal.title": {
     "placeholders": {},
@@ -451,7 +463,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        190
+        252
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -467,7 +479,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        183
+        245
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -483,7 +495,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        196
+        258
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -535,7 +547,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        73
+        90
       ]
     ],
     "translation": "Queued message"
@@ -547,7 +559,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        91
+        108
       ]
     ],
     "translation": "Message queued"
@@ -559,7 +571,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        96
+        113
       ]
     ],
     "translation": "Your message will be sent when the current task completes"
@@ -582,7 +594,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        292
+        315
       ]
     ],
     "translation": "Failed to schedule message"
@@ -594,7 +606,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        275
+        298
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -606,7 +618,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        280
+        303
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -617,7 +629,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        226
+        288
       ]
     ],
     "translation": "Send"
@@ -628,11 +640,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        677
+        700
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        785
       ]
     ],
     "translation": "Send Now"
@@ -643,11 +655,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        660
+        683
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        745
+        768
       ]
     ],
     "translation": "Send Mode"
@@ -658,15 +670,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        680
+        703
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        774
+        797
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        800
+        823
       ]
     ],
     "translation": "Schedule Send"
@@ -678,7 +690,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        769
+        792
       ]
     ],
     "translation": "Scheduled (not available with attachments)"
@@ -689,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        687
+        710
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -701,11 +713,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        347
+        370
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        454
+        477
       ]
     ],
     "translation": "Switched to immediate send (scheduled send doesn't support attachments)"
@@ -717,7 +729,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        161
+        228
       ]
     ],
     "translation": "Abort current session and restart with your message. Progress may be lost."
@@ -729,7 +741,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        153
+        220
       ]
     ],
     "translation": "Abort & Send"
@@ -741,7 +753,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        49
+        116
       ]
     ],
     "translation": "Claude is currently working. How would you like to proceed?"
@@ -753,7 +765,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        86
+        153
       ]
     ],
     "translation": "Claude will read this at the next opportunity while continuing to work. Due to a bug in the Claude Agent SDK, Claude may receive the message twice and it won't appear in the conversation."
@@ -765,7 +777,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        79
+        146
       ]
     ],
     "translation": "Send Now"
@@ -777,7 +789,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        123
+        190
       ]
     ],
     "translation": "Your message will be sent when Claude finishes the current task."
@@ -789,10 +801,70 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        116
+        183
       ]
     ],
     "translation": "Queue for Later"
+  },
+  "chat.send_options.session_available.cancel": {
+    "message": "No, keep editing",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        76
+      ]
+    ],
+    "translation": "No, keep editing"
+  },
+  "chat.send_options.session_available.description": {
+    "message": "Claude finished while you were choosing. Would you like to send your message now?",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        62
+      ]
+    ],
+    "translation": "Claude finished while you were choosing. Would you like to send your message now?"
+  },
+  "chat.send_options.session_available.send": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        92
+      ]
+    ],
+    "translation": "Send now"
+  },
+  "chat.send_options.session_available.sending": {
+    "translation": "Sending...",
+    "message": "Sending...",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        86
+      ]
+    ]
+  },
+  "chat.send_options.session_available.title": {
+    "message": "Session is now available",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        56
+      ]
+    ],
+    "translation": "Session is now available"
   },
   "chat.send_options.title": {
     "message": "How would you like to send this message?",
@@ -801,7 +873,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        43
+        110
       ]
     ],
     "translation": "How would you like to send this message?"
@@ -812,7 +884,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        819
+        842
       ]
     ],
     "translation": "Processing..."
@@ -843,7 +915,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        177
+        244
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
@@ -859,7 +931,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        183
+        250
       ]
     ],
     "translation": "Confirm"
@@ -2726,7 +2798,6 @@
     "translation": "Total"
   },
   "session.creating.description": {
-    "translation": "Please wait while the session is being initialized...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2734,10 +2805,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         726
       ]
-    ]
+    ],
+    "translation": "Please wait while the session is being initialized..."
   },
   "session.creating.title": {
-    "translation": "Creating Session",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2745,7 +2816,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         723
       ]
-    ]
+    ],
+    "translation": "Creating Session"
   },
   "session.empty_state.description": {
     "placeholders": {},

@@ -93,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        634
+        657
       ]
     ],
     "translation": "带补全支持的消息输入"
@@ -339,7 +339,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        720
+        743
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +354,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        732
+        755
       ]
     ],
     "translation": "自动补全已激活"
@@ -376,7 +376,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        576
+        599
       ]
     ],
     "translation": "发送消息失败。请重试。"
@@ -388,7 +388,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        137
+        159
       ]
     ],
     "translation": "停止会话失败"
@@ -400,7 +400,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        129
+        151
       ]
     ],
     "translation": "发送消息失败"
@@ -412,10 +412,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        64
+        81
       ]
     ],
     "translation": "消息已发送给Claude"
+  },
+  "chat.message.send_failed": {
+    "message": "Failed to send message",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
+        188
+      ]
+    ],
+    "translation": ""
   },
   "chat.modal.title": {
     "placeholders": {},
@@ -451,7 +463,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        190
+        252
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -467,7 +479,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        183
+        245
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -483,7 +495,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        196
+        258
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
@@ -535,7 +547,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        73
+        90
       ]
     ],
     "translation": ""
@@ -547,7 +559,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        91
+        108
       ]
     ],
     "translation": ""
@@ -559,7 +571,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        96
+        113
       ]
     ],
     "translation": ""
@@ -582,7 +594,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        292
+        315
       ]
     ],
     "translation": "定时发送消息失败"
@@ -594,7 +606,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        275
+        298
       ]
     ],
     "translation": "消息定时发送成功"
@@ -606,7 +618,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        280
+        303
       ]
     ],
     "translation": "您可以在定时任务选项卡中查看和管理"
@@ -617,7 +629,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ContinueChat.tsx",
-        226
+        288
       ]
     ],
     "translation": "发送"
@@ -628,11 +640,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        677
+        700
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        785
       ]
     ],
     "translation": "立即发送"
@@ -643,11 +655,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        660
+        683
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        745
+        768
       ]
     ],
     "translation": "发送模式"
@@ -658,15 +670,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        680
+        703
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        774
+        797
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        800
+        823
       ]
     ],
     "translation": "定时发送"
@@ -678,7 +690,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        769
+        792
       ]
     ],
     "translation": ""
@@ -689,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        687
+        710
       ]
     ],
     "translation": "定时发送时间"
@@ -701,11 +713,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        347
+        370
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        454
+        477
       ]
     ],
     "translation": ""
@@ -717,7 +729,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        161
+        228
       ]
     ],
     "translation": "中止当前会话并使用您的消息重新启动。进度可能会丢失。"
@@ -729,7 +741,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        153
+        220
       ]
     ],
     "translation": "中止并发送"
@@ -741,7 +753,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        49
+        116
       ]
     ],
     "translation": "Claude正在工作中。您想如何继续？"
@@ -753,7 +765,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        86
+        153
       ]
     ],
     "translation": "Claude会在继续工作的同时，在下一个合适的时机读取此消息。由于Claude Agent SDK的一个bug，Claude可能会收到两次消息，且不会显示在对话中。"
@@ -765,7 +777,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        79
+        146
       ]
     ],
     "translation": "立即发送"
@@ -777,7 +789,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        123
+        190
       ]
     ],
     "translation": "您的消息将在Claude完成当前任务后发送。"
@@ -789,10 +801,70 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        116
+        183
       ]
     ],
     "translation": "稍后发送"
+  },
+  "chat.send_options.session_available.cancel": {
+    "message": "No, keep editing",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        76
+      ]
+    ],
+    "translation": "不，继续编辑"
+  },
+  "chat.send_options.session_available.description": {
+    "message": "Claude finished while you were choosing. Would you like to send your message now?",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        62
+      ]
+    ],
+    "translation": "Claude在您选择时已完成。是否现在发送消息？"
+  },
+  "chat.send_options.session_available.send": {
+    "message": "Send now",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        92
+      ]
+    ],
+    "translation": "立即发送"
+  },
+  "chat.send_options.session_available.sending": {
+    "translation": "发送中...",
+    "message": "Sending...",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        86
+      ]
+    ]
+  },
+  "chat.send_options.session_available.title": {
+    "message": "Session is now available",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
+        56
+      ]
+    ],
+    "translation": "会话现已可用"
   },
   "chat.send_options.title": {
     "message": "How would you like to send this message?",
@@ -801,7 +873,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        43
+        110
       ]
     ],
     "translation": "您想如何发送这条消息？"
@@ -812,7 +884,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        819
+        842
       ]
     ],
     "translation": "处理中..."
@@ -843,7 +915,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        177
+        244
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SchedulerTab.tsx",
@@ -859,7 +931,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
-        183
+        250
       ]
     ],
     "translation": ""
@@ -2726,7 +2798,6 @@
     "translation": "总计"
   },
   "session.creating.description": {
-    "translation": "正在初始化会话，请稍候...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2734,10 +2805,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         726
       ]
-    ]
+    ],
+    "translation": "正在初始化会话，请稍候..."
   },
   "session.creating.title": {
-    "translation": "正在创建会话",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2745,7 +2816,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
         723
       ]
-    ]
+    ],
+    "translation": "正在创建会话"
   },
   "session.empty_state.description": {
     "placeholders": {},

@@ -1,5 +1,5 @@
 import { Trans, useLingui } from "@lingui/react";
-import { type FC, useState } from "react";
+import { type FC, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useCreateSchedulerJob } from "@/hooks/useScheduler";
 import { useConfig } from "../../../../../../hooks/useConfig";
@@ -48,6 +48,23 @@ export const ContinueChat: FC<{
     null,
   );
   const [isExecutingAction, setIsExecutingAction] = useState(false);
+  // Track if session became available while dialog was open
+  const [sessionBecameAvailable, setSessionBecameAvailable] = useState(false);
+  // Message to restore to the input when user cancels
+  const [messageToRestore, setMessageToRestore] = useState<MessageInput | null>(
+    null,
+  );
+
+  // Detect when session becomes paused while dialog is open
+  useEffect(() => {
+    if (
+      showOptionsDialog &&
+      pendingMessage &&
+      sessionProcessStatus === "paused"
+    ) {
+      setSessionBecameAvailable(true);
+    }
+  }, [sessionProcessStatus, showOptionsDialog, pendingMessage]);
 
   // Check if we need to change permission mode
   const needsPermissionChange =
@@ -113,14 +130,19 @@ export const ContinueChat: FC<{
     }
   };
 
+  const closeDialog = () => {
+    setShowOptionsDialog(false);
+    setPendingMessage(null);
+    setSessionBecameAvailable(false);
+  };
+
   const handleDialogConfirm = async (option: SendMessageOption) => {
     if (!pendingMessage) return;
 
     setIsExecutingAction(true);
     try {
       await executeSendAction(option, pendingMessage);
-      setPendingMessage(null);
-      setShowOptionsDialog(false);
+      closeDialog();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";
@@ -145,6 +167,46 @@ export const ContinueChat: FC<{
       }
     } finally {
       setIsExecutingAction(false);
+    }
+  };
+
+  // Handle "Send Now" when session became available
+  const handleSendNow = async () => {
+    if (!pendingMessage) return;
+
+    setIsExecutingAction(true);
+    try {
+      await continueSessionProcess.mutateAsync({
+        input: pendingMessage,
+        sessionProcessId,
+      });
+      closeDialog();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      toast.error(
+        i18n._({
+          id: "chat.message.send_failed",
+          message: "Failed to send message",
+        }),
+        { description: errorMessage },
+      );
+    } finally {
+      setIsExecutingAction(false);
+    }
+  };
+
+  // Handle "Cancel" when session became available - restore message to input
+  const handleCancelWithRestore = () => {
+    setMessageToRestore(pendingMessage);
+    closeDialog();
+  };
+
+  const handleDialogOpenChange = (open: boolean) => {
+    if (!open) {
+      closeDialog();
+    } else {
+      setShowOptionsDialog(true);
     }
   };
 
@@ -229,12 +291,17 @@ export const ContinueChat: FC<{
         enableScheduledSend={!isActiveSession}
         showQueueOption={isActiveSession}
         baseSessionId={sessionId}
+        restoredMessage={messageToRestore}
+        onMessageRestored={() => setMessageToRestore(null)}
       />
       <SendMessageOptionsDialog
         open={showOptionsDialog}
-        onOpenChange={setShowOptionsDialog}
+        onOpenChange={handleDialogOpenChange}
         onConfirm={handleDialogConfirm}
         isLoading={isExecutingAction}
+        sessionBecameAvailable={sessionBecameAvailable}
+        onSendNow={handleSendNow}
+        onCancelWithRestore={handleCancelWithRestore}
       />
     </div>
   );
