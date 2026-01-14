@@ -167,6 +167,7 @@ const SessionPageMainContent: FC<
     useState(0);
   const [isDiffModalOpen, setIsDiffModalOpen] = useState(false);
   const [isReloading, setIsReloading] = useState(false);
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   // Track if user is near bottom - initialized to true so first messages auto-scroll
   const isNearBottomRef = useRef(true);
@@ -709,21 +710,38 @@ const SessionPageMainContent: FC<
               projectName={projectName}
               scheduledJobs={sessionScheduledJobs}
             />
-            {!isExistingSession && (
-              <div className="rounded-2xl border border-dashed border-muted-foreground/40 bg-muted/30 p-8 text-center space-y-3">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm">
-                  <MessageSquareIcon className="w-5 h-5 text-muted-foreground" />
+            {!isExistingSession &&
+              (isCreatingSession ? (
+                <div className="rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-8 text-center space-y-3">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm">
+                    <div className="relative">
+                      <LoaderIcon className="w-5 h-5 animate-spin text-primary" />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-base font-semibold">
+                      <Trans id="session.creating.title" />
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed animate-pulse">
+                      <Trans id="session.creating.description" />
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-base font-semibold">
-                    <Trans id="chat.modal.title" />
-                  </p>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    <Trans id="session.empty_state.description" />
-                  </p>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-muted-foreground/40 bg-muted/30 p-8 text-center space-y-3">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-background shadow-sm">
+                    <MessageSquareIcon className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-base font-semibold">
+                      <Trans id="chat.modal.title" />
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      <Trans id="session.empty_state.description" />
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
             {isExistingSession &&
               (relatedSessionProcess?.status === "running" ||
                 relatedSessionProcess?.status === "starting" ||
@@ -773,7 +791,10 @@ const SessionPageMainContent: FC<
           ) : isExistingSession && sessionId ? (
             <ResumeChat projectId={projectId} sessionId={sessionId} />
           ) : (
-            <StartNewChat projectId={projectId} />
+            <StartNewChat
+              projectId={projectId}
+              onPendingChange={setIsCreatingSession}
+            />
           )}
         </div>
       </div>

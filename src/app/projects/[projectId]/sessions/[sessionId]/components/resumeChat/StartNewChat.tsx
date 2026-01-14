@@ -1,5 +1,5 @@
 import { Trans, useLingui } from "@lingui/react";
-import type { FC } from "react";
+import { type FC, useEffect } from "react";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import {
   ChatInput,
@@ -7,10 +7,18 @@ import {
   useCreateSessionProcessMutation,
 } from "../../../../components/chatForm";
 
-export const StartNewChat: FC<{ projectId: string }> = ({ projectId }) => {
+export const StartNewChat: FC<{
+  projectId: string;
+  onPendingChange?: (isPending: boolean) => void;
+}> = ({ projectId, onPendingChange }) => {
   const { i18n } = useLingui();
   const createSessionProcess = useCreateSessionProcessMutation(projectId);
   const { config } = useConfig();
+
+  // Notify parent of pending state changes
+  useEffect(() => {
+    onPendingChange?.(createSessionProcess.isPending);
+  }, [createSessionProcess.isPending, onPendingChange]);
 
   const handleSubmit = async (input: MessageInput) => {
     await createSessionProcess.mutateAsync({ input });

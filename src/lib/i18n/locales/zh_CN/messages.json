@@ -365,7 +365,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        51
+        59
       ]
     ],
     "translation": "开始对话"
@@ -423,11 +423,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        281
+        282
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        719
+        737
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
@@ -455,7 +455,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        29
+        37
       ]
     ],
     "translation": "输入消息...(输入 / 使用命令,@ 使用文件,Command+Enter 发送)"
@@ -471,7 +471,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        22
+        30
       ]
     ],
     "translation": "输入消息...(输入 / 使用命令,@ 使用文件,Enter 发送)"
@@ -487,7 +487,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/StartNewChat.tsx",
-        35
+        43
       ]
     ],
     "translation": "输入消息...(输入 / 使用命令,@ 使用文件,Shift+Enter 发送)"
@@ -983,11 +983,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        365
+        366
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        541
+        542
       ]
     ],
     "translation": "分支"
@@ -1032,7 +1032,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        503
+        504
       ]
     ],
     "translation": "元数据"
@@ -1090,7 +1090,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        509
+        510
       ]
     ],
     "translation": "项目路径"
@@ -1125,7 +1125,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        527
+        528
       ]
     ],
     "translation": "会话 ID"
@@ -2566,7 +2566,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        671
+        672
       ]
     ],
     "translation": "当前令牌数"
@@ -2577,7 +2577,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        647
+        648
       ]
     ],
     "translation": "上下文窗口"
@@ -2588,7 +2588,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        680
+        681
       ]
     ],
     "translation": "最大令牌数"
@@ -2599,7 +2599,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        402
+        403
       ]
     ],
     "translation": "上下文窗口使用量"
@@ -2621,21 +2621,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        464
+        465
       ]
     ],
     "translation": "已暂停"
   },
   "session.conversation.pending": {
-    "translation": "准备中",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        446
+        447
       ]
-    ]
+    ],
+    "translation": "准备中"
   },
   "session.conversation.running": {
     "placeholders": {},
@@ -2643,21 +2643,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        455
+        456
       ]
     ],
     "translation": "运行中"
   },
   "session.conversation.starting": {
-    "translation": "启动中",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        437
+        438
       ]
-    ]
+    ],
+    "translation": "启动中"
   },
   "session.cost.cache_creation": {
     "placeholders": {},
@@ -2665,7 +2665,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        613
+        614
       ]
     ],
     "translation": "缓存创建"
@@ -2676,7 +2676,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        627
+        628
       ]
     ],
     "translation": "缓存读取"
@@ -2687,7 +2687,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        585
+        586
       ]
     ],
     "translation": "输入令牌"
@@ -2698,7 +2698,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        570
+        571
       ]
     ],
     "translation": "会话成本"
@@ -2709,7 +2709,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        599
+        600
       ]
     ],
     "translation": "输出令牌"
@@ -2720,10 +2720,32 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        577
+        578
       ]
     ],
     "translation": "总计"
+  },
+  "session.creating.description": {
+    "translation": "正在初始化会话，请稍候...",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        726
+      ]
+    ]
+  },
+  "session.creating.title": {
+    "translation": "正在创建会话",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
+        723
+      ]
+    ]
   },
   "session.empty_state.description": {
     "placeholders": {},
@@ -2731,7 +2753,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        722
+        740
       ]
     ],
     "translation": ""
@@ -2742,7 +2764,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        556
+        557
       ]
     ],
     "translation": "模型"
@@ -2753,7 +2775,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        738
+        756
       ]
     ],
     "translation": "Claude Code 正在处理..."
@@ -2807,7 +2829,6 @@
     "translation": "定时消息"
   },
   "session.status.paused": {
-    "translation": "已暂停",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2815,10 +2836,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
         46
       ]
-    ]
+    ],
+    "translation": "已暂停"
   },
   "session.status.pending": {
-    "translation": "准备中",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2826,10 +2847,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
         42
       ]
-    ]
+    ],
+    "translation": "准备中"
   },
   "session.status.running": {
-    "translation": "运行中",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2837,10 +2858,10 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
         44
       ]
-    ]
+    ],
+    "translation": "运行中"
   },
   "session.status.starting": {
-    "translation": "启动中",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -2848,7 +2869,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionListItem.tsx",
         40
       ]
-    ]
+    ],
+    "translation": "启动中"
   },
   "session_id.copied": {
     "placeholders": {},
@@ -2948,7 +2970,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        341
+        342
       ]
     ],
     "translation": "显示此项目的会话"
