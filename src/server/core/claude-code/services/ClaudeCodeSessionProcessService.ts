@@ -375,7 +375,13 @@ const LayerImpl = Effect.gen(function* () {
 
     return Effect.gen(function* () {
       const currentProcess = yield* getSessionProcess(sessionProcessId);
-      if (currentProcess.type !== "file_created") {
+      // Allow transition from both file_created and initialized states
+      // The initialized case happens for local commands like /compact
+      // that don't produce assistant messages
+      if (
+        currentProcess.type !== "file_created" &&
+        currentProcess.type !== "initialized"
+      ) {
         return yield* Effect.fail(
           new IllegalStateChangeError({
             from: currentProcess.type,

@@ -244,10 +244,30 @@ const LayerImpl = Effect.gen(function* () {
             );
           }
 
+          // Handle result message to transition to paused state
+          // This can happen from two states:
+          // - file_created: normal flow where Claude responded with assistant messages
+          // - initialized: local commands like /compact that don't produce assistant messages
           if (
             message.type === "result" &&
-            processState.type === "file_created"
+            (processState.type === "file_created" ||
+              processState.type === "initialized")
           ) {
+            // If we're in initialized state, we skipped file_created state
+            // (happens for local commands like /compact that don't produce assistant messages)
+            // We need to do the cleanup that would normally happen in file_created transition
+            if (processState.type === "initialized") {
+              // Resolve the file created promise to not leave it hanging
+              sessionFileCreatedPromise.resolve({
+                sessionId: message.session_id,
+              });
+
+              // Clean up virtual conversations
+              yield* virtualConversationDatabase.deleteVirtualConversations(
+                message.session_id,
+              );
+            }
+
             yield* sessionProcessService.toPausedState({
               sessionProcessId: processState.def.sessionProcessId,
               resultMessage: message,
