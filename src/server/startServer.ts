@@ -33,6 +33,9 @@ import { SessionRepository } from "./core/session/infrastructure/SessionReposito
 import { VirtualConversationDatabase } from "./core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "./core/session/presentation/SessionController";
 import { SessionMetaService } from "./core/session/services/SessionMetaService";
+import { StarredSessionsConfigBaseDir } from "./core/starred-session/config";
+import { StarredSessionController } from "./core/starred-session/presentation/StarredSessionController";
+import { StarredSessionService } from "./core/starred-session/StarredSessionService";
 import { honoApp } from "./hono/app";
 import { InitializeService } from "./hono/initialize";
 import { AuthMiddleware } from "./hono/middleware/auth.middleware";
@@ -80,6 +83,7 @@ export const startServer = async (options: CliOptions) => {
       Effect.provide(SchedulerController.Live),
       Effect.provide(FeatureFlagController.Live),
       Effect.provide(SearchController.Live),
+      Effect.provide(StarredSessionController.Live),
     )
     .pipe(
       /** Application */
@@ -101,6 +105,8 @@ export const startServer = async (options: CliOptions) => {
       Effect.provide(GitService.Live),
       Effect.provide(SchedulerConfigBaseDir.Live),
       Effect.provide(SearchService.Live),
+      Effect.provide(StarredSessionService.Live),
+      Effect.provide(StarredSessionsConfigBaseDir.Live),
     )
     .pipe(
       /** Infrastructure */

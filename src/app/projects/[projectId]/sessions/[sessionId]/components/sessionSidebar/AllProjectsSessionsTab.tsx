@@ -11,6 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  useStarredSessionsSet,
+  useToggleStarredSession,
+} from "@/hooks/useStarredSessions";
 import { sortSessionsByStatusAndDate } from "@/lib/session-sorting";
 import { cn } from "@/lib/utils";
 import { useConfig } from "../../../../../../hooks/useConfig";
@@ -103,6 +107,8 @@ export const AllProjectsSessionsTab: FC<{
   const sessions = sessionsData.pages.flatMap((page) => page.sessions);
   const sessionProcesses = useAtomValue(sessionProcessesAtom);
   const { config } = useConfig();
+  const starredSessionIds = useStarredSessionsSet();
+  const toggleStar = useToggleStarredSession();
 
   // Default tab for navigation
   const currentTab = "all-sessions";
@@ -110,7 +116,12 @@ export const AllProjectsSessionsTab: FC<{
   const sortedSessions = sortSessionsByStatusAndDate(
     sessions,
     sessionProcesses,
+    starredSessionIds,
   );
+
+  const handleToggleStar = (sessionId: string) => {
+    toggleStar.mutate(sessionId);
+  };
 
   const handleSelectProject = (projectId: string) => {
     navigate({
@@ -153,6 +164,8 @@ export const AllProjectsSessionsTab: FC<{
               isActive={session.id === currentSessionId}
               status={sessionProcess?.status}
               locale={config.locale}
+              isStarred={starredSessionIds.has(session.id)}
+              onToggleStar={handleToggleStar}
             />
           );
         })}

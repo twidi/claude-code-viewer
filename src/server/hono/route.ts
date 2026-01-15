@@ -36,6 +36,8 @@ import { SearchController } from "../core/search/presentation/SearchController";
 import type { VirtualConversationDatabase } from "../core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "../core/session/presentation/SessionController";
 import type { SessionMetaService } from "../core/session/services/SessionMetaService";
+import type { StarredSessionsConfigBaseDir } from "../core/starred-session/config";
+import { StarredSessionController } from "../core/starred-session/presentation/StarredSessionController";
 import { userConfigSchema } from "../lib/config/config";
 import { effectToResponse } from "../lib/effect/toEffectResponse";
 import type { HonoAppType } from "./app";
@@ -70,6 +72,7 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
     const schedulerController = yield* SchedulerController;
     const featureFlagController = yield* FeatureFlagController;
     const searchController = yield* SearchController;
+    const starredSessionController = yield* StarredSessionController;
 
     // middleware
     const authMiddlewareService = yield* AuthMiddleware;
@@ -88,6 +91,7 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
       | ClaudeCodeLifeCycleService
       | ProjectRepository
       | SchedulerConfigBaseDir
+      | StarredSessionsConfigBaseDir
     >();
 
     if ((yield* envService.getEnv("NEXT_PHASE")) !== "phase-production-build") {
@@ -761,6 +765,55 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
             featureFlagController.getFlags().pipe(Effect.provide(runtime)),
           );
 
+          return response;
+        })
+
+        /**
+         * StarredSessionController Routes
+         */
+        .get("/api/starred-sessions", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .getStarredSessionIds()
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .post("/api/starred-sessions/:sessionId/toggle", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .toggleStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .post("/api/starred-sessions/:sessionId", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .addStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .delete("/api/starred-sessions/:sessionId", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .removeStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
           return response;
         })
     );

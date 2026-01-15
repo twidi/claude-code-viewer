@@ -33,7 +33,6 @@
     "translation": "Close Sidebar"
   },
   "Commit Changes": {
-    "translation": "Commit Changes",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -41,7 +40,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
         554
       ]
-    ]
+    ],
+    "translation": "Commit Changes"
   },
   "Compare from": {
     "placeholders": {},
@@ -132,15 +132,15 @@
     "translation": "Retry Push"
   },
   "Select auto-abort timeout": {
-    "translation": "Select auto-abort timeout",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        350
+        349
       ]
-    ]
+    ],
+    "translation": "Select auto-abort timeout"
   },
   "Select enter key behavior": {
     "placeholders": {},
@@ -159,7 +159,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        382
+        380
       ]
     ],
     "translation": "Select language"
@@ -192,7 +192,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        411
+        409
       ]
     ],
     "translation": "Select theme"
@@ -465,15 +465,15 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        48
+        52
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        82
+        86
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        73
+        84
       ]
     ],
     "translation": "Start New Chat"
@@ -1024,15 +1024,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        85
+        89
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        171
+        184
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        107
+        120
       ]
     ],
     "translation": "Loading..."
@@ -3100,7 +3100,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        128
+        139
       ]
     ],
     "translation": "Sessions (all projects)"
@@ -3111,11 +3111,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        173
+        186
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        109
+        122
       ]
     ],
     "translation": "Load More"
@@ -3126,7 +3126,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        52
+        56
       ]
     ],
     "translation": "Select a project"
@@ -3148,7 +3148,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        48
+        59
       ]
     ],
     "translation": "Sessions"
@@ -3159,17 +3159,16 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
-        132
+        143
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/SessionsTab.tsx",
-        52
+        63
       ]
     ],
     "translation": "Total"
   },
   "settings.auto_abort": {
-    "translation": "Auto-abort idle sessions",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -3177,21 +3176,21 @@
         "src/components/SettingsControls.tsx",
         341
       ]
-    ]
+    ],
+    "translation": "Auto-abort idle sessions"
   },
   "settings.auto_abort.description": {
-    "translation": "Automatically abort paused sessions after this period of inactivity.",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        363
+        361
       ]
-    ]
+    ],
+    "translation": "Automatically abort paused sessions after this period of inactivity."
   },
   "settings.auto_abort.hour": {
-    "translation": "1 hour",
     "message": "1 hour",
     "placeholders": {},
     "comments": [],
@@ -3200,10 +3199,10 @@
         "src/components/SettingsControls.tsx",
         168
       ]
-    ]
+    ],
+    "translation": "1 hour"
   },
   "settings.auto_abort.hours": {
-    "translation": "{hours} hours",
     "message": "{hours} hours",
     "placeholders": {
       "hours": [
@@ -3216,10 +3215,10 @@
         "src/components/SettingsControls.tsx",
         173
       ]
-    ]
+    ],
+    "translation": "{hours} hours"
   },
   "settings.auto_abort.minutes": {
-    "translation": "{minutes} minutes",
     "message": "{minutes} minutes",
     "placeholders": {
       "minutes": [
@@ -3232,7 +3231,8 @@
         "src/components/SettingsControls.tsx",
         160
       ]
-    ]
+    ],
+    "translation": "{minutes} minutes"
   },
   "settings.description": {
     "placeholders": {},
@@ -3251,7 +3251,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        443
+        441
       ]
     ],
     "translation": "Simplified View"
@@ -3262,7 +3262,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        449
+        447
       ]
     ],
     "translation": "Hide tool calls, system messages, and other non-essential content from conversations"
@@ -3387,7 +3387,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        374
+        372
       ]
     ],
     "translation": "Language"
@@ -3398,7 +3398,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        398
+        396
       ]
     ],
     "translation": "Select your preferred language"
@@ -3409,7 +3409,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        389
+        387
       ]
     ],
     "translation": "English"
@@ -3420,7 +3420,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        386
+        384
       ]
     ],
     "translation": "Japanese"
@@ -3431,7 +3431,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        392
+        390
       ]
     ],
     "translation": "Chinese (Simplified)"
@@ -3633,7 +3633,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        406
+        404
       ]
     ],
     "translation": "Theme"
@@ -3644,7 +3644,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        418
+        416
       ]
     ],
     "translation": "Dark"
@@ -3655,7 +3655,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        427
+        425
       ]
     ],
     "translation": "Select your preferred color theme"
@@ -3666,7 +3666,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        415
+        413
       ]
     ],
     "translation": "Light"
@@ -3677,7 +3677,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        421
+        419
       ]
     ],
     "translation": "System"

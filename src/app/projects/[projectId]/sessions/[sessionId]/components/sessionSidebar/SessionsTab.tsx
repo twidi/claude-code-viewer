@@ -4,6 +4,10 @@ import { useAtomValue } from "jotai";
 import { PlusIcon } from "lucide-react";
 import type { FC } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  useStarredSessionsSet,
+  useToggleStarredSession,
+} from "@/hooks/useStarredSessions";
 import { sortSessionsByStatusAndDate } from "@/lib/session-sorting";
 import { cn } from "@/lib/utils";
 import { useConfig } from "../../../../../../hooks/useConfig";
@@ -29,6 +33,8 @@ export const SessionsTab: FC<{
   const search = useSearch({
     from: "/projects/$projectId/session",
   });
+  const starredSessionIds = useStarredSessionsSet();
+  const toggleStar = useToggleStarredSession();
 
   // Preserve current tab state or default to "sessions"
   const currentTab = search.tab ?? "sessions";
@@ -38,7 +44,12 @@ export const SessionsTab: FC<{
   const sortedSessions = sortSessionsByStatusAndDate(
     sessions,
     sessionProcesses,
+    starredSessionIds,
   );
+
+  const handleToggleStar = (sessionId: string) => {
+    toggleStar.mutate(sessionId);
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -89,6 +100,8 @@ export const SessionsTab: FC<{
               isActive={session.id === currentSessionId}
               status={sessionProcess?.status}
               locale={config.locale}
+              isStarred={starredSessionIds.has(session.id)}
+              onToggleStar={handleToggleStar}
             />
           );
         })}

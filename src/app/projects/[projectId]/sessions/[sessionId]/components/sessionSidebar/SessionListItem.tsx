@@ -1,7 +1,12 @@
 import { Trans } from "@lingui/react";
 import { Link } from "@tanstack/react-router";
-import { CoinsIcon, FolderIcon, MessageSquareIcon } from "lucide-react";
-import type { FC } from "react";
+import {
+  CoinsIcon,
+  FolderIcon,
+  MessageSquareIcon,
+  StarIcon,
+} from "lucide-react";
+import type { FC, MouseEvent } from "react";
 import { Badge } from "@/components/ui/badge";
 import type { SupportedLocale } from "@/lib/i18n/schema";
 import { cn } from "@/lib/utils";
@@ -55,6 +60,8 @@ export const SessionListItem: FC<{
   isActive: boolean;
   status: SessionProcessStatus | undefined;
   locale: SupportedLocale;
+  isStarred: boolean;
+  onToggleStar: (sessionId: string) => void;
 }> = ({
   session,
   projectId,
@@ -63,11 +70,19 @@ export const SessionListItem: FC<{
   isActive,
   status,
   locale,
+  isStarred,
+  onToggleStar,
 }) => {
   const title =
     session.meta.firstUserMessage !== null
       ? firstUserMessageToTitle(session.meta.firstUserMessage)
       : session.id;
+
+  const handleStarClick = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggleStar(session.id);
+  };
 
   return (
     <Link
@@ -82,13 +97,31 @@ export const SessionListItem: FC<{
     >
       <div className="space-y-1.5">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-medium line-clamp-2 leading-tight text-sidebar-foreground flex-1">
-            {title}
-          </h3>
+          <div className="flex items-start gap-1.5 flex-1 min-w-0">
+            <button
+              type="button"
+              onClick={handleStarClick}
+              className={cn(
+                "flex-shrink-0 mt-0.5 transition-colors hover:text-yellow-500",
+                isStarred && "text-yellow-500",
+              )}
+              aria-label={isStarred ? "Unstar session" : "Star session"}
+            >
+              <StarIcon
+                className={cn("w-3.5 h-3.5", isStarred && "fill-current")}
+              />
+            </button>
+            <h3 className="text-sm font-medium line-clamp-2 leading-tight text-sidebar-foreground">
+              {title}
+            </h3>
+          </div>
           {status !== undefined && (
             <Badge
               variant="default"
-              className={cn("text-xs", getStatusColorClass(status))}
+              className={cn(
+                "text-xs flex-shrink-0",
+                getStatusColorClass(status),
+              )}
             >
               <StatusLabel status={status} />
             </Badge>

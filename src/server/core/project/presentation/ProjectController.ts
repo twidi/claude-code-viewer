@@ -10,6 +10,7 @@ import { ClaudeCodeLifeCycleService } from "../../claude-code/services/ClaudeCod
 import { ApplicationContext } from "../../platform/services/ApplicationContext";
 import { UserConfigService } from "../../platform/services/UserConfigService";
 import { SessionRepository } from "../../session/infrastructure/SessionRepository";
+import { StarredSessionService } from "../../starred-session/StarredSessionService";
 import { encodeProjectId } from "../functions/id";
 import { ProjectRepository } from "../infrastructure/ProjectRepository";
 
@@ -18,6 +19,7 @@ const LayerImpl = Effect.gen(function* () {
   const claudeCodeLifeCycleService = yield* ClaudeCodeLifeCycleService;
   const userConfigService = yield* UserConfigService;
   const sessionRepository = yield* SessionRepository;
+  const starredSessionService = yield* StarredSessionService;
   const context = yield* ApplicationContext;
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -74,10 +76,15 @@ const LayerImpl = Effect.gen(function* () {
         (p) => p.projectId === projectId,
       );
 
-      // Sort sessions by status (active/paused first) then by date
+      // Get starred session IDs
+      const starredSessionIds =
+        yield* starredSessionService.getStarredSessionIds();
+
+      // Sort sessions by status (active/paused first), then starred, then by date
       const sortedSessions = sortSessionsByStatusAndDate(
         allSessions,
         projectProcesses,
+        new Set(starredSessionIds),
       );
 
       // Apply user config filters
@@ -139,6 +146,7 @@ const LayerImpl = Effect.gen(function* () {
         filteredSessions = sortSessionsByStatusAndDate(
           filteredSessions,
           projectProcesses,
+          new Set(starredSessionIds),
         );
       }
 
@@ -193,6 +201,10 @@ const LayerImpl = Effect.gen(function* () {
       // Get active session processes
       const sessionProcesses = yield* getPublicSessionProcesses();
 
+      // Get starred session IDs
+      const starredSessionIds =
+        yield* starredSessionService.getStarredSessionIds();
+
       // Get sessions from all projects (first page only, limited per project)
       const allSessionsEffects = projects.map((project) =>
         Effect.gen(function* () {
@@ -224,10 +236,11 @@ const LayerImpl = Effect.gen(function* () {
         concurrency: "unbounded",
       });
 
-      // Flatten and sort by status (active/paused first) then by date
+      // Flatten and sort by status (active/paused first), then starred, then by date
       const allSessions = sortSessionsByStatusAndDate(
         sessionsPerProject.flat(),
         sessionProcesses,
+        new Set(starredSessionIds),
       );
 
       // Apply cursor-based pagination

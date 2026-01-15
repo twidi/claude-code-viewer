@@ -11,6 +11,7 @@ import {
   MenuIcon,
   MessageSquareIcon,
   PauseIcon,
+  StarIcon,
 } from "lucide-react";
 
 /**
@@ -48,8 +49,13 @@ import {
 } from "@/components/ui/tooltip";
 import { usePermissionRequests } from "@/hooks/usePermissionRequests";
 import { useSchedulerJobs } from "@/hooks/useScheduler";
+import {
+  useStarredSessionsSet,
+  useToggleStarredSession,
+} from "@/hooks/useStarredSessions";
 import { honoClient } from "@/lib/api/client";
 import { sessionDetailQuery, sessionProcessesQuery } from "@/lib/api/queries";
+import { cn } from "@/lib/utils";
 import type { PermissionMode } from "@/types/session-process";
 import { firstUserMessageToTitle } from "../../../services/firstCommandToTitle";
 import { useExportSession } from "../hooks/useExportSession";
@@ -129,6 +135,15 @@ const SessionPageMainContent: FC<
     from: "/projects/$projectId/session",
   });
   const isAllSessionsTab = search.tab === "all-sessions";
+  const starredSessionIds = useStarredSessionsSet();
+  const toggleStar = useToggleStarredSession();
+  const isStarred = sessionId ? starredSessionIds.has(sessionId) : false;
+
+  const handleToggleStar = () => {
+    if (sessionId) {
+      toggleStar.mutate(sessionId);
+    }
+  };
 
   const sessionProcess = useSessionProcess();
   const relatedSessionProcess = useMemo(() => {
@@ -301,6 +316,24 @@ const SessionPageMainContent: FC<
             >
               <MenuIcon className="w-4 h-4" />
             </Button>
+            {isExistingSession && (
+              <button
+                type="button"
+                onClick={handleToggleStar}
+                className={cn(
+                  "flex-shrink-0 transition-colors hover:text-yellow-500",
+                  isStarred && "text-yellow-500",
+                )}
+                aria-label={isStarred ? "Unstar session" : "Star session"}
+              >
+                <StarIcon
+                  className={cn(
+                    "w-5 h-5 sm:w-6 sm:h-6",
+                    isStarred && "fill-current",
+                  )}
+                />
+              </button>
+            )}
             <h1 className="text-lg sm:text-2xl md:text-3xl font-bold break-all overflow-ellipsis line-clamp-1 min-w-0">
               {headerTitle}
             </h1>
