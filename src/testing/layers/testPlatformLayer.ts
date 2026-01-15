@@ -70,6 +70,8 @@ export const testPlatformLayer = (overrides?: {
         theme: overrides?.userConfig?.theme ?? "system",
         searchHotkey: overrides?.userConfig?.searchHotkey ?? "command-k",
         simplifiedView: overrides?.userConfig?.simplifiedView ?? false,
+        autoAbortAfterMinutes:
+          overrides?.userConfig?.autoAbortAfterMinutes ?? "120",
       }),
   });
 

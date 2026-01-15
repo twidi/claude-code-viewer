@@ -32,13 +32,24 @@
     ],
     "translation": "サイドバーを閉じる"
   },
+  "Commit Changes": {
+    "translation": "",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        554
+      ]
+    ]
+  },
   "Compare from": {
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        400
+        513
       ]
     ],
     "translation": "比較元"
@@ -49,7 +60,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        406
+        519
       ]
     ],
     "translation": "比較先"
@@ -60,7 +71,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        312
+        426
       ]
     ],
     "translation": "コミットに失敗しました"
@@ -71,7 +82,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        378
+        492
       ]
     ],
     "translation": "コミットとプッシュに失敗しました"
@@ -82,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        330
+        444
       ]
     ],
     "translation": "プッシュに失敗しました"
@@ -93,7 +104,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        657
+        665
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -115,10 +126,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        365
+        479
       ]
     ],
     "translation": "プッシュを再試行"
+  },
+  "Select auto-abort timeout": {
+    "translation": "",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        350
+      ]
+    ]
   },
   "Select enter key behavior": {
     "placeholders": {},
@@ -126,7 +148,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        201
+        238
       ]
     ],
     "translation": "Enterキーの動作を選択"
@@ -137,7 +159,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        312
+        382
       ]
     ],
     "translation": "言語を選択"
@@ -148,7 +170,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        269
+        306
       ]
     ],
     "translation": "権限モードを選択"
@@ -159,7 +181,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        236
+        273
       ]
     ],
     "translation": "検索ホットキーを選択"
@@ -170,7 +192,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        341
+        411
       ]
     ],
     "translation": "テーマを選択"
@@ -181,7 +203,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        181
+        295
       ]
     ],
     "translation": "未コミットの変更"
@@ -339,7 +361,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        743
+        751
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +376,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        755
+        763
       ]
     ],
     "translation": "オートコンプリート有効"
@@ -376,7 +398,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        599
+        607
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -640,11 +662,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        700
+        708
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        785
+        793
+      ],
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        827
       ]
     ],
     "translation": "今すぐ送信"
@@ -655,11 +681,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        683
+        691
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        768
+        776
       ]
     ],
     "translation": "送信モード"
@@ -670,15 +696,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        703
+        711
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        797
+        805
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        823
+        833
       ]
     ],
     "translation": "予約送信"
@@ -690,7 +716,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        792
+        800
       ]
     ],
     "translation": ""
@@ -701,7 +727,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        710
+        718
       ]
     ],
     "translation": "送信予定時刻"
@@ -713,11 +739,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        370
+        378
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        477
+        485
       ]
     ],
     "translation": ""
@@ -884,7 +910,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        842
+        853
       ]
     ],
     "translation": "処理中..."
@@ -996,10 +1022,6 @@
     "placeholders": {},
     "comments": [],
     "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        422
-      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
         85
@@ -1469,7 +1491,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        557
+        673
       ]
     ],
     "translation": "コミット"
@@ -1480,7 +1502,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        462
+        589
       ]
     ],
     "translation": "変更をコミット"
@@ -1491,7 +1513,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        531
+        647
       ]
     ],
     "translation": "コミットメッセージ"
@@ -1502,7 +1524,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        589
+        705
       ]
     ],
     "translation": "コミット＆プッシュ"
@@ -1513,7 +1535,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        554
+        670
       ]
     ],
     "translation": "コミット中..."
@@ -1524,7 +1546,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        586
+        702
       ]
     ],
     "translation": "コミット＆プッシュ中..."
@@ -1535,7 +1557,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        491
+        608
       ]
     ],
     "translation": "すべて選択解除"
@@ -1546,7 +1568,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        599
+        715
       ]
     ],
     "translation": "コミットメッセージを入力"
@@ -1557,7 +1579,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        56
+        138
       ]
     ],
     "translation": "ファイル"
@@ -1568,10 +1590,39 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        53
+        135
       ]
     ],
     "translation": "ファイルが変更されました"
+  },
+  "diff.large_file.load": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        296
+      ]
+    ],
+    "translation": "差分を読み込む"
+  },
+  "diff.large_file.message": {
+    "placeholders": {
+      "size": [
+        "formatSize(diffSize)"
+      ],
+      "lines": [
+        "lineCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        284
+      ]
+    ],
+    "translation": "大きな差分は非表示です ({size}, {lines} 行)"
   },
   "diff.loading": {
     "placeholders": {},
@@ -1579,21 +1630,54 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        618
+        756
       ]
     ],
     "translation": "差分を読み込み中..."
   },
   "diff.modal.title": {
-    "translation": "Git差分比較",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        395
+        509
       ]
-    ]
+    ],
+    "translation": "Git差分比較"
+  },
+  "diff.options.highlight": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        541
+      ]
+    ],
+    "translation": "構文"
+  },
+  "diff.options.split": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        526
+      ]
+    ],
+    "translation": "分割表示"
+  },
+  "diff.options.wrap": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        536
+      ]
+    ],
+    "translation": "折り返し"
   },
   "diff.push": {
     "placeholders": {},
@@ -1601,7 +1685,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        572
+        688
       ]
     ],
     "translation": "プッシュ"
@@ -1612,7 +1696,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        569
+        685
       ]
     ],
     "translation": "プッシュ中..."
@@ -1623,7 +1707,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        483
+        600
       ]
     ],
     "translation": "すべて選択"
@@ -1634,68 +1718,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        597
+        713
       ]
     ],
     "translation": "少なくとも1つのファイルを選択してください"
-  },
-  "diff.options.split": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        220
-      ]
-    ],
-    "translation": "分割表示"
-  },
-  "diff.options.wrap": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        225
-      ]
-    ],
-    "translation": "折り返し"
-  },
-  "diff.options.highlight": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        230
-      ]
-    ],
-    "translation": "構文"
-  },
-  "diff.large_file.message": {
-    "placeholders": {
-      "size": {},
-      "lines": {}
-    },
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        159
-      ]
-    ],
-    "translation": "大きな差分は非表示です ({size}, {lines} 行)"
-  },
-  "diff.large_file.load": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        170
-      ]
-    ],
-    "translation": "差分を読み込む"
   },
   "directory_picker.current": {
     "placeholders": {},
@@ -3142,6 +3168,72 @@
     ],
     "translation": "合計"
   },
+  "settings.auto_abort": {
+    "translation": "アイドルセッションの自動中止",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        341
+      ]
+    ]
+  },
+  "settings.auto_abort.description": {
+    "translation": "一定時間操作がない一時停止中のセッションを自動的に中止します。",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        363
+      ]
+    ]
+  },
+  "settings.auto_abort.hour": {
+    "translation": "1時間",
+    "message": "1 hour",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        168
+      ]
+    ]
+  },
+  "settings.auto_abort.hours": {
+    "translation": "{hours}時間",
+    "message": "{hours} hours",
+    "placeholders": {
+      "hours": [
+        "hours"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        173
+      ]
+    ]
+  },
+  "settings.auto_abort.minutes": {
+    "translation": "{minutes}分",
+    "message": "{minutes} minutes",
+    "placeholders": {
+      "minutes": [
+        "num"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        160
+      ]
+    ]
+  },
   "settings.description": {
     "placeholders": {},
     "comments": [],
@@ -3159,7 +3251,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        373
+        443
       ]
     ],
     "translation": "シンプル表示"
@@ -3170,7 +3262,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        379
+        449
       ]
     ],
     "translation": "ツール呼び出し、システムメッセージ、その他の補足的なコンテンツを会話から非表示にします"
@@ -3181,7 +3273,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        193
+        230
       ]
     ],
     "translation": "Enterキーの動作"
@@ -3192,7 +3284,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        211
+        248
       ]
     ],
     "translation": "Command+Enterで送信"
@@ -3203,7 +3295,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        217
+        254
       ]
     ],
     "translation": "メッセージ入力でのEnterキーの動作を選択"
@@ -3214,7 +3306,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        208
+        245
       ]
     ],
     "translation": "Enterで送信"
@@ -3225,7 +3317,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        205
+        242
       ]
     ],
     "translation": "Shift+Enterで送信（デフォルト）"
@@ -3236,7 +3328,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        228
+        265
       ]
     ],
     "translation": "検索ホットキー"
@@ -3247,7 +3339,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        243
+        280
       ]
     ],
     "translation": "Command+K"
@@ -3258,7 +3350,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        240
+        277
       ]
     ],
     "translation": "Ctrl+K"
@@ -3269,7 +3361,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        249
+        286
       ]
     ],
     "translation": "検索ダイアログを開くホットキーを選択します"
@@ -3295,7 +3387,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        304
+        374
       ]
     ],
     "translation": "言語"
@@ -3306,7 +3398,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        328
+        398
       ]
     ],
     "translation": "お好みの言語を選択"
@@ -3317,7 +3409,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        319
+        389
       ]
     ],
     "translation": "English"
@@ -3328,7 +3420,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        316
+        386
       ]
     ],
     "translation": "日本語"
@@ -3339,7 +3431,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        322
+        392
       ]
     ],
     "translation": "中国語（簡体字）"
@@ -3361,7 +3453,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        260
+        297
       ]
     ],
     "translation": "権限モード"
@@ -3372,7 +3464,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        276
+        313
       ]
     ],
     "translation": "編集を承認（ファイル編集を自動承認）"
@@ -3383,7 +3475,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        279
+        316
       ]
     ],
     "translation": "権限をバイパス（プロンプトなし）"
@@ -3394,7 +3486,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        273
+        310
       ]
     ],
     "translation": "デフォルト（権限を確認）"
@@ -3405,7 +3497,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        288
+        325
       ]
     ],
     "translation": "ファイル操作の権限リクエストの処理方法を制御"
@@ -3416,7 +3508,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        282
+        319
       ]
     ],
     "translation": "プランモード（計画のみ）"
@@ -3427,7 +3519,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        293
+        330
       ]
     ],
     "translation": "お使いのClaude Codeバージョンではこの機能は利用できません。すべてのツールは自動で承認されます。"
@@ -3482,7 +3574,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        156
+        193
       ]
     ],
     "translation": "ユーザーメッセージのないセッションを非表示"
@@ -3493,7 +3585,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        162
+        199
       ]
     ],
     "translation": "ユーザーコマンドまたはメッセージを含むセッションのみを表示"
@@ -3504,7 +3596,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        177
+        214
       ]
     ],
     "translation": "同じタイトルのセッションを統合"
@@ -3515,7 +3607,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        183
+        220
       ]
     ],
     "translation": "同じタイトルの複数のセッションがある場合、最新のセッションのみを表示"
@@ -3541,7 +3633,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        336
+        406
       ]
     ],
     "translation": "テーマ"
@@ -3552,7 +3644,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        348
+        418
       ]
     ],
     "translation": "ダーク"
@@ -3563,7 +3655,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        357
+        427
       ]
     ],
     "translation": "お好みのカラーテーマを選択"
@@ -3574,7 +3666,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        345
+        415
       ]
     ],
     "translation": "ライト"
@@ -3585,7 +3677,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        351
+        421
       ]
     ],
     "translation": "システム"

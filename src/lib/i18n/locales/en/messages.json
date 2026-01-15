@@ -32,13 +32,24 @@
     ],
     "translation": "Close Sidebar"
   },
+  "Commit Changes": {
+    "translation": "Commit Changes",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        554
+      ]
+    ]
+  },
   "Compare from": {
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        400
+        513
       ]
     ],
     "translation": "Compare from"
@@ -49,7 +60,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        406
+        519
       ]
     ],
     "translation": "Compare to"
@@ -60,7 +71,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        312
+        426
       ]
     ],
     "translation": "Failed to commit"
@@ -71,7 +82,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        378
+        492
       ]
     ],
     "translation": "Failed to commit and push"
@@ -82,7 +93,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        330
+        444
       ]
     ],
     "translation": "Failed to push"
@@ -93,7 +104,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        657
+        665
       ]
     ],
     "translation": "Message input with completion support"
@@ -115,10 +126,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        365
+        479
       ]
     ],
     "translation": "Retry Push"
+  },
+  "Select auto-abort timeout": {
+    "translation": "Select auto-abort timeout",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        350
+      ]
+    ]
   },
   "Select enter key behavior": {
     "placeholders": {},
@@ -126,7 +148,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        201
+        238
       ]
     ],
     "translation": "Select enter key behavior"
@@ -137,7 +159,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        312
+        382
       ]
     ],
     "translation": "Select language"
@@ -148,7 +170,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        269
+        306
       ]
     ],
     "translation": "Select permission mode"
@@ -159,7 +181,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        236
+        273
       ]
     ],
     "translation": "Select search hotkey"
@@ -170,7 +192,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        341
+        411
       ]
     ],
     "translation": "Select theme"
@@ -181,7 +203,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        181
+        295
       ]
     ],
     "translation": "Uncommitted changes"
@@ -339,7 +361,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        743
+        751
       ],
       [
         "src/components/AttachButton.tsx",
@@ -354,7 +376,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        755
+        763
       ]
     ],
     "translation": "Autocomplete Active"
@@ -376,7 +398,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        599
+        607
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -640,11 +662,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        700
+        708
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        785
+        793
+      ],
+      [
+        "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
+        827
       ]
     ],
     "translation": "Send Now"
@@ -655,11 +681,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        683
+        691
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        768
+        776
       ]
     ],
     "translation": "Send Mode"
@@ -670,15 +696,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        703
+        711
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        797
+        805
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        823
+        833
       ]
     ],
     "translation": "Schedule Send"
@@ -690,7 +716,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        792
+        800
       ]
     ],
     "translation": "Scheduled (not available with attachments)"
@@ -701,7 +727,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        710
+        718
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -713,11 +739,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        370
+        378
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        477
+        485
       ]
     ],
     "translation": "Switched to immediate send (scheduled send doesn't support attachments)"
@@ -884,7 +910,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        842
+        853
       ]
     ],
     "translation": "Processing..."
@@ -996,10 +1022,6 @@
     "placeholders": {},
     "comments": [],
     "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        422
-      ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
         85
@@ -1469,7 +1491,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        557
+        673
       ]
     ],
     "translation": "Commit"
@@ -1480,7 +1502,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        462
+        589
       ]
     ],
     "translation": "Commit Changes"
@@ -1491,7 +1513,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        531
+        647
       ]
     ],
     "translation": "Commit Message"
@@ -1502,7 +1524,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        589
+        705
       ]
     ],
     "translation": "Commit & Push"
@@ -1513,7 +1535,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        554
+        670
       ]
     ],
     "translation": "Committing..."
@@ -1524,7 +1546,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        586
+        702
       ]
     ],
     "translation": "Committing & Pushing..."
@@ -1535,7 +1557,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        491
+        608
       ]
     ],
     "translation": "Deselect All"
@@ -1546,7 +1568,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        599
+        715
       ]
     ],
     "translation": "Please enter a commit message"
@@ -1557,7 +1579,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        56
+        138
       ]
     ],
     "translation": "Files"
@@ -1568,10 +1590,39 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        53
+        135
       ]
     ],
     "translation": "files changed"
+  },
+  "diff.large_file.load": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        296
+      ]
+    ],
+    "translation": "Load diff"
+  },
+  "diff.large_file.message": {
+    "placeholders": {
+      "size": [
+        "formatSize(diffSize)"
+      ],
+      "lines": [
+        "lineCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        284
+      ]
+    ],
+    "translation": "Large diff hidden ({size}, {lines} lines)"
   },
   "diff.loading": {
     "placeholders": {},
@@ -1579,21 +1630,54 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        618
+        756
       ]
     ],
     "translation": "Loading diff..."
   },
   "diff.modal.title": {
-    "translation": "Git Diff Comparison",
     "placeholders": {},
     "comments": [],
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        395
+        509
       ]
-    ]
+    ],
+    "translation": "Git Diff Comparison"
+  },
+  "diff.options.highlight": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        541
+      ]
+    ],
+    "translation": "Syntax"
+  },
+  "diff.options.split": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        526
+      ]
+    ],
+    "translation": "Split"
+  },
+  "diff.options.wrap": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        536
+      ]
+    ],
+    "translation": "Wrap"
   },
   "diff.push": {
     "placeholders": {},
@@ -1601,7 +1685,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        572
+        688
       ]
     ],
     "translation": "Push"
@@ -1612,7 +1696,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        569
+        685
       ]
     ],
     "translation": "Pushing..."
@@ -1623,7 +1707,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        483
+        600
       ]
     ],
     "translation": "Select All"
@@ -1634,68 +1718,10 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        597
+        713
       ]
     ],
     "translation": "Please select at least one file"
-  },
-  "diff.options.split": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        220
-      ]
-    ],
-    "translation": "Split"
-  },
-  "diff.options.wrap": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        225
-      ]
-    ],
-    "translation": "Wrap"
-  },
-  "diff.options.highlight": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        230
-      ]
-    ],
-    "translation": "Syntax"
-  },
-  "diff.large_file.message": {
-    "placeholders": {
-      "size": {},
-      "lines": {}
-    },
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        159
-      ]
-    ],
-    "translation": "Large diff hidden ({size}, {lines} lines)"
-  },
-  "diff.large_file.load": {
-    "placeholders": {},
-    "comments": [],
-    "origin": [
-      [
-        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
-        170
-      ]
-    ],
-    "translation": "Load diff"
   },
   "directory_picker.current": {
     "placeholders": {},
@@ -3142,6 +3168,72 @@
     ],
     "translation": "Total"
   },
+  "settings.auto_abort": {
+    "translation": "Auto-abort idle sessions",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        341
+      ]
+    ]
+  },
+  "settings.auto_abort.description": {
+    "translation": "Automatically abort paused sessions after this period of inactivity.",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        363
+      ]
+    ]
+  },
+  "settings.auto_abort.hour": {
+    "translation": "1 hour",
+    "message": "1 hour",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        168
+      ]
+    ]
+  },
+  "settings.auto_abort.hours": {
+    "translation": "{hours} hours",
+    "message": "{hours} hours",
+    "placeholders": {
+      "hours": [
+        "hours"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        173
+      ]
+    ]
+  },
+  "settings.auto_abort.minutes": {
+    "translation": "{minutes} minutes",
+    "message": "{minutes} minutes",
+    "placeholders": {
+      "minutes": [
+        "num"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/SettingsControls.tsx",
+        160
+      ]
+    ]
+  },
   "settings.description": {
     "placeholders": {},
     "comments": [],
@@ -3159,7 +3251,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        373
+        443
       ]
     ],
     "translation": "Simplified View"
@@ -3170,7 +3262,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        379
+        449
       ]
     ],
     "translation": "Hide tool calls, system messages, and other non-essential content from conversations"
@@ -3181,7 +3273,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        193
+        230
       ]
     ],
     "translation": "Enter Key Behavior"
@@ -3192,7 +3284,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        211
+        248
       ]
     ],
     "translation": "Send with Command+Enter"
@@ -3203,7 +3295,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        217
+        254
       ]
     ],
     "translation": "Select Enter key behavior for message input"
@@ -3214,7 +3306,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        208
+        245
       ]
     ],
     "translation": "Send with Enter"
@@ -3225,7 +3317,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        205
+        242
       ]
     ],
     "translation": "Send with Shift+Enter (Default)"
@@ -3236,7 +3328,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        228
+        265
       ]
     ],
     "translation": "Search Hotkey"
@@ -3247,7 +3339,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        243
+        280
       ]
     ],
     "translation": "Command+K"
@@ -3258,7 +3350,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        240
+        277
       ]
     ],
     "translation": "Ctrl+K"
@@ -3269,7 +3361,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        249
+        286
       ]
     ],
     "translation": "Select the hotkey to open search dialog"
@@ -3295,7 +3387,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        304
+        374
       ]
     ],
     "translation": "Language"
@@ -3306,7 +3398,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        328
+        398
       ]
     ],
     "translation": "Select your preferred language"
@@ -3317,7 +3409,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        319
+        389
       ]
     ],
     "translation": "English"
@@ -3328,7 +3420,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        316
+        386
       ]
     ],
     "translation": "Japanese"
@@ -3339,7 +3431,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        322
+        392
       ]
     ],
     "translation": "Chinese (Simplified)"
@@ -3361,7 +3453,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        260
+        297
       ]
     ],
     "translation": "Permission Mode"
@@ -3372,7 +3464,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        276
+        313
       ]
     ],
     "translation": "Accept Edits (Auto-approve file edits)"
@@ -3383,7 +3475,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        279
+        316
       ]
     ],
     "translation": "Bypass Permissions (No prompts)"
@@ -3394,7 +3486,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        273
+        310
       ]
     ],
     "translation": "Default (Confirm Permissions)"
@@ -3405,7 +3497,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        288
+        325
       ]
     ],
     "translation": "Control how file operation permission requests are handled"
@@ -3416,7 +3508,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        282
+        319
       ]
     ],
     "translation": "Plan Mode (Planning only)"
@@ -3427,7 +3519,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        293
+        330
       ]
     ],
     "translation": "This feature is not available in your Claude Code version. All tools are automatically approved."
@@ -3482,7 +3574,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        156
+        193
       ]
     ],
     "translation": "Hide Sessions Without User Messages"
@@ -3493,7 +3585,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        162
+        199
       ]
     ],
     "translation": "Show only sessions that contain user commands or messages"
@@ -3504,7 +3596,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        177
+        214
       ]
     ],
     "translation": "Unify Sessions with Same Title"
@@ -3515,7 +3607,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        183
+        220
       ]
     ],
     "translation": "When multiple sessions have the same title, show only the latest session"
@@ -3541,7 +3633,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        336
+        406
       ]
     ],
     "translation": "Theme"
@@ -3552,7 +3644,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        348
+        418
       ]
     ],
     "translation": "Dark"
@@ -3563,7 +3655,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        357
+        427
       ]
     ],
     "translation": "Select your preferred color theme"
@@ -3574,7 +3666,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        345
+        415
       ]
     ],
     "translation": "Light"
@@ -3585,7 +3677,7 @@
     "origin": [
       [
         "src/components/SettingsControls.tsx",
-        351
+        421
       ]
     ],
     "translation": "System"

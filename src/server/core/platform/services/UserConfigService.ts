@@ -13,6 +13,7 @@ const LayerImpl = Effect.gen(function* () {
     theme: "system",
     searchHotkey: "command-k",
     simplifiedView: false,
+    autoAbortAfterMinutes: "120",
   });
 
   const setUserConfig = (newConfig: UserConfig) =>

@@ -18,6 +18,7 @@ import {
   detectLocaleFromNavigator,
 } from "../lib/i18n/localeDetection";
 import type { SupportedLocale } from "../lib/i18n/schema";
+import { autoAbortAfterMinutesValues } from "../server/lib/config/config";
 
 interface SettingsControlsProps {
   openingProjectId: string;
@@ -40,6 +41,7 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
   const enterKeyBehaviorId = useId();
   const searchHotkeyId = useId();
   const permissionModeId = useId();
+  const autoAbortId = useId();
   const localeId = useId();
   const themeId = useId();
   const simplifiedViewId = useId();
@@ -138,6 +140,41 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
       simplifiedView: !config?.simplifiedView,
     };
     updateConfig(newConfig);
+  };
+
+  const handleAutoAbortChange = async (
+    value: (typeof autoAbortAfterMinutesValues)[number],
+  ) => {
+    const newConfig = {
+      ...config,
+      autoAbortAfterMinutes: value,
+    };
+    updateConfig(newConfig);
+  };
+
+  const formatAutoAbortLabel = (
+    minutes: (typeof autoAbortAfterMinutesValues)[number],
+  ) => {
+    const num = Number.parseInt(minutes, 10);
+    if (num < 60) {
+      return i18n._({
+        id: "settings.auto_abort.minutes",
+        message: "{minutes} minutes",
+        values: { minutes: num },
+      });
+    }
+    const hours = num / 60;
+    if (hours === 1) {
+      return i18n._({
+        id: "settings.auto_abort.hour",
+        message: "1 hour",
+      });
+    }
+    return i18n._({
+      id: "settings.auto_abort.hours",
+      message: "{hours} hours",
+      values: { hours },
+    });
   };
 
   return (
@@ -291,6 +328,37 @@ export const SettingsControls: FC<SettingsControlsProps> = ({
         {showDescriptions && !isToolApprovalAvailable && (
           <p className="text-xs text-destructive mt-1">
             <Trans id="settings.permission.mode.unavailable" />
+          </p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        {showLabels && (
+          <label
+            htmlFor={autoAbortId}
+            className="text-sm font-medium leading-none"
+          >
+            <Trans id="settings.auto_abort" />
+          </label>
+        )}
+        <Select
+          value={config?.autoAbortAfterMinutes || "120"}
+          onValueChange={handleAutoAbortChange}
+        >
+          <SelectTrigger id={autoAbortId} className="w-full">
+            <SelectValue placeholder={i18n._("Select auto-abort timeout")} />
+          </SelectTrigger>
+          <SelectContent>
+            {autoAbortAfterMinutesValues.map((value) => (
+              <SelectItem key={value} value={value}>
+                {formatAutoAbortLabel(value)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {showDescriptions && (
+          <p className="text-xs text-muted-foreground mt-1">
+            <Trans id="settings.auto_abort.description" />
           </p>
         )}
       </div>

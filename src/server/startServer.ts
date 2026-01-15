@@ -6,6 +6,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Effect } from "effect";
 import { AgentSessionLayer } from "./core/agent-session";
 import { AgentSessionController } from "./core/agent-session/presentation/AgentSessionController";
+import { AutoAbortService } from "./core/auto-abort/AutoAbortService";
 import { ClaudeCodeController } from "./core/claude-code/presentation/ClaudeCodeController";
 import { ClaudeCodePermissionController } from "./core/claude-code/presentation/ClaudeCodePermissionController";
 import { ClaudeCodeSessionProcessController } from "./core/claude-code/presentation/ClaudeCodeSessionProcessController";
@@ -88,6 +89,7 @@ export const startServer = async (options: CliOptions) => {
     )
     .pipe(
       /** Domain - Services with cross-dependencies */
+      Effect.provide(AutoAbortService.Live),
       Effect.provide(SchedulerService.Live),
     )
     .pipe(

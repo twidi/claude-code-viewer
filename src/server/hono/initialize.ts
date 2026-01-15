@@ -1,4 +1,5 @@
 import { Context, Effect, Layer, Ref, Schedule } from "effect";
+import { AutoAbortService } from "../core/auto-abort/AutoAbortService";
 import { EventBus } from "../core/events/services/EventBus";
 import { FileWatcherService } from "../core/events/services/fileWatcher";
 import type { InternalEventDeclaration } from "../core/events/types/InternalEventDeclaration";
@@ -29,6 +30,7 @@ export class InitializeService extends Context.Tag("InitializeService")<
       const sessionMetaService = yield* SessionMetaService;
       const virtualConversationDatabase = yield* VirtualConversationDatabase;
       const schedulerService = yield* SchedulerService;
+      const autoAbortService = yield* AutoAbortService;
 
       // 状態管理用の Ref
       const listenersRef = yield* Ref.make<{
@@ -126,6 +128,14 @@ export class InitializeService extends Context.Tag("InitializeService")<
               return Effect.void;
             }),
           );
+
+          // Start the auto-abort daemon to clean up idle paused sessions
+          yield* autoAbortService.startAutoAbortDaemon.pipe(
+            Effect.catchAll((error) => {
+              console.error("Failed to start auto-abort daemon:", error);
+              return Effect.void;
+            }),
+          );
         }).pipe(Effect.withSpan("start-initialization")) as Effect.Effect<void>;
       };
 
@@ -144,6 +154,7 @@ export class InitializeService extends Context.Tag("InitializeService")<
           }
 
           yield* Ref.set(listenersRef, {});
+          yield* autoAbortService.stopAutoAbortDaemon;
           yield* schedulerService.stopScheduler;
           yield* fileWatcher.stop();
         });

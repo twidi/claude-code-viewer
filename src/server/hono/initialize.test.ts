@@ -1,5 +1,6 @@
 import { Effect, Layer, Ref } from "effect";
 import { describe, expect, it } from "vitest";
+import { testAutoAbortServiceLayer } from "../../testing/layers/testAutoAbortServiceLayer";
 import { testPlatformLayer } from "../../testing/layers/testPlatformLayer";
 import { testProjectMetaServiceLayer } from "../../testing/layers/testProjectMetaServiceLayer";
 import { testProjectRepositoryLayer } from "../../testing/layers/testProjectRepositoryLayer";
@@ -35,6 +36,7 @@ const allDependencies = Layer.mergeAll(
     }),
   }),
   testSchedulerServiceLayer(),
+  testAutoAbortServiceLayer(),
   testPlatformLayer(),
 );
 
