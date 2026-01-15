@@ -841,7 +841,7 @@ export const ChatInput: FC<ChatInputProps> = ({
                     disabled
                   }
                   size={buttonSize}
-                  className="gap-2 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-muted disabled:to-muted"
+                  className="gap-2 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
                 >
                   {isPending ? (
                     <>
