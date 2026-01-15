@@ -1,9 +1,10 @@
 import { Trans, useLingui } from "@lingui/react";
 import {
   ChevronDown,
-  ChevronUp,
+  ChevronRight,
   FileText,
   GitBranch,
+  GitCommitHorizontal,
   Loader2,
   RefreshCcwIcon,
 } from "lucide-react";
@@ -12,7 +13,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -29,24 +30,105 @@ import {
   useGitDiff,
   usePushCommits,
 } from "../../hooks/useGit";
-import { DiffViewer } from "./DiffViewer";
-import type { DiffModalProps, DiffSummary, GitRef } from "./types";
+import type { DiffViewOptions } from "./DiffViewer";
+import {
+  DEFAULT_DIFF_OPTIONS,
+  DiffOptionToggle,
+  DiffViewer,
+  getFileElementId,
+} from "./DiffViewer";
+import type { DiffModalProps, DiffSummary, FileStatus, GitRef } from "./types";
+
+interface FileStatusBadgeProps {
+  status: FileStatus;
+  className?: string;
+}
+
+const FileStatusBadge: FC<FileStatusBadgeProps> = ({ status, className }) => {
+  const config: Record<
+    FileStatus,
+    { label: string; bgClass: string; textClass: string }
+  > = {
+    added: {
+      label: "A",
+      bgClass: "bg-green-100 dark:bg-green-900/30",
+      textClass: "text-green-700 dark:text-green-400",
+    },
+    deleted: {
+      label: "D",
+      bgClass: "bg-red-100 dark:bg-red-900/30",
+      textClass: "text-red-700 dark:text-red-400",
+    },
+    modified: {
+      label: "M",
+      bgClass: "bg-yellow-100 dark:bg-yellow-900/30",
+      textClass: "text-yellow-700 dark:text-yellow-400",
+    },
+    renamed: {
+      label: "R",
+      bgClass: "bg-purple-100 dark:bg-purple-900/30",
+      textClass: "text-purple-700 dark:text-purple-400",
+    },
+    copied: {
+      label: "C",
+      bgClass: "bg-blue-100 dark:bg-blue-900/30",
+      textClass: "text-blue-700 dark:text-blue-400",
+    },
+    untracked: {
+      label: "U",
+      bgClass: "bg-gray-100 dark:bg-gray-700",
+      textClass: "text-gray-700 dark:text-gray-300",
+    },
+  };
+
+  const { label, bgClass, textClass } = config[status];
+
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold shrink-0",
+        bgClass,
+        textClass,
+        className,
+      )}
+      title={status}
+    >
+      {label}
+    </span>
+  );
+};
 
 interface DiffSummaryProps {
   summary: DiffSummary;
   className?: string;
+  onFileClick?: (filePath: string) => void;
 }
 
-const DiffSummaryComponent: FC<DiffSummaryProps> = ({ summary, className }) => {
+const DiffSummaryComponent: FC<DiffSummaryProps> = ({
+  summary,
+  className,
+  onFileClick,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
     <div
       className={cn(
-        "bg-gray-50 dark:bg-gray-800 rounded-lg p-2 border border-gray-200 dark:border-gray-700",
+        "bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700",
         className,
       )}
     >
-      <div className="flex items-center justify-between text-sm">
+      <button
+        type="button"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full p-2 flex items-center justify-between text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors rounded-lg"
+      >
         <div className="flex items-center gap-1">
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          )}
           <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400" />
           <span className="font-medium">
             <span className="hidden sm:inline">
@@ -69,7 +151,35 @@ const DiffSummaryComponent: FC<DiffSummaryProps> = ({ summary, className }) => {
             </span>
           )}
         </div>
-      </div>
+      </button>
+      {isExpanded && (
+        <div className="border-t border-gray-200 dark:border-gray-700 p-2 space-y-1 max-h-60 overflow-y-auto">
+          {summary.files.map((file) => (
+            <button
+              key={file.filePath}
+              type="button"
+              onClick={() => onFileClick?.(file.filePath)}
+              className="w-full text-left px-2 py-1 text-sm font-mono hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors flex items-center gap-2"
+            >
+              <FileStatusBadge status={file.status} />
+              <span className="truncate flex-1">{file.filePath}</span>
+              <span className="shrink-0 text-xs">
+                {file.additions > 0 && (
+                  <span className="text-green-600 dark:text-green-400">
+                    +{file.additions}
+                  </span>
+                )}
+                {file.additions > 0 && file.deletions > 0 && " "}
+                {file.deletions > 0 && (
+                  <span className="text-red-600 dark:text-red-400">
+                    -{file.deletions}
+                  </span>
+                )}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -156,6 +266,10 @@ export const DiffModal: FC<DiffModalProps> = ({
 
   // Commit section collapse state (default: collapsed)
   const [isCommitSectionExpanded, setIsCommitSectionExpanded] = useState(false);
+
+  // Diff view options state
+  const [diffOptions, setDiffOptions] =
+    useState<DiffViewOptions>(DEFAULT_DIFF_OPTIONS);
 
   // API hooks - use parent data if available, otherwise fetch
   const { data: fetchedRevisionsData, isLoading: isLoadingRevisions } =
@@ -391,37 +505,71 @@ export const DiffModal: FC<DiffModalProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-7xl w-[95vw] h-[90vh] overflow-hidden flex flex-col px-2 md:px-8">
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-          <div className="flex flex-col sm:flex-row gap-2 flex-1">
-            <RefSelector
-              label={i18n._("Compare from")}
-              value={compareFrom}
-              onValueChange={setCompareFrom}
-              refs={gitRefs.filter((ref) => ref.name !== "working")}
+        <DialogTitle className="sr-only">
+          <Trans id="diff.modal.title" />
+        </DialogTitle>
+        <div className="flex flex-wrap items-end gap-2">
+          <RefSelector
+            label={i18n._("Compare from")}
+            value={compareFrom}
+            onValueChange={setCompareFrom}
+            refs={gitRefs.filter((ref) => ref.name !== "working")}
+          />
+          <RefSelector
+            label={i18n._("Compare to")}
+            value={compareTo}
+            onValueChange={setCompareTo}
+            refs={gitRefs}
+          />
+          <div className="flex flex-wrap items-center gap-3 ml-auto">
+            <DiffOptionToggle
+              label={<Trans id="diff.options.split" />}
+              checked={diffOptions.mode === "split"}
+              onChange={(isSplit) =>
+                setDiffOptions((prev) => ({
+                  ...prev,
+                  mode: isSplit ? "split" : "unified",
+                }))
+              }
             />
-            <RefSelector
-              label={i18n._("Compare to")}
-              value={compareTo}
-              onValueChange={setCompareTo}
-              refs={gitRefs}
+            <DiffOptionToggle
+              label={<Trans id="diff.options.wrap" />}
+              checked={diffOptions.wrap}
+              onChange={(wrap) => setDiffOptions((prev) => ({ ...prev, wrap }))}
             />
-          </div>
-          <Button
-            onClick={handleCompare}
-            disabled={
-              isDiffLoading || isLoadingRevisions || compareFrom === compareTo
-            }
-            className="sm:self-end w-full sm:w-auto"
-          >
-            {isDiffLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                <Trans id="common.loading" />
-              </>
-            ) : (
-              <RefreshCcwIcon className="w-4 h-4" />
+            <DiffOptionToggle
+              label={<Trans id="diff.options.highlight" />}
+              checked={diffOptions.highlight}
+              onChange={(highlight) =>
+                setDiffOptions((prev) => ({ ...prev, highlight }))
+              }
+            />
+            {compareTo === "working" && (
+              <Button
+                onClick={() =>
+                  setIsCommitSectionExpanded(!isCommitSectionExpanded)
+                }
+                size="sm"
+                variant={isCommitSectionExpanded ? "default" : "outline"}
+                title={i18n._("Commit Changes")}
+              >
+                <GitCommitHorizontal className="w-4 h-4" />
+              </Button>
             )}
-          </Button>
+            <Button
+              onClick={handleCompare}
+              disabled={
+                isDiffLoading || isLoadingRevisions || compareFrom === compareTo
+              }
+              size="sm"
+            >
+              {isDiffLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCcwIcon className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {diffError && (
@@ -433,205 +581,171 @@ export const DiffModal: FC<DiffModalProps> = ({
         )}
 
         {diffData?.success && (
-          <div className="flex-1 overflow-auto">
-            <DiffSummaryComponent
-              summary={{
-                filesChanged: diffData.data.files.length,
-                insertions: diffData.data.summary.totalAdditions,
-                deletions: diffData.data.summary.totalDeletions,
-                files: diffData.data.diffs.map((diff) => ({
-                  filename: diff.file.filePath,
-                  oldFilename: diff.file.oldPath,
-                  isNew: diff.file.status === "added",
-                  isDeleted: diff.file.status === "deleted",
-                  isRenamed: diff.file.status === "renamed",
-                  isBinary: false,
-                  hunks: diff.hunks,
-                  linesAdded: diff.file.additions,
-                  linesDeleted: diff.file.deletions,
-                })),
-              }}
-              className="mb-3"
-            />
-
-            {/* Commit UI Section */}
-            {compareTo === "working" && (
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg mb-4 border border-gray-200 dark:border-gray-700">
-                {/* Section header with toggle */}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setIsCommitSectionExpanded(!isCommitSectionExpanded)
-                  }
-                  className="w-full flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors rounded-t-lg"
-                >
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <Trans id="diff.commit.changes" />
-                  </span>
-                  {isCommitSectionExpanded ? (
-                    <ChevronUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                  )}
-                </button>
-
-                {/* Collapsible content */}
-                {isCommitSectionExpanded && (
-                  <div className="p-4 pt-0 space-y-3">
-                    {/* File selection controls */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={handleSelectAll}
-                          disabled={commitMutation.isPending}
-                        >
-                          <Trans id="diff.select.all" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={handleDeselectAll}
-                          disabled={commitMutation.isPending}
-                        >
-                          <Trans id="diff.deselect.all" />
-                        </Button>
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
-                          {selectedCount} / {diffData.data.files.length} files
-                          selected
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* File list with checkboxes */}
-                    <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-2">
-                      {diffData.data.files.map((file) => (
-                        <div
-                          key={file.filePath}
-                          className="flex items-center gap-2"
-                        >
-                          <Checkbox
-                            id={`file-${file.filePath}`}
-                            checked={selectedFiles.get(file.filePath) ?? false}
-                            onCheckedChange={() =>
-                              handleToggleFile(file.filePath)
-                            }
-                            disabled={commitMutation.isPending}
-                          />
-                          <label
-                            htmlFor={`file-${file.filePath}`}
-                            className="text-sm font-mono cursor-pointer flex-1"
-                          >
-                            {file.filePath}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Commit message input */}
-                    <div className="space-y-2">
-                      <label
-                        htmlFor={commitMessageId}
-                        className="text-sm font-medium text-gray-700 dark:text-gray-300"
-                      >
-                        <Trans id="diff.commit.message" />
-                      </label>
-                      <Textarea
-                        id={commitMessageId}
-                        placeholder="Enter commit message..."
-                        value={commitMessage}
-                        onChange={(e) => setCommitMessage(e.target.value)}
-                        disabled={commitMutation.isPending}
-                        className="resize-none"
-                        rows={3}
-                      />
-                    </div>
-
-                    {/* Action buttons */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <Button
-                        onClick={handleCommit}
-                        disabled={isCommitDisabled}
-                        className="w-full sm:w-auto"
-                      >
-                        {commitMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            <Trans id="diff.committing" />
-                          </>
-                        ) : (
-                          <Trans id="diff.commit" />
-                        )}
-                      </Button>
-                      <Button
-                        onClick={handlePush}
-                        disabled={pushMutation.isPending}
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                      >
-                        {pushMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            <Trans id="diff.pushing" />
-                          </>
-                        ) : (
-                          <Trans id="diff.push" />
-                        )}
-                      </Button>
-                      <Button
-                        onClick={handleCommitAndPush}
-                        disabled={
-                          isCommitDisabled || commitAndPushMutation.isPending
-                        }
-                        variant="secondary"
-                        className="w-full sm:w-auto"
-                      >
-                        {commitAndPushMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            <Trans id="diff.committing.pushing" />
-                          </>
-                        ) : (
-                          <Trans id="diff.commit.push" />
-                        )}
-                      </Button>
-                      {isCommitDisabled &&
-                        !commitMutation.isPending &&
-                        !commitAndPushMutation.isPending && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {selectedCount === 0 ? (
-                              <Trans id="diff.select.file" />
-                            ) : (
-                              <Trans id="diff.enter.message" />
-                            )}
-                          </span>
-                        )}
-                    </div>
+          <>
+            {/* Commit UI Section - shown when toggle is active */}
+            {compareTo === "working" && isCommitSectionExpanded && (
+              <div className="bg-gray-50 dark:bg-gray-900 rounded-lg mb-3 border border-gray-200 dark:border-gray-700 p-4 space-y-3">
+                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <Trans id="diff.commit.changes" />
+                </h3>
+                {/* File selection controls */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleSelectAll}
+                      disabled={commitMutation.isPending}
+                    >
+                      <Trans id="diff.select.all" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleDeselectAll}
+                      disabled={commitMutation.isPending}
+                    >
+                      <Trans id="diff.deselect.all" />
+                    </Button>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {selectedCount} / {diffData.data.files.length} files
+                      selected
+                    </span>
                   </div>
-                )}
+                </div>
+
+                {/* File list with checkboxes */}
+                <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded p-2">
+                  {diffData.data.files.map((file) => (
+                    <div
+                      key={file.filePath}
+                      className="flex items-center gap-2"
+                    >
+                      <Checkbox
+                        id={`file-${file.filePath}`}
+                        checked={selectedFiles.get(file.filePath) ?? false}
+                        onCheckedChange={() => handleToggleFile(file.filePath)}
+                        disabled={commitMutation.isPending}
+                      />
+                      <FileStatusBadge status={file.status} />
+                      <label
+                        htmlFor={`file-${file.filePath}`}
+                        className="text-sm font-mono cursor-pointer flex-1 truncate"
+                      >
+                        {file.filePath}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Commit message input */}
+                <div className="space-y-2">
+                  <label
+                    htmlFor={commitMessageId}
+                    className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
+                    <Trans id="diff.commit.message" />
+                  </label>
+                  <Textarea
+                    id={commitMessageId}
+                    placeholder="Enter commit message..."
+                    value={commitMessage}
+                    onChange={(e) => setCommitMessage(e.target.value)}
+                    disabled={commitMutation.isPending}
+                    className="resize-none"
+                    rows={3}
+                  />
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button
+                    onClick={handleCommit}
+                    disabled={isCommitDisabled}
+                    className="w-full sm:w-auto"
+                  >
+                    {commitMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Trans id="diff.committing" />
+                      </>
+                    ) : (
+                      <Trans id="diff.commit" />
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handlePush}
+                    disabled={pushMutation.isPending}
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
+                    {pushMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Trans id="diff.pushing" />
+                      </>
+                    ) : (
+                      <Trans id="diff.push" />
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleCommitAndPush}
+                    disabled={
+                      isCommitDisabled || commitAndPushMutation.isPending
+                    }
+                    variant="secondary"
+                    className="w-full sm:w-auto"
+                  >
+                    {commitAndPushMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Trans id="diff.committing.pushing" />
+                      </>
+                    ) : (
+                      <Trans id="diff.commit.push" />
+                    )}
+                  </Button>
+                  {isCommitDisabled &&
+                    !commitMutation.isPending &&
+                    !commitAndPushMutation.isPending && (
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {selectedCount === 0 ? (
+                          <Trans id="diff.select.file" />
+                        ) : (
+                          <Trans id="diff.enter.message" />
+                        )}
+                      </span>
+                    )}
+                </div>
               </div>
             )}
 
-            <div className="space-y-3">
-              {diffData.data.diffs.map((diff) => (
-                <DiffViewer
-                  key={diff.file.filePath}
-                  fileDiff={{
-                    filename: diff.file.filePath,
-                    oldFilename: diff.file.oldPath,
-                    isNew: diff.file.status === "added",
-                    isDeleted: diff.file.status === "deleted",
-                    isRenamed: diff.file.status === "renamed",
-                    isBinary: false,
-                    hunks: diff.hunks,
-                    linesAdded: diff.file.additions,
-                    linesDeleted: diff.file.deletions,
-                  }}
-                />
-              ))}
+            {/* File summary - outside scrollable area for easy navigation */}
+            <DiffSummaryComponent
+              summary={{
+                filesChanged: diffData.data.summary.totalFiles,
+                insertions: diffData.data.summary.totalAdditions,
+                deletions: diffData.data.summary.totalDeletions,
+                files: diffData.data.files,
+              }}
+              className="mb-3 shrink-0"
+              onFileClick={(filePath) => {
+                const element = document.getElementById(
+                  getFileElementId(filePath),
+                );
+                element?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+            />
+
+            {/* Scrollable diff content */}
+            <div className="flex-1 overflow-auto min-h-0">
+              <DiffViewer
+                rawDiff={diffData.data.rawDiff}
+                options={diffOptions}
+                fileStats={diffData.data.files}
+              />
             </div>
-          </div>
+          </>
         )}
 
         {isDiffLoading && (

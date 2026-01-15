@@ -1,10 +1,15 @@
 export { DiffModal } from "./DiffModal";
-export { DiffViewer } from "./DiffViewer";
+export type { DiffFileStats, DiffViewOptions } from "./DiffViewer";
+export {
+  DEFAULT_DIFF_OPTIONS,
+  DiffOptionToggle,
+  DiffViewer,
+  getFileElementId,
+} from "./DiffViewer";
 export type {
-  DiffHunk,
-  DiffLine,
+  DiffFileSummary,
   DiffModalProps,
   DiffSummary,
-  FileDiff,
+  FileStatus,
   GitRef,
 } from "./types";

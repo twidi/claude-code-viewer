@@ -38,7 +38,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        397
+        400
       ]
     ],
     "translation": "Compare from"
@@ -49,7 +49,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        403
+        406
       ]
     ],
     "translation": "Compare to"
@@ -435,11 +435,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        282
+        287
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        737
+        742
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
@@ -843,7 +843,6 @@
     "translation": "Send now"
   },
   "chat.send_options.session_available.sending": {
-    "translation": "Sending...",
     "message": "Sending...",
     "placeholders": {},
     "comments": [],
@@ -852,7 +851,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SendMessageOptionsDialog.tsx",
         86
       ]
-    ]
+    ],
+    "translation": "Sending..."
   },
   "chat.send_options.session_available.title": {
     "message": "Session is now available",
@@ -998,7 +998,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        419
+        422
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/sessionSidebar/AllProjectsSessionsTab.tsx",
@@ -1055,11 +1055,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        366
+        371
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        542
+        547
       ]
     ],
     "translation": "Branch"
@@ -1104,7 +1104,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        504
+        509
       ]
     ],
     "translation": "Metadata"
@@ -1162,7 +1162,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        510
+        515
       ]
     ],
     "translation": "Project Path"
@@ -1197,7 +1197,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        528
+        533
       ]
     ],
     "translation": "Session ID"
@@ -1469,7 +1469,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        564
+        557
       ]
     ],
     "translation": "Commit"
@@ -1480,7 +1480,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        469
+        462
       ]
     ],
     "translation": "Commit Changes"
@@ -1491,7 +1491,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        538
+        531
       ]
     ],
     "translation": "Commit Message"
@@ -1502,7 +1502,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        596
+        589
       ]
     ],
     "translation": "Commit & Push"
@@ -1513,7 +1513,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        561
+        554
       ]
     ],
     "translation": "Committing..."
@@ -1524,7 +1524,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        593
+        586
       ]
     ],
     "translation": "Committing & Pushing..."
@@ -1535,7 +1535,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        498
+        491
       ]
     ],
     "translation": "Deselect All"
@@ -1546,7 +1546,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        606
+        599
       ]
     ],
     "translation": "Please enter a commit message"
@@ -1579,10 +1579,21 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        642
+        618
       ]
     ],
     "translation": "Loading diff..."
+  },
+  "diff.modal.title": {
+    "translation": "Git Diff Comparison",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
+        395
+      ]
+    ]
   },
   "diff.push": {
     "placeholders": {},
@@ -1590,7 +1601,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        579
+        572
       ]
     ],
     "translation": "Push"
@@ -1601,7 +1612,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        576
+        569
       ]
     ],
     "translation": "Pushing..."
@@ -1612,7 +1623,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        490
+        483
       ]
     ],
     "translation": "Select All"
@@ -1623,10 +1634,68 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        604
+        597
       ]
     ],
     "translation": "Please select at least one file"
+  },
+  "diff.options.split": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        220
+      ]
+    ],
+    "translation": "Split"
+  },
+  "diff.options.wrap": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        225
+      ]
+    ],
+    "translation": "Wrap"
+  },
+  "diff.options.highlight": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        230
+      ]
+    ],
+    "translation": "Syntax"
+  },
+  "diff.large_file.message": {
+    "placeholders": {
+      "size": {},
+      "lines": {}
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        159
+      ]
+    ],
+    "translation": "Large diff hidden ({size}, {lines} lines)"
+  },
+  "diff.large_file.load": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffViewer.tsx",
+        170
+      ]
+    ],
+    "translation": "Load diff"
   },
   "directory_picker.current": {
     "placeholders": {},
@@ -2638,7 +2707,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        672
+        677
       ]
     ],
     "translation": "Current tokens"
@@ -2649,7 +2718,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        648
+        653
       ]
     ],
     "translation": "Context Window"
@@ -2660,7 +2729,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        681
+        686
       ]
     ],
     "translation": "Max tokens"
@@ -2671,7 +2740,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        403
+        408
       ]
     ],
     "translation": "Context Window Usage"
@@ -2693,7 +2762,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        465
+        470
       ]
     ],
     "translation": "Paused"
@@ -2704,7 +2773,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        447
+        452
       ]
     ],
     "translation": "Pending"
@@ -2715,7 +2784,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        456
+        461
       ]
     ],
     "translation": "Running"
@@ -2726,7 +2795,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        438
+        443
       ]
     ],
     "translation": "Starting"
@@ -2737,7 +2806,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        614
+        619
       ]
     ],
     "translation": "Cache creation"
@@ -2748,7 +2817,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        628
+        633
       ]
     ],
     "translation": "Cache read"
@@ -2759,7 +2828,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        586
+        591
       ]
     ],
     "translation": "Input tokens"
@@ -2770,7 +2839,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        571
+        576
       ]
     ],
     "translation": "Session Cost"
@@ -2781,7 +2850,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        600
+        605
       ]
     ],
     "translation": "Output tokens"
@@ -2792,7 +2861,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        578
+        583
       ]
     ],
     "translation": "Total"
@@ -2803,7 +2872,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        726
+        731
       ]
     ],
     "translation": "Please wait while the session is being initialized..."
@@ -2814,7 +2883,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        723
+        728
       ]
     ],
     "translation": "Creating Session"
@@ -2825,7 +2894,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        740
+        745
       ]
     ],
     "translation": "session.empty_state.description"
@@ -2836,7 +2905,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        557
+        562
       ]
     ],
     "translation": "Model"
@@ -2847,7 +2916,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        756
+        761
       ]
     ],
     "translation": "Claude Code is processing..."
@@ -3042,7 +3111,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/SessionPageMain.tsx",
-        342
+        347
       ]
     ],
     "translation": "Show this project's sessions"

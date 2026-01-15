@@ -13,32 +13,20 @@ export interface GitBranchesResponse {
   data: GitBranch[];
 }
 
-export interface GitFileInfo {
+export type GitFileStatus =
+  | "added"
+  | "deleted"
+  | "modified"
+  | "renamed"
+  | "copied"
+  | "untracked";
+
+export interface GitDiffFileSummary {
   filePath: string;
-  status: "added" | "modified" | "deleted" | "renamed" | "copied";
   additions: number;
   deletions: number;
-  oldPath?: string;
-}
-
-export interface GitDiffLine {
-  type: "added" | "deleted" | "unchanged" | "hunk";
-  oldLineNumber?: number;
-  newLineNumber?: number;
-  content: string;
-}
-
-export interface GitDiffHunk {
-  oldStart: number;
-  oldLines: number;
-  newStart: number;
-  newLines: number;
-  lines: GitDiffLine[];
-}
-
-export interface GitFileDiff {
-  file: GitFileInfo;
-  hunks: GitDiffHunk[];
+  status: GitFileStatus;
+  oldFilePath?: string;
 }
 
 export interface GitDiffSummary {
@@ -50,8 +38,8 @@ export interface GitDiffSummary {
 export interface GitDiffResponse {
   success: true;
   data: {
-    files: GitFileInfo[];
-    diffs: GitFileDiff[];
+    rawDiff: string;
+    files: GitDiffFileSummary[];
     summary: GitDiffSummary;
   };
 }

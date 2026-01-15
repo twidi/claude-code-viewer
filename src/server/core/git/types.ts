@@ -14,53 +14,30 @@ export type GitCommit = {
   date: string;
 };
 
-export type GitDiffFile = {
+export type GitFileStatus =
+  | "added"
+  | "deleted"
+  | "modified"
+  | "renamed"
+  | "copied"
+  | "untracked";
+
+export type GitDiffFileSummary = {
   filePath: string;
-  status: "added" | "modified" | "deleted" | "renamed" | "copied";
   additions: number;
   deletions: number;
-  oldPath?: string; // For renamed files
+  status: GitFileStatus;
+  oldFilePath?: string; // For renamed/copied files
 };
 
-export type GitDiffHunk = {
-  oldStart: number;
-  oldCount: number;
-  newStart: number;
-  newCount: number;
-  header: string;
-  lines: GitDiffLine[];
-};
-
-export type GitDiffLine = {
-  type: "context" | "added" | "deleted";
-  content: string;
-  oldLineNumber?: number;
-  newLineNumber?: number;
-};
-
-export type GitDiff = {
-  file: GitDiffFile;
-  hunks: GitDiffHunk[];
-};
-
-export type GitComparisonResult = {
-  files: GitDiffFile[];
-  diffs: GitDiff[];
+export type GitRawDiffResult = {
+  rawDiff: string;
+  files: GitDiffFileSummary[];
   summary: {
     totalFiles: number;
     totalAdditions: number;
     totalDeletions: number;
   };
-};
-
-export type GitStatus = {
-  branch: string;
-  ahead: number;
-  behind: number;
-  staged: GitDiffFile[];
-  unstaged: GitDiffFile[];
-  untracked: string[];
-  conflicted: string[];
 };
 
 export type GitError = {
