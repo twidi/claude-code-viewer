@@ -170,7 +170,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
         .put("/api/config", zValidator("json", userConfigSchema), async (c) => {
           const { ...config } = c.req.valid("json");
 
-          setCookie(c, "ccv-config", JSON.stringify(config));
+          setCookie(c, "ccv-config", JSON.stringify(config), {
+            maxAge: 60 * 60 * 24 * 400, // 400 days (browser max)
+          });
 
           return c.json({
             config,

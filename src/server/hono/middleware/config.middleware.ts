@@ -25,6 +25,9 @@ export const configMiddleware = createMiddleware<HonoContext>(
           ...defaultUserConfig,
           locale: preferredLocale,
         } satisfies UserConfig),
+        {
+          maxAge: 60 * 60 * 24 * 400, // 400 days (browser max)
+        },
       );
     }
 
