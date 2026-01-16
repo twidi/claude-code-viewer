@@ -5,6 +5,7 @@ import { AuthenticatedProviders } from "../components/AuthenticatedProviders";
 import { AuthProvider } from "../components/AuthProvider";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { Toaster } from "../components/ui/sonner";
+import { SendOptionMemoryProvider } from "../contexts/SendOptionMemoryContext";
 import { LinguiClientProvider } from "../lib/i18n/LinguiProvider";
 
 export const Route = createRootRoute({
@@ -15,7 +16,9 @@ export const Route = createRootRoute({
           <LinguiClientProvider>
             <AuthenticatedProviders>
               <BrowserPreviewProvider>
-                <Outlet />
+                <SendOptionMemoryProvider>
+                  <Outlet />
+                </SendOptionMemoryProvider>
               </BrowserPreviewProvider>
             </AuthenticatedProviders>
           </LinguiClientProvider>

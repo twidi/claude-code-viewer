@@ -1,6 +1,7 @@
 import { Trans, useLingui } from "@lingui/react";
-import { type FC, useEffect, useState } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useSendOptionMemory } from "@/contexts/SendOptionMemoryContext";
 import { useCreateSchedulerJob } from "@/hooks/useScheduler";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import {
@@ -41,6 +42,10 @@ export const ContinueChat: FC<{
   const createSchedulerJob = useCreateSchedulerJob();
   const { config } = useConfig();
   const { pendingMode, clearPendingMode } = usePendingPermissionMode(sessionId);
+  const { getOption, setOption, resetOption } = useSendOptionMemory();
+
+  // Track the previous session status to detect transitions to paused
+  const prevStatusRef = useRef(sessionProcessStatus);
 
   // Dialog state for send options when session is running
   const [showOptionsDialog, setShowOptionsDialog] = useState(false);
@@ -65,6 +70,21 @@ export const ContinueChat: FC<{
       setSessionBecameAvailable(true);
     }
   }, [sessionProcessStatus, showOptionsDialog, pendingMessage]);
+
+  // Reset remembered option when session transitions to paused
+  useEffect(() => {
+    const prevStatus = prevStatusRef.current;
+    prevStatusRef.current = sessionProcessStatus;
+
+    // Only reset when transitioning from an active state to paused
+    if (
+      prevStatus !== "paused" &&
+      prevStatus !== undefined &&
+      sessionProcessStatus === "paused"
+    ) {
+      resetOption(sessionId);
+    }
+  }, [sessionProcessStatus, sessionId, resetOption]);
 
   // Check if we need to change permission mode
   const needsPermissionChange =
@@ -139,6 +159,9 @@ export const ContinueChat: FC<{
   const handleDialogConfirm = async (option: SendMessageOption) => {
     if (!pendingMessage) return;
 
+    // Remember the selected option for next time
+    setOption(sessionId, option);
+
     setIsExecutingAction(true);
     try {
       await executeSendAction(option, pendingMessage);
@@ -204,6 +227,8 @@ export const ContinueChat: FC<{
 
   const handleDialogOpenChange = (open: boolean) => {
     if (!open) {
+      // Restore message when dialog is cancelled
+      setMessageToRestore(pendingMessage);
       closeDialog();
     } else {
       setShowOptionsDialog(true);
@@ -302,6 +327,7 @@ export const ContinueChat: FC<{
         sessionBecameAvailable={sessionBecameAvailable}
         onSendNow={handleSendNow}
         onCancelWithRestore={handleCancelWithRestore}
+        defaultOption={getOption(sessionId)}
       />
     </div>
   );
