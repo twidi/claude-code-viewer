@@ -27,7 +27,6 @@ interface ChatActionMenuProps {
   onForceReload?: () => void;
   isReloading?: boolean;
   isNewChat?: boolean;
-  showGitButton?: boolean;
 }
 
 export const ChatActionMenu: FC<ChatActionMenuProps> = ({
@@ -38,7 +37,6 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   onForceReload,
   isReloading = false,
   isNewChat = false,
-  showGitButton = false,
 }) => {
   const { i18n } = useLingui();
   const navigate = useNavigate();
@@ -72,54 +70,50 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
   return (
     <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 mb-1">
       <div className="py-0 flex items-center gap-1.5 flex-wrap">
-        {showGitButton && (
-          <>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => persistentDialogs?.toggle("git")}
-              disabled={isPending}
-              className="h-7 px-2 gap-1.5 text-xs bg-muted/20 rounded-lg border border-border/40 relative"
-              title={i18n._({
-                id: "control.open_git_dialog",
-                message: "Open Git Dialog",
-              })}
-            >
-              <GitCompareIcon className="w-3.5 h-3.5" />
-              <span>
-                <Trans id="control.git" />
-              </span>
-              {diffCommentCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-medium bg-blue-500 text-white rounded-full px-1">
-                  {diffCommentCount}
-                </span>
-              )}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => persistentDialogs?.toggle("file-explorer")}
-              disabled={isPending}
-              className="h-7 px-2 gap-1.5 text-xs bg-muted/20 rounded-lg border border-border/40 relative"
-              title={i18n._({
-                id: "control.open_file_explorer",
-                message: "Open File Explorer",
-              })}
-            >
-              <FolderOpenIcon className="w-3.5 h-3.5" />
-              <span>
-                <Trans id="control.files" />
-              </span>
-              {fileExplorerCommentCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-medium bg-blue-500 text-white rounded-full px-1">
-                  {fileExplorerCommentCount}
-                </span>
-              )}
-            </Button>
-          </>
-        )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => persistentDialogs?.toggle("git")}
+          disabled={isPending}
+          className="h-7 px-2 gap-1.5 text-xs bg-muted/20 rounded-lg border border-border/40 relative"
+          title={i18n._({
+            id: "control.open_git_dialog",
+            message: "Open Git Dialog",
+          })}
+        >
+          <GitCompareIcon className="w-3.5 h-3.5" />
+          <span>
+            <Trans id="control.git" />
+          </span>
+          {diffCommentCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-medium bg-blue-500 text-white rounded-full px-1">
+              {diffCommentCount}
+            </span>
+          )}
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => persistentDialogs?.toggle("file-explorer")}
+          disabled={isPending}
+          className="h-7 px-2 gap-1.5 text-xs bg-muted/20 rounded-lg border border-border/40 relative"
+          title={i18n._({
+            id: "control.open_file_explorer",
+            message: "Open File Explorer",
+          })}
+        >
+          <FolderOpenIcon className="w-3.5 h-3.5" />
+          <span>
+            <Trans id="control.files" />
+          </span>
+          {fileExplorerCommentCount > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center text-[10px] font-medium bg-blue-500 text-white rounded-full px-1">
+              {fileExplorerCommentCount}
+            </span>
+          )}
+        </Button>
         <Button
           type="button"
           variant="ghost"

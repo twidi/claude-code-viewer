@@ -848,7 +848,6 @@ const SessionPageMainContent: FC<
             onForceReload={isExistingSession ? handleForceReload : undefined}
             isReloading={isReloading}
             isNewChat={!isExistingSession}
-            showGitButton={isExistingSession}
           />
         </div>
 
