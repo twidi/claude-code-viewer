@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import type { FC, ReactNode } from "react";
 import { useCallback, useId, useState } from "react";
-import { PersistentDialogShell } from "@/components/PersistentDialogShell";
+import {
+  PersistentDialogShell,
+  useDialogShell,
+} from "@/components/PersistentDialogShell";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFileExplorerComment } from "@/contexts/FileExplorerCommentContext";
@@ -74,6 +77,7 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
 }) => {
   // Context for inserting comments into chat
   const { insertText, setNonEmptyCommentCount } = useFileExplorerComment();
+  const dialogShell = useDialogShell();
 
   // Use shared hook for comment management
   const {
@@ -108,7 +112,10 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
 
     // Clear all comments after sending (focus happens in insertText callback)
     resetComments();
-  }, [comments, insertText, nonEmptyCommentCount, resetComments]);
+
+    // Close the dialog so user can see the chat input
+    dialogShell?.hide();
+  }, [comments, insertText, nonEmptyCommentCount, resetComments, dialogShell]);
 
   // Handle file selection
   const handleFileSelect = useCallback((filePath: string) => {

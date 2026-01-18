@@ -9,7 +9,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { type FC, useCallback, useEffect, useState } from "react";
-import { PersistentDialogShell } from "@/components/PersistentDialogShell";
+import {
+  PersistentDialogShell,
+  useDialogShell,
+} from "@/components/PersistentDialogShell";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useTerminalComment } from "@/contexts/TerminalCommentContext";
@@ -22,20 +25,14 @@ import {
   type TouchMode,
 } from "./TerminalPanel";
 
-/**
- * TerminalDialog - Persistent dialog wrapper for the terminal.
- *
- * Key differences from Git/Files dialogs:
- * - No resetKey: The terminal NEVER resets on session/project changes
- * - No closeConfirmation: No state to lose (terminal keeps running in background)
- * - No badgeCount: Terminal has no pending notifications
- *
- * The terminal is truly global and persistent - it survives all navigation
- * and only terminates when the application is closed.
- */
-export const TerminalDialog: FC = () => {
+// ============================================================================
+// TerminalDialogContent - internal component rendered inside PersistentDialogShell
+// ============================================================================
+
+const TerminalDialogContent: FC = () => {
   // Context for inserting text into chat
   const { insertText } = useTerminalComment();
+  const dialogShell = useDialogShell();
 
   // Touch mode toggle for mobile: scroll vs select
   const [touchMode, setTouchMode] = useState<TouchMode>("scroll");
@@ -71,8 +68,11 @@ export const TerminalDialog: FC = () => {
       clearTerminalSelection();
       setSelectionCharCount(0);
       setAddedCharCount(charCount);
+
+      // Close the dialog so user can see the chat input
+      dialogShell?.hide();
     }
-  }, [insertText]);
+  }, [insertText, dialogShell]);
 
   // Auto-hide copy notification after 2 seconds
   useEffect(() => {
@@ -91,16 +91,7 @@ export const TerminalDialog: FC = () => {
   }, [addedCharCount]);
 
   return (
-    <PersistentDialogShell
-      dialogId="terminal"
-      config={{
-        icon: TerminalIcon,
-        label: <Trans id="control.terminal" />,
-        // No badgeCount for terminal
-      }}
-      // No resetKey - terminal never resets
-      // No closeConfirmation - no state to lose
-    >
+    <>
       <PersistentDialogShell.Header>
         <TerminalIcon className="w-5 h-5" />
         <span className="font-medium">
@@ -211,6 +202,38 @@ export const TerminalDialog: FC = () => {
           onSelectionChange={handleSelectionChange}
         />
       </PersistentDialogShell.Content>
+    </>
+  );
+};
+
+// ============================================================================
+// TerminalDialog - wrapper component that uses PersistentDialogShell
+// ============================================================================
+
+/**
+ * TerminalDialog - Persistent dialog wrapper for the terminal.
+ *
+ * Key differences from Git/Files dialogs:
+ * - No resetKey: The terminal NEVER resets on session/project changes
+ * - No closeConfirmation: No state to lose (terminal keeps running in background)
+ * - No badgeCount: Terminal has no pending notifications
+ *
+ * The terminal is truly global and persistent - it survives all navigation
+ * and only terminates when the application is closed.
+ */
+export const TerminalDialog: FC = () => {
+  return (
+    <PersistentDialogShell
+      dialogId="terminal"
+      config={{
+        icon: TerminalIcon,
+        label: <Trans id="control.terminal" />,
+        // No badgeCount for terminal
+      }}
+      // No resetKey - terminal never resets
+      // No closeConfirmation - no state to lose
+    >
+      <TerminalDialogContent />
     </PersistentDialogShell>
   );
 };

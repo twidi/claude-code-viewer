@@ -81,6 +81,8 @@ interface PersistentDialogShellProps {
 
 interface ShellContextValue {
   requestClose: () => void;
+  /** Close immediately without confirmation (for actions like "add to chat") */
+  hide: () => void;
 }
 
 const ShellContext = createContext<ShellContextValue | null>(null);
@@ -93,6 +95,14 @@ function useShellContext(): ShellContextValue {
     );
   }
   return context;
+}
+
+/**
+ * Hook to access the dialog shell context from within dialog content.
+ * Returns null if not inside a PersistentDialogShell (safe for conditional use).
+ */
+export function useDialogShell(): ShellContextValue | null {
+  return useContext(ShellContext);
 }
 
 // ============================================================================
@@ -257,7 +267,10 @@ const PersistentDialogShellBase: FC<PersistentDialogShellProps> = ({
   );
 
   // Context value for compound components
-  const contextValue = useMemo(() => ({ requestClose }), [requestClose]);
+  const contextValue = useMemo(
+    () => ({ requestClose, hide }),
+    [requestClose, hide],
+  );
 
   return createPortal(
     <ShellContext.Provider value={contextValue}>

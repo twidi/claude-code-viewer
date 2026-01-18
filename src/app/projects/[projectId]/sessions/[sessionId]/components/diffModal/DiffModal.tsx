@@ -20,7 +20,10 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
-import { PersistentDialogShell } from "@/components/PersistentDialogShell";
+import {
+  PersistentDialogShell,
+  useDialogShell,
+} from "@/components/PersistentDialogShell";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -322,6 +325,7 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
 
   // Context for inserting line comments into chat
   const { insertText, setNonEmptyCommentCount } = useDiffLineComment();
+  const dialogShell = useDialogShell();
 
   // Use shared hook for comment management
   const {
@@ -450,7 +454,10 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
 
     // Clear all comments after sending
     resetComments();
-  }, [comments, insertText, nonEmptyCommentCount, resetComments]);
+
+    // Close the dialog so user can see the chat input
+    dialogShell?.hide();
+  }, [comments, insertText, nonEmptyCommentCount, resetComments, dialogShell]);
 
   // File selection handlers
   const handleToggleFile = (filePath: string) => {
