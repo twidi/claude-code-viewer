@@ -352,6 +352,45 @@ export const agentSessionQuery = (
     },
   }) as const;
 
+/**
+ * Find a pending agent session by matching prompt and timestamp.
+ *
+ * This is a workaround for foreground Task execution where the agentId
+ * is not available in the session's tool_use message until the task completes.
+ * The frontend calls this when opening a TaskModal for a running task
+ * to find the matching agent file and enable live updates.
+ *
+ * This is NOT a TanStack Query - it's a direct API call function because:
+ * 1. We don't want caching (the result changes as the agent file is created)
+ * 2. We call it imperatively when the modal opens
+ * 3. Once resolved, we store the agentId in component state
+ */
+export const findPendingAgentSession = async (params: {
+  projectId: string;
+  sessionId: string;
+  prompt: string;
+  toolUseTimestamp: string;
+  knownAgentIds: string[];
+}): Promise<{ agentId: string | null }> => {
+  const { projectId, sessionId, prompt, toolUseTimestamp, knownAgentIds } =
+    params;
+
+  const response = await honoClient.api.projects[":projectId"].sessions[
+    ":sessionId"
+  ]["agent-sessions"]["find-pending"].$post({
+    param: { projectId, sessionId },
+    json: { prompt, toolUseTimestamp, knownAgentIds },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to find pending agent session: ${response.statusText}`,
+    );
+  }
+
+  return await response.json();
+};
+
 export const searchQuery = (
   query: string,
   options?: { limit?: number; projectId?: string },

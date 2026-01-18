@@ -33,6 +33,7 @@ export type ContentWithUuid = {
   content: AssistantMessageContent;
   uuid: string;
   contentIndex: number;
+  timestamp: string;
 };
 
 /**
@@ -67,6 +68,7 @@ type SimplifiedViewElement =
       content: AssistantMessageContent;
       uuid: string;
       contentIndex: number;
+      timestamp: string;
     }
   | {
       type: "collapsed";
@@ -82,16 +84,17 @@ const addToOrCreateCollapsedElement = (
   content: AssistantMessageContent,
   uuid: string,
   contentIndex: number,
+  timestamp: string,
 ): void => {
   const lastElement = elements[elements.length - 1];
   if (lastElement?.type === "collapsed") {
     // Merge with existing collapsed group
-    lastElement.contents.push({ content, uuid, contentIndex });
+    lastElement.contents.push({ content, uuid, contentIndex, timestamp });
   } else {
     // Create new collapsed group
     elements.push({
       type: "collapsed",
-      contents: [{ content, uuid, contentIndex }],
+      contents: [{ content, uuid, contentIndex, timestamp }],
     });
   }
 };
@@ -133,10 +136,17 @@ const buildSimplifiedViewElements = (
             content,
             uuid: conv.uuid,
             contentIndex: i,
+            timestamp: conv.timestamp,
           });
         } else {
           // Non-text content goes into collapsed group
-          addToOrCreateCollapsedElement(elements, content, conv.uuid, i);
+          addToOrCreateCollapsedElement(
+            elements,
+            content,
+            conv.uuid,
+            i,
+            conv.timestamp,
+          );
         }
       }
     }
@@ -418,6 +428,14 @@ export const ConversationList: FC<ConversationListProps> = ({
     [toolUseIdToAgentIdMap],
   );
 
+  /**
+   * Returns all known agent IDs from the toolUseIdToAgentIdMap.
+   * Used by TaskModal to exclude these agents when searching for pending tasks.
+   */
+  const getKnownAgentIds = useCallback((): string[] => {
+    return Array.from(toolUseIdToAgentIdMap.values());
+  }, [toolUseIdToAgentIdMap]);
+
   const renderConversation = (conversation: Conversation | ErrorJsonl) => {
     if (conversation.type === "x-error") {
       return (
@@ -434,6 +452,7 @@ export const ConversationList: FC<ConversationListProps> = ({
         conversation={conversation}
         getToolResult={getToolResult}
         getAgentIdForToolUse={getAgentIdForToolUse}
+        getKnownAgentIds={getKnownAgentIds}
         getTurnDuration={getTurnDuration}
         isRootSidechain={isRootSidechain}
         getSidechainConversations={getSidechainConversations}
@@ -497,12 +516,14 @@ export const ConversationList: FC<ConversationListProps> = ({
                           content={element.content}
                           getToolResult={getToolResult}
                           getAgentIdForToolUse={getAgentIdForToolUse}
+                          getKnownAgentIds={getKnownAgentIds}
                           getSidechainConversationByPrompt={
                             getSidechainConversationByPrompt
                           }
                           getSidechainConversations={getSidechainConversations}
                           projectId={projectId}
                           sessionId={sessionId}
+                          conversationTimestamp={element.timestamp}
                         />
                       </li>
                     </ul>
@@ -524,6 +545,7 @@ export const ConversationList: FC<ConversationListProps> = ({
                       contents={element.contents}
                       getToolResult={getToolResult}
                       getAgentIdForToolUse={getAgentIdForToolUse}
+                      getKnownAgentIds={getKnownAgentIds}
                       getSidechainConversations={getSidechainConversations}
                       getSidechainConversationByPrompt={
                         getSidechainConversationByPrompt

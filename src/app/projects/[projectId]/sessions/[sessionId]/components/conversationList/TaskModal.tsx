@@ -1,8 +1,7 @@
 import { Trans } from "@lingui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Eye, Loader2, MessageSquare, XCircle } from "lucide-react";
-import { type FC, useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { type FC, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { agentSessionQuery } from "@/lib/api/queries";
+import { agentSessionQuery, findPendingAgentSession } from "@/lib/api/queries";
 import type { SidechainConversation } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
 import type { UserEntry } from "../../../../../../../lib/conversation-schema/entry/UserEntrySchema";
@@ -28,6 +27,16 @@ type TaskModalProps = {
    * Used to directly fetch agent-${agentId}.jsonl file.
    */
   agentId: string | undefined;
+  /**
+   * Timestamp of the tool_use message in the session.
+   * Used to find pending agent sessions for foreground tasks.
+   */
+  toolUseTimestamp: string;
+  /**
+   * List of agentIds already known/mapped to tool_use IDs.
+   * Used to exclude from pending agent search.
+   */
+  knownAgentIds: string[];
   getSidechainConversationByPrompt: (
     prompt: string,
   ) => SidechainConversation | undefined;
@@ -42,21 +51,35 @@ type TaskModalProps = {
  * Fallback strategy:
  * 1. First check legacy sidechain data (embedded in same session file)
  * 2. If legacy data exists (length > 0), display it without API request
- * 3. If legacy data is empty and agentId exists, fetch from agent session API endpoint
+ * 3. If agentId exists (from tool_result), fetch from agent session API endpoint
+ * 4. If agentId is undefined (foreground task in progress), try to find the
+ *    pending agent session by matching prompt and timestamp
  *
- * This approach supports both old Claude Code versions (embedded sidechain)
- * and new versions (separate agent-*.jsonl files) without version detection.
+ * This approach supports:
+ * - Old Claude Code versions (embedded sidechain)
+ * - New versions with completed tasks (agentId in tool_result)
+ * - New versions with foreground tasks in progress (agentId lookup)
  */
 export const TaskModal: FC<TaskModalProps> = ({
   prompt,
   projectId,
   sessionId,
   agentId,
+  toolUseTimestamp,
+  knownAgentIds,
   getSidechainConversationByPrompt,
   getSidechainConversations,
   getToolResult,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // State for resolved agentId when not available from tool_result
+  // This is used for foreground tasks where agentId is only known after completion
+  const [resolvedAgentId, setResolvedAgentId] = useState<string | null>(null);
+  const [isResolvingAgentId, setIsResolvingAgentId] = useState(false);
+
+  // Use provided agentId or fallback to resolved one
+  const effectiveAgentId = agentId ?? resolvedAgentId ?? undefined;
 
   // Check legacy sidechain data first
   const legacyConversation = getSidechainConversationByPrompt(prompt);
@@ -66,14 +89,85 @@ export const TaskModal: FC<TaskModalProps> = ({
       : [];
   const hasLegacyData = legacySidechainConversations.length > 0;
 
+  // Try to find pending agent session when modal opens and agentId is not available
+  // Uses polling to keep searching until the agent file is created
+  useEffect(() => {
+    if (
+      !isOpen ||
+      hasLegacyData ||
+      agentId !== undefined ||
+      resolvedAgentId !== null
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const POLL_INTERVAL_MS = 1000;
+
+    const resolve = async () => {
+      if (cancelled) return;
+
+      setIsResolvingAgentId(true);
+
+      try {
+        const result = await findPendingAgentSession({
+          projectId,
+          sessionId,
+          prompt,
+          toolUseTimestamp,
+          knownAgentIds,
+        });
+
+        if (!cancelled) {
+          if (result.agentId) {
+            setResolvedAgentId(result.agentId);
+            setIsResolvingAgentId(false);
+          } else {
+            // Agent not found yet, keep polling
+            setIsResolvingAgentId(false);
+            timeoutId = setTimeout(resolve, POLL_INTERVAL_MS);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to find pending agent session:", error);
+        if (!cancelled) {
+          setIsResolvingAgentId(false);
+          // Retry on error after a delay
+          timeoutId = setTimeout(resolve, POLL_INTERVAL_MS);
+        }
+      }
+    };
+
+    resolve();
+
+    return () => {
+      cancelled = true;
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [
+    isOpen,
+    hasLegacyData,
+    agentId,
+    resolvedAgentId,
+    projectId,
+    sessionId,
+    prompt,
+    toolUseTimestamp,
+    knownAgentIds,
+  ]);
+
   // Only fetch from API if:
   // 1. Legacy data is not available
-  // 2. agentId exists (new Claude Code version)
+  // 2. effectiveAgentId exists (either from tool_result or resolved)
   // 3. Modal is open
-  const shouldFetchFromApi = isOpen && !hasLegacyData && agentId !== undefined;
+  const shouldFetchFromApi =
+    isOpen && !hasLegacyData && effectiveAgentId !== undefined;
 
   const { data, isLoading, error, refetch } = useQuery({
-    ...agentSessionQuery(projectId, sessionId, agentId ?? ""),
+    ...agentSessionQuery(projectId, sessionId, effectiveAgentId ?? ""),
     enabled: shouldFetchFromApi,
     staleTime: 0,
   });
@@ -98,18 +192,47 @@ export const TaskModal: FC<TaskModalProps> = ({
   })();
 
   // Determine loading/error states (only applicable when using API)
-  const showLoading = shouldFetchFromApi && isLoading;
+  const showLoading = isResolvingAgentId || (shouldFetchFromApi && isLoading);
   const showError = shouldFetchFromApi && error !== null;
-  const showNoData =
-    !showLoading && !showError && conversations.length === 0 && isOpen;
-  const showConversations =
-    !showLoading && !showError && conversations.length > 0;
+  // Show conversations area when not loading and no error
+  // Even if conversations is empty, we'll show the synthetic prompt
+  const showConversations = !showLoading && !showError && isOpen;
 
-  const firstConversation = useMemo(() => {
-    return conversations.find(
-      (c) => c.type === "user" || c.type === "assistant" || c.type === "system",
-    );
-  }, [conversations]);
+  // Build the final conversation list:
+  // - If agent has conversations, show them directly (they include the initial prompt)
+  // - If agent has no conversations yet (task just started), show a synthetic prompt entry
+  const conversationsToDisplay = useMemo(() => {
+    if (conversations.length > 0) {
+      // Agent has data, display it directly
+      return conversations.map((c) => ({
+        ...c,
+        isSidechain: false,
+      }));
+    }
+
+    // No agent data yet - show synthetic prompt while waiting for agent to start
+    // This provides immediate feedback when the modal opens before the agent writes anything
+    const syntheticUserEntry: UserEntry = {
+      type: "user",
+      message: {
+        role: "user",
+        content: prompt,
+      },
+      isSidechain: false,
+      userType: "external",
+      cwd: "",
+      sessionId: sessionId,
+      version: "",
+      uuid: "synthetic-prompt",
+      timestamp: toolUseTimestamp,
+      parentUuid: null,
+      isMeta: false,
+      toolUseResult: undefined,
+      gitBranch: "",
+      isCompactSummary: false,
+    };
+    return [syntheticUserEntry];
+  }, [conversations, prompt, sessionId, toolUseTimestamp]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -181,47 +304,9 @@ export const TaskModal: FC<TaskModalProps> = ({
               </Button>
             </div>
           )}
-          {showNoData && (
-            <div className="flex flex-col items-center justify-center h-full gap-4">
-              <Badge variant="secondary" className="text-sm">
-                <Trans id="assistant.tool.no_task_data" />
-              </Badge>
-              <p className="text-xs text-muted-foreground max-w-md text-center">
-                <Trans id="assistant.tool.no_task_data_description" />
-              </p>
-            </div>
-          )}
           {showConversations && (
             <ConversationList
-              conversations={[
-                ...(hasLegacyData
-                  ? []
-                  : [
-                      {
-                        type: "user",
-                        message: {
-                          role: "user",
-                          content: prompt,
-                        },
-                        isSidechain: false,
-                        userType: "external",
-                        cwd: firstConversation?.cwd ?? "dummy",
-                        sessionId: sessionId,
-                        version: firstConversation?.version ?? "dummy",
-                        uuid: "dummy",
-                        timestamp: firstConversation?.timestamp ?? "dummy",
-                        parentUuid: null,
-                        isMeta: false,
-                        toolUseResult: undefined,
-                        gitBranch: firstConversation?.gitBranch ?? "dummy",
-                        isCompactSummary: false,
-                      } satisfies UserEntry,
-                    ]),
-                ...conversations.map((c) => ({
-                  ...c,
-                  isSidechain: false,
-                })),
-              ]}
+              conversations={conversationsToDisplay}
               getToolResult={getToolResult}
               projectId={projectId}
               sessionId={sessionId}

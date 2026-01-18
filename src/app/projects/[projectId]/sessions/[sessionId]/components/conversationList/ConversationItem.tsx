@@ -18,6 +18,7 @@ export const ConversationItem: FC<{
   conversation: Conversation;
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   getAgentIdForToolUse: (toolUseId: string) => string | undefined;
+  getKnownAgentIds: () => string[];
   getTurnDuration: (uuid: string) => number | undefined;
   isRootSidechain: (conversation: Conversation) => boolean;
   getSidechainConversationByPrompt: (
@@ -31,6 +32,7 @@ export const ConversationItem: FC<{
   conversation,
   getToolResult,
   getAgentIdForToolUse,
+  getKnownAgentIds,
   getTurnDuration,
   getSidechainConversationByPrompt,
   getSidechainConversations,
@@ -114,12 +116,14 @@ export const ConversationItem: FC<{
                 content={content}
                 getToolResult={getToolResult}
                 getAgentIdForToolUse={getAgentIdForToolUse}
+                getKnownAgentIds={getKnownAgentIds}
                 getSidechainConversationByPrompt={
                   getSidechainConversationByPrompt
                 }
                 getSidechainConversations={getSidechainConversations}
                 projectId={projectId}
                 sessionId={sessionId}
+                conversationTimestamp={conversation.timestamp}
               />
             </li>
           ))}
@@ -136,12 +140,14 @@ export const ConversationItem: FC<{
                 content={content}
                 getToolResult={getToolResult}
                 getAgentIdForToolUse={getAgentIdForToolUse}
+                getKnownAgentIds={getKnownAgentIds}
                 getSidechainConversationByPrompt={
                   getSidechainConversationByPrompt
                 }
                 getSidechainConversations={getSidechainConversations}
                 projectId={projectId}
                 sessionId={sessionId}
+                conversationTimestamp={conversation.timestamp}
               />
             </li>
           ))}

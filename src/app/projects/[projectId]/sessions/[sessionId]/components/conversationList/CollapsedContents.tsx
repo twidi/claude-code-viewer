@@ -13,6 +13,7 @@ type CollapsedContentsProps = {
   contents: ContentWithUuid[];
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   getAgentIdForToolUse: (toolUseId: string) => string | undefined;
+  getKnownAgentIds: () => string[];
   getSidechainConversationByPrompt: (
     prompt: string,
   ) => SidechainConversation | undefined;
@@ -25,6 +26,7 @@ export const CollapsedContents: FC<CollapsedContentsProps> = ({
   contents,
   getToolResult,
   getAgentIdForToolUse,
+  getKnownAgentIds,
   getSidechainConversationByPrompt,
   getSidechainConversations,
   projectId,
@@ -48,18 +50,20 @@ export const CollapsedContents: FC<CollapsedContentsProps> = ({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <ul className="w-full border-l-2 border-muted ml-1 pl-2 mt-1">
-          {contents.map(({ content, uuid, contentIndex }) => (
+          {contents.map(({ content, uuid, contentIndex, timestamp }) => (
             <li key={`${uuid}-${contentIndex}`} className="w-full">
               <AssistantConversationContent
                 content={content}
                 getToolResult={getToolResult}
                 getAgentIdForToolUse={getAgentIdForToolUse}
+                getKnownAgentIds={getKnownAgentIds}
                 getSidechainConversationByPrompt={
                   getSidechainConversationByPrompt
                 }
                 getSidechainConversations={getSidechainConversations}
                 projectId={projectId}
                 sessionId={sessionId}
+                conversationTimestamp={timestamp}
               />
             </li>
           ))}

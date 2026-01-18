@@ -328,6 +328,42 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
         )
 
         /**
+         * Find a pending agent session by matching prompt and timestamp.
+         * This is used when viewing a running foreground Task before its tool_result
+         * is written to the session file (which contains the agentId).
+         */
+        .post(
+          "/api/projects/:projectId/sessions/:sessionId/agent-sessions/find-pending",
+          zValidator(
+            "json",
+            z.object({
+              prompt: z.string(),
+              toolUseTimestamp: z.string(),
+              knownAgentIds: z.array(z.string()),
+            }),
+          ),
+          async (c) => {
+            const { projectId, sessionId } = c.req.param();
+            const { prompt, toolUseTimestamp, knownAgentIds } =
+              c.req.valid("json");
+
+            const response = await effectToResponse(
+              c,
+              agentSessionController
+                .findPendingAgentSession({
+                  projectId,
+                  sessionId,
+                  prompt,
+                  toolUseTimestamp,
+                  knownAgentIds,
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
+        /**
          * GitController Routes
          */
 
