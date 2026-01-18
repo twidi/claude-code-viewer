@@ -1,8 +1,10 @@
 import type { FC } from "react";
 import { Suspense } from "react";
+import { TerminalDialog } from "@/components/terminal/TerminalDialog";
 import { DiffLineCommentProvider } from "@/contexts/DiffLineCommentContext";
 import { FileExplorerCommentProvider } from "@/contexts/FileExplorerCommentContext";
 import { PersistentDialogsProvider } from "@/contexts/PersistentDialogsContext";
+import { TerminalCommentProvider } from "@/contexts/TerminalCommentContext";
 import { Loading } from "../../../../../../components/Loading";
 import { useProject } from "../../../hooks/useProject";
 import { useGitCurrentRevisions } from "../hooks/useGit";
@@ -69,19 +71,22 @@ export const SessionPageMainWrapper: FC<{
               branchName={currentBranch}
             />
           )}
+          <TerminalCommentProvider>
+            <TerminalDialog />
 
-          <Suspense fallback={<Loading />}>
-            <SessionPageMain
-              key={sessionId}
-              projectId={projectId}
-              sessionId={sessionId}
-              setIsMobileSidebarOpen={setIsMobileSidebarOpen}
-              projectPath={projectPath}
-              currentBranch={currentBranch}
-              revisionsData={revisionsData}
-              projectName={projectName}
-            />
-          </Suspense>
+            <Suspense fallback={<Loading />}>
+              <SessionPageMain
+                key={sessionId}
+                projectId={projectId}
+                sessionId={sessionId}
+                setIsMobileSidebarOpen={setIsMobileSidebarOpen}
+                projectPath={projectPath}
+                currentBranch={currentBranch}
+                revisionsData={revisionsData}
+                projectName={projectName}
+              />
+            </Suspense>
+          </TerminalCommentProvider>
         </FileExplorerCommentProvider>
       </DiffLineCommentProvider>
     </PersistentDialogsProvider>

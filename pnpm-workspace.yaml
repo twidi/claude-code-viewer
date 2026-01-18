@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
+  - '@homebridge/node-pty-prebuilt-multiarch'
   - '@parcel/watcher'
   - '@swc/core'
   - '@tailwindcss/oxide'

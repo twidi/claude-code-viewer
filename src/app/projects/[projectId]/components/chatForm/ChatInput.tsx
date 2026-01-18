@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner";
 import { useDiffLineComment } from "@/contexts/DiffLineCommentContext";
 import { useFileExplorerComment } from "@/contexts/FileExplorerCommentContext";
+import { useTerminalComment } from "@/contexts/TerminalCommentContext";
 import {
   AttachmentList,
   type PendingAttachment,
@@ -191,11 +192,13 @@ export const ChatInput: FC<ChatInputProps> = ({
     }
   }, [restoredMessage, onMessageRestored, setDraft]);
 
-  // Register callback for inserting text from diff line comments and file explorer comments
+  // Register callback for inserting text from diff line comments, file explorer comments, and terminal
   const { registerInsertCallback: registerDiffInsertCallback } =
     useDiffLineComment();
   const { registerInsertCallback: registerFileExplorerInsertCallback } =
     useFileExplorerComment();
+  const { registerInsertCallback: registerTerminalInsertCallback } =
+    useTerminalComment();
   useEffect(() => {
     const insertTextAtCursor = (text: string) => {
       const textarea = textareaRef.current;
@@ -239,18 +242,22 @@ export const ChatInput: FC<ChatInputProps> = ({
       });
     };
 
-    // Register the same callback with both contexts
+    // Register the same callback with all contexts
     const unregisterDiff = registerDiffInsertCallback(insertTextAtCursor);
     const unregisterFileExplorer =
       registerFileExplorerInsertCallback(insertTextAtCursor);
+    const unregisterTerminal =
+      registerTerminalInsertCallback(insertTextAtCursor);
 
     return () => {
       unregisterDiff();
       unregisterFileExplorer();
+      unregisterTerminal();
     };
   }, [
     registerDiffInsertCallback,
     registerFileExplorerInsertCallback,
+    registerTerminalInsertCallback,
     message,
     setDraft,
   ]);

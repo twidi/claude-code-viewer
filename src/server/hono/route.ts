@@ -41,9 +41,11 @@ import { StarredSessionController } from "../core/starred-session/presentation/S
 import { userConfigSchema } from "../lib/config/config";
 import { effectToResponse } from "../lib/effect/toEffectResponse";
 import type { HonoAppType } from "./app";
+import { upgradeWebSocket } from "./app";
 import { InitializeService } from "./initialize";
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { configMiddleware } from "./middleware/config.middleware";
+import { terminalRoutes } from "./routes/terminal";
 
 export const routes = (app: HonoAppType, options: CliOptions) =>
   Effect.gen(function* () {
@@ -101,6 +103,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
         await Runtime.runPromise(runtime)(initializeService.stopCleanup());
       });
     }
+
+    // Mount terminal routes (WebSocket endpoint for terminal, REST endpoint for resize)
+    app.route("/api", terminalRoutes(upgradeWebSocket));
 
     return (
       app

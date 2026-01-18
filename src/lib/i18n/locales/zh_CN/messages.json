@@ -22,7 +22,6 @@
     "translation": "可用的文件和目录"
   },
   "Clear search": {
-    "translation": "清除搜索",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -30,7 +29,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         116
       ]
-    ]
+    ],
+    "translation": "清除搜索"
   },
   "Close sidebar": {
     "placeholders": {},
@@ -141,7 +141,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        769
       ]
     ],
     "translation": "带补全支持的消息输入"
@@ -180,7 +180,6 @@
     "translation": "搜索结果"
   },
   "Search files...": {
-    "translation": "搜索文件...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -188,7 +187,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         100
       ]
-    ]
+    ],
+    "translation": "搜索文件..."
   },
   "Select auto-abort timeout": {
     "placeholders": {},
@@ -446,7 +446,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        848
+        855
       ],
       [
         "src/components/AttachButton.tsx",
@@ -461,7 +461,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        860
+        867
       ]
     ],
     "translation": "自动补全已激活"
@@ -483,7 +483,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        688
+        695
       ]
     ],
     "translation": "发送消息失败。请重试。"
@@ -701,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        383
+        390
       ]
     ],
     "translation": "定时发送消息失败"
@@ -713,7 +713,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        366
+        373
       ]
     ],
     "translation": "消息定时发送成功"
@@ -725,7 +725,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        371
+        378
       ]
     ],
     "translation": "您可以在定时任务选项卡中查看和管理"
@@ -747,15 +747,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        805
+        812
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        890
+        897
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        924
+        931
       ]
     ],
     "translation": "立即发送"
@@ -766,11 +766,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        788
+        795
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        873
+        880
       ]
     ],
     "translation": "发送模式"
@@ -781,15 +781,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        808
+        815
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        902
+        909
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        930
+        937
       ]
     ],
     "translation": "定时发送"
@@ -801,7 +801,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        897
+        904
       ]
     ],
     "translation": ""
@@ -812,7 +812,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        815
+        822
       ]
     ],
     "translation": "定时发送时间"
@@ -824,11 +824,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        446
+        453
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        553
+        560
       ]
     ],
     "translation": ""
@@ -995,7 +995,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        950
+        957
       ]
     ],
     "translation": "处理中..."
@@ -1177,11 +1177,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        230
+        278
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        109
+        110
       ]
     ],
     "translation": "文件"
@@ -1193,7 +1193,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        201
+        219
       ]
     ],
     "translation": "强制刷新"
@@ -1204,7 +1204,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        141
+        159
       ]
     ],
     "translation": "完整视图"
@@ -1223,7 +1223,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        87
+        88
       ]
     ],
     "translation": "Git"
@@ -1245,7 +1245,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        158
+        176
       ]
     ],
     "translation": "新建"
@@ -1257,7 +1257,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        151
+        169
       ]
     ],
     "translation": "新建对话"
@@ -1269,7 +1269,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        124
+        142
       ]
     ],
     "translation": ""
@@ -1281,7 +1281,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        102
+        103
       ]
     ],
     "translation": "打开文件浏览器"
@@ -1293,10 +1293,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        80
+        81
       ]
     ],
     "translation": "打开 Git 对话框"
+  },
+  "control.open_terminal": {
+    "message": "Open Terminal",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        125
+      ]
+    ],
+    "translation": "打开终端"
   },
   "control.project_path": {
     "placeholders": {},
@@ -1316,7 +1328,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        185
+        203
       ]
     ],
     "translation": "滚动到底部"
@@ -1328,7 +1340,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        169
+        187
       ]
     ],
     "translation": "滚动到顶部"
@@ -1343,6 +1355,21 @@
       ]
     ],
     "translation": "会话 ID"
+  },
+  "control.terminal": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        132
+      ],
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        98
+      ]
+    ],
+    "translation": "终端"
   },
   "conversation.error.raw_content": {
     "placeholders": {},
@@ -1611,11 +1638,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        920
+        921
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        244
+        293
       ]
     ],
     "translation": "保持打开"
@@ -1626,11 +1653,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        921
+        922
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        245
+        294
       ]
     ],
     "translation": "关闭"
@@ -1645,11 +1672,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        915
+        916
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        239
+        288
       ]
     ],
     "translation": "您有{count}条未发送的评论。如果现在关闭并切换到其他项目或分支，您的评论将丢失且不会收到警告。"
@@ -1660,11 +1687,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        913
+        914
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        237
+        286
       ]
     ],
     "translation": "未发送的评论"
@@ -1844,7 +1871,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        185
+        233
       ]
     ],
     "translation": "将 {count} 条评论添加到聊天"
@@ -1885,7 +1912,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        126
+        153
       ]
     ],
     "translation": "语法"
@@ -1911,7 +1938,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        121
+        148
       ]
     ],
     "translation": "自动换行"
@@ -2043,7 +2070,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        115
+        142
       ]
     ],
     "translation": "文件浏览器"
@@ -4280,6 +4307,117 @@
       ]
     ],
     "translation": "Claude Code Viewer"
+  },
+  "terminal.add_to_chat": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        166
+      ]
+    ],
+    "translation": "添加到聊天"
+  },
+  "terminal.added_to_chat_count": {
+    "placeholders": {
+      "count": [
+        "addedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        127
+      ]
+    ],
+    "translation": "已添加 {count} 个字符"
+  },
+  "terminal.clear": {
+    "translation": "清除",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        203
+      ]
+    ]
+  },
+  "terminal.copied_count": {
+    "placeholders": {
+      "count": [
+        "copiedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        116
+      ]
+    ],
+    "translation": "已复制 {count} 个字符"
+  },
+  "terminal.copy": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        155
+      ]
+    ],
+    "translation": "复制"
+  },
+  "terminal.mode.scroll": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        178
+      ]
+    ],
+    "translation": "滚动"
+  },
+  "terminal.mode.select": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        191
+      ]
+    ],
+    "translation": "选择"
+  },
+  "terminal.selection_count": {
+    "placeholders": {
+      "count": [
+        "selectionCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        141
+      ]
+    ],
+    "translation": "已选择: {count} 个字符"
+  },
+  "terminal.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        107
+      ]
+    ],
+    "translation": "终端"
   },
   "user.content.document.pdf": {
     "placeholders": {},

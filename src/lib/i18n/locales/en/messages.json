@@ -22,7 +22,6 @@
     "translation": "Available files and directories"
   },
   "Clear search": {
-    "translation": "Clear search",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -30,7 +29,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         116
       ]
-    ]
+    ],
+    "translation": "Clear search"
   },
   "Close sidebar": {
     "placeholders": {},
@@ -141,7 +141,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        769
       ]
     ],
     "translation": "Message input with completion support"
@@ -180,7 +180,6 @@
     "translation": "Search Results"
   },
   "Search files...": {
-    "translation": "Search files...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -188,7 +187,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         100
       ]
-    ]
+    ],
+    "translation": "Search files..."
   },
   "Select auto-abort timeout": {
     "placeholders": {},
@@ -446,7 +446,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        848
+        855
       ],
       [
         "src/components/AttachButton.tsx",
@@ -461,7 +461,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        860
+        867
       ]
     ],
     "translation": "Autocomplete Active"
@@ -483,7 +483,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        688
+        695
       ]
     ],
     "translation": "Failed to send message. Please try again."
@@ -701,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        383
+        390
       ]
     ],
     "translation": "Failed to schedule message"
@@ -713,7 +713,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        366
+        373
       ]
     ],
     "translation": "Message scheduled successfully"
@@ -725,7 +725,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        371
+        378
       ]
     ],
     "translation": "You can view and manage it in the Scheduler tab"
@@ -747,15 +747,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        805
+        812
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        890
+        897
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        924
+        931
       ]
     ],
     "translation": "Send Now"
@@ -766,11 +766,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        788
+        795
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        873
+        880
       ]
     ],
     "translation": "Send Mode"
@@ -781,15 +781,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        808
+        815
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        902
+        909
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        930
+        937
       ]
     ],
     "translation": "Schedule Send"
@@ -801,7 +801,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        897
+        904
       ]
     ],
     "translation": "Scheduled (not available with attachments)"
@@ -812,7 +812,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        815
+        822
       ]
     ],
     "translation": "Scheduled Send Time"
@@ -824,11 +824,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        446
+        453
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        553
+        560
       ]
     ],
     "translation": "Switched to immediate send (scheduled send doesn't support attachments)"
@@ -995,7 +995,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        950
+        957
       ]
     ],
     "translation": "Processing..."
@@ -1177,11 +1177,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        230
+        278
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        109
+        110
       ]
     ],
     "translation": "Files"
@@ -1193,7 +1193,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        201
+        219
       ]
     ],
     "translation": "Force Reload"
@@ -1204,7 +1204,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        141
+        159
       ]
     ],
     "translation": "Full view"
@@ -1223,7 +1223,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        87
+        88
       ]
     ],
     "translation": "Git"
@@ -1245,7 +1245,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        158
+        176
       ]
     ],
     "translation": "New"
@@ -1257,7 +1257,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        151
+        169
       ]
     ],
     "translation": "New Chat"
@@ -1269,7 +1269,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        124
+        142
       ]
     ],
     "translation": "Open Browser"
@@ -1281,7 +1281,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        102
+        103
       ]
     ],
     "translation": "Open File Explorer"
@@ -1293,10 +1293,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        80
+        81
       ]
     ],
     "translation": "Open Git Dialog"
+  },
+  "control.open_terminal": {
+    "message": "Open Terminal",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        125
+      ]
+    ],
+    "translation": "Open Terminal"
   },
   "control.project_path": {
     "placeholders": {},
@@ -1316,7 +1328,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        185
+        203
       ]
     ],
     "translation": "Scroll to Bottom"
@@ -1328,7 +1340,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        169
+        187
       ]
     ],
     "translation": "Scroll to Top"
@@ -1343,6 +1355,21 @@
       ]
     ],
     "translation": "Session ID"
+  },
+  "control.terminal": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        132
+      ],
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        98
+      ]
+    ],
+    "translation": "Terminal"
   },
   "conversation.error.raw_content": {
     "placeholders": {},
@@ -1611,11 +1638,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        920
+        921
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        244
+        293
       ]
     ],
     "translation": "Stay open"
@@ -1626,11 +1653,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        921
+        922
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        245
+        294
       ]
     ],
     "translation": "Close anyway"
@@ -1645,11 +1672,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        915
+        916
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        239
+        288
       ]
     ],
     "translation": "You have {count} unsent comment(s). If you close now and switch to another project or branch, your comments will be lost without warning."
@@ -1660,11 +1687,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        913
+        914
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        237
+        286
       ]
     ],
     "translation": "Unsent comments"
@@ -1844,7 +1871,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        185
+        233
       ]
     ],
     "translation": "Add {count} comment(s) to chat"
@@ -1885,7 +1912,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        126
+        153
       ]
     ],
     "translation": "Syntax"
@@ -1911,7 +1938,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        121
+        148
       ]
     ],
     "translation": "Wrap"
@@ -2043,7 +2070,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        115
+        142
       ]
     ],
     "translation": "File Explorer"
@@ -4280,6 +4307,117 @@
       ]
     ],
     "translation": "Claude Code Viewer"
+  },
+  "terminal.add_to_chat": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        166
+      ]
+    ],
+    "translation": "Add to chat"
+  },
+  "terminal.added_to_chat_count": {
+    "placeholders": {
+      "count": [
+        "addedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        127
+      ]
+    ],
+    "translation": "Added {count} chars"
+  },
+  "terminal.clear": {
+    "translation": "Clear",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        203
+      ]
+    ]
+  },
+  "terminal.copied_count": {
+    "placeholders": {
+      "count": [
+        "copiedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        116
+      ]
+    ],
+    "translation": "Copied {count} chars"
+  },
+  "terminal.copy": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        155
+      ]
+    ],
+    "translation": "Copy"
+  },
+  "terminal.mode.scroll": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        178
+      ]
+    ],
+    "translation": "Scroll"
+  },
+  "terminal.mode.select": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        191
+      ]
+    ],
+    "translation": "Select"
+  },
+  "terminal.selection_count": {
+    "placeholders": {
+      "count": [
+        "selectionCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        141
+      ]
+    ],
+    "translation": "Selection: {count} chars"
+  },
+  "terminal.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        107
+      ]
+    ],
+    "translation": "Terminal"
   },
   "user.content.document.pdf": {
     "placeholders": {},

@@ -22,7 +22,6 @@
     "translation": "利用可能なファイルとディレクトリ"
   },
   "Clear search": {
-    "translation": "検索をクリア",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -30,7 +29,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         116
       ]
-    ]
+    ],
+    "translation": "検索をクリア"
   },
   "Close sidebar": {
     "placeholders": {},
@@ -141,7 +141,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        762
+        769
       ]
     ],
     "translation": "補完機能付きメッセージ入力"
@@ -180,7 +180,6 @@
     "translation": "検索結果"
   },
   "Search files...": {
-    "translation": "ファイルを検索...",
     "placeholders": {},
     "comments": [],
     "origin": [
@@ -188,7 +187,8 @@
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileTreeSearch.tsx",
         100
       ]
-    ]
+    ],
+    "translation": "ファイルを検索..."
   },
   "Select auto-abort timeout": {
     "placeholders": {},
@@ -446,7 +446,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        848
+        855
       ],
       [
         "src/components/AttachButton.tsx",
@@ -461,7 +461,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        860
+        867
       ]
     ],
     "translation": "オートコンプリート有効"
@@ -483,7 +483,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        688
+        695
       ]
     ],
     "translation": "メッセージの送信に失敗しました。もう一度お試しください。"
@@ -701,7 +701,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        383
+        390
       ]
     ],
     "translation": "メッセージの予約に失敗しました"
@@ -713,7 +713,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        366
+        373
       ]
     ],
     "translation": "メッセージを予約しました"
@@ -725,7 +725,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        371
+        378
       ]
     ],
     "translation": "スケジューラタブで確認・管理できます"
@@ -747,15 +747,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        805
+        812
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        890
+        897
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        924
+        931
       ]
     ],
     "translation": "今すぐ送信"
@@ -766,11 +766,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        788
+        795
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        873
+        880
       ]
     ],
     "translation": "送信モード"
@@ -781,15 +781,15 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        808
+        815
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        902
+        909
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        930
+        937
       ]
     ],
     "translation": "予約送信"
@@ -801,7 +801,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        897
+        904
       ]
     ],
     "translation": ""
@@ -812,7 +812,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        815
+        822
       ]
     ],
     "translation": "送信予定時刻"
@@ -824,11 +824,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        446
+        453
       ],
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        553
+        560
       ]
     ],
     "translation": ""
@@ -995,7 +995,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/components/chatForm/ChatInput.tsx",
-        950
+        957
       ]
     ],
     "translation": "処理中..."
@@ -1177,11 +1177,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        230
+        278
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        109
+        110
       ]
     ],
     "translation": "ファイル"
@@ -1193,7 +1193,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        201
+        219
       ]
     ],
     "translation": "強制リロード"
@@ -1204,7 +1204,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        141
+        159
       ]
     ],
     "translation": "フル表示"
@@ -1223,7 +1223,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        87
+        88
       ]
     ],
     "translation": "Git"
@@ -1245,7 +1245,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        158
+        176
       ]
     ],
     "translation": "新規"
@@ -1257,7 +1257,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        151
+        169
       ]
     ],
     "translation": "新しいチャット"
@@ -1269,7 +1269,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        124
+        142
       ]
     ],
     "translation": ""
@@ -1281,7 +1281,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        102
+        103
       ]
     ],
     "translation": "ファイルエクスプローラーを開く"
@@ -1293,10 +1293,22 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        80
+        81
       ]
     ],
     "translation": "Gitダイアログを開く"
+  },
+  "control.open_terminal": {
+    "message": "Open Terminal",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        125
+      ]
+    ],
+    "translation": "ターミナルを開く"
   },
   "control.project_path": {
     "placeholders": {},
@@ -1316,7 +1328,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        185
+        203
       ]
     ],
     "translation": "ボトムにスクロール"
@@ -1328,7 +1340,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
-        169
+        187
       ]
     ],
     "translation": "トップにスクロール"
@@ -1343,6 +1355,21 @@
       ]
     ],
     "translation": "セッションID"
+  },
+  "control.terminal": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/app/projects/[projectId]/sessions/[sessionId]/components/resumeChat/ChatActionMenu.tsx",
+        132
+      ],
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        98
+      ]
+    ],
+    "translation": "ターミナル"
   },
   "conversation.error.raw_content": {
     "placeholders": {},
@@ -1611,11 +1638,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        920
+        921
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        244
+        293
       ]
     ],
     "translation": "開いたままにする"
@@ -1626,11 +1653,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        921
+        922
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        245
+        294
       ]
     ],
     "translation": "閉じる"
@@ -1645,11 +1672,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        915
+        916
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        239
+        288
       ]
     ],
     "translation": "未送信のコメントが{count}件あります。閉じて別のプロジェクトやブランチに切り替えると、コメントは警告なしに失われます。"
@@ -1660,11 +1687,11 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/diffModal/DiffModal.tsx",
-        913
+        914
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        237
+        286
       ]
     ],
     "translation": "未送信のコメント"
@@ -1844,7 +1871,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        185
+        233
       ]
     ],
     "translation": "{count}件のコメントをチャットに追加"
@@ -1885,7 +1912,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        126
+        153
       ]
     ],
     "translation": "構文"
@@ -1911,7 +1938,7 @@
       ],
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        121
+        148
       ]
     ],
     "translation": "折り返し"
@@ -2043,7 +2070,7 @@
     "origin": [
       [
         "src/app/projects/[projectId]/sessions/[sessionId]/components/fileExplorer/FileExplorerDialog.tsx",
-        115
+        142
       ]
     ],
     "translation": "ファイルエクスプローラー"
@@ -4280,6 +4307,117 @@
       ]
     ],
     "translation": "Claude Code Viewer"
+  },
+  "terminal.add_to_chat": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        166
+      ]
+    ],
+    "translation": "チャットに追加"
+  },
+  "terminal.added_to_chat_count": {
+    "placeholders": {
+      "count": [
+        "addedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        127
+      ]
+    ],
+    "translation": "{count}文字追加済み"
+  },
+  "terminal.clear": {
+    "translation": "クリア",
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        203
+      ]
+    ]
+  },
+  "terminal.copied_count": {
+    "placeholders": {
+      "count": [
+        "copiedCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        116
+      ]
+    ],
+    "translation": "{count}文字コピー済み"
+  },
+  "terminal.copy": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        155
+      ]
+    ],
+    "translation": "コピー"
+  },
+  "terminal.mode.scroll": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        178
+      ]
+    ],
+    "translation": "スクロール"
+  },
+  "terminal.mode.select": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        191
+      ]
+    ],
+    "translation": "選択"
+  },
+  "terminal.selection_count": {
+    "placeholders": {
+      "count": [
+        "selectionCharCount"
+      ]
+    },
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        141
+      ]
+    ],
+    "translation": "選択: {count}文字"
+  },
+  "terminal.title": {
+    "placeholders": {},
+    "comments": [],
+    "origin": [
+      [
+        "src/components/terminal/TerminalDialog.tsx",
+        107
+      ]
+    ],
+    "translation": "ターミナル"
   },
   "user.content.document.pdf": {
     "placeholders": {},

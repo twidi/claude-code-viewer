@@ -8,6 +8,7 @@ import {
   GlobeIcon,
   PlusIcon,
   RefreshCwIcon,
+  TerminalIcon,
 } from "lucide-react";
 import type { FC } from "react";
 import { useConfig } from "@/app/hooks/useConfig";
@@ -113,6 +114,23 @@ export const ChatActionMenu: FC<ChatActionMenuProps> = ({
               {fileExplorerCommentCount}
             </span>
           )}
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => persistentDialogs?.toggle("terminal")}
+          disabled={isPending}
+          className="h-7 px-2 gap-1.5 text-xs bg-muted/20 rounded-lg border border-border/40"
+          title={i18n._({
+            id: "control.open_terminal",
+            message: "Open Terminal",
+          })}
+        >
+          <TerminalIcon className="w-3.5 h-3.5" />
+          <span>
+            <Trans id="control.terminal" />
+          </span>
         </Button>
         <Button
           type="button"
