@@ -2,7 +2,7 @@ import { parseLines } from "../functions/utils";
 import type { GitCommit } from "../types";
 
 /**
- * Get the last 20 commits from the current branch
+ * Parse git log output with format: sha|subject|author|date
  */
 export const parseGitCommitsOutput = (output: string) => {
   const lines = parseLines(output);

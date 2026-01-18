@@ -396,6 +396,41 @@ const LayerImpl = Effect.gen(function* () {
       } as const satisfies ControllerResponse;
     });
 
+  const getCommitDetailsRoute = (options: { projectId: string; sha: string }) =>
+    Effect.gen(function* () {
+      const { projectId, sha } = options;
+
+      const { project } = yield* projectRepository.getProject(projectId);
+
+      if (project.meta.projectPath === null) {
+        return {
+          response: { error: "Project path not found" },
+          status: 400,
+        } as const satisfies ControllerResponse;
+      }
+
+      const projectPath = project.meta.projectPath;
+
+      const commitResult = yield* Effect.either(
+        gitService.getCommitDetails(projectPath, sha),
+      );
+
+      if (Either.isLeft(commitResult)) {
+        return {
+          response: { success: false, error: "Failed to get commit details" },
+          status: 200,
+        } as const satisfies ControllerResponse;
+      }
+
+      return {
+        response: {
+          success: true,
+          data: commitResult.right,
+        },
+        status: 200,
+      } as const satisfies ControllerResponse;
+    });
+
   return {
     getGitDiff,
     commitFiles,
@@ -403,6 +438,7 @@ const LayerImpl = Effect.gen(function* () {
     commitAndPush,
     getCurrentRevisions,
     getFileStatusRoute,
+    getCommitDetailsRoute,
   };
 });
 

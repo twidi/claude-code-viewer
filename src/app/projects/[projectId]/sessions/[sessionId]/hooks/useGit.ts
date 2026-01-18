@@ -105,3 +105,21 @@ export const useCommitAndPush = (projectId: string) => {
     },
   });
 };
+
+export const useCommitDetails = (projectId: string) => {
+  return useMutation({
+    mutationFn: async ({ sha }: { sha: string }) => {
+      const response = await honoClient.api.projects[":projectId"].git.commits[
+        ":sha"
+      ].$get({
+        param: { projectId, sha },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get commit details: ${response.statusText}`);
+      }
+
+      return response.json();
+    },
+  });
+};

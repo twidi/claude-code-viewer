@@ -14,6 +14,10 @@ export type GitCommit = {
   date: string;
 };
 
+export type GitCommitDetails = GitCommit & {
+  body: string;
+};
+
 export type GitFileStatus =
   | "added"
   | "deleted"

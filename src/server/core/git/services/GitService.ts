@@ -106,6 +106,46 @@ const LayerImpl = Effect.gen(function* () {
       return parseGitCommitsOutput(result);
     });
 
+  const getCommitDetails = (cwd: string, sha: string) =>
+    Effect.gen(function* () {
+      // Use ASCII separators: \x1f (unit separator) between fields
+      const result = yield* execGitCommand(
+        [
+          "show",
+          "-s",
+          "--format=%H\x1f%s\x1f%b\x1f%an\x1f%ad",
+          "--date=iso",
+          sha,
+        ],
+        cwd,
+      );
+      const parts = result.split("\x1f");
+      if (parts.length < 5) {
+        return yield* Effect.fail(
+          new GitCommandError({
+            cwd,
+            command: `git show ${sha}`,
+          }),
+        );
+      }
+      const [commitSha, subject, body, author, date] = parts;
+      if (!commitSha || !subject || !author || !date) {
+        return yield* Effect.fail(
+          new GitCommandError({
+            cwd,
+            command: `git show ${sha} (parse error)`,
+          }),
+        );
+      }
+      return {
+        sha: commitSha.trim(),
+        message: subject.trim(),
+        body: (body ?? "").trim(),
+        author: author.trim(),
+        date: date.trim(),
+      };
+    });
+
   const stageFiles = (cwd: string, files: string[]) =>
     Effect.gen(function* () {
       if (files.length === 0) {
@@ -395,6 +435,7 @@ const LayerImpl = Effect.gen(function* () {
     getCurrentBranch,
     branchExists,
     getCommits,
+    getCommitDetails,
     stageFiles,
     commit,
     push,

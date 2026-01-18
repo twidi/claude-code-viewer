@@ -6,6 +6,7 @@ import {
   GitBranch,
   GitCommitHorizontal,
   GitCompareIcon,
+  Info,
   Loader2,
   MessageSquarePlus,
   RefreshCcwIcon,
@@ -44,6 +45,7 @@ import { cn } from "@/lib/utils";
 import { formatFileLineComments } from "@/lib/utils/fileLineComments";
 import {
   useCommitAndPush,
+  useCommitDetails,
   useCommitFiles,
   useGitCurrentRevisions,
   useGitDiff,
@@ -215,7 +217,7 @@ const DiffSummaryComponent: FC<DiffSummaryProps> = ({
 };
 
 interface RefSelectorProps {
-  label: string;
+  label?: string;
   value: string;
   onValueChange: (value: GitRef["name"]) => void;
   refs: GitRef[];
@@ -241,6 +243,33 @@ const RefSelector: FC<RefSelectorProps> = ({
     }
   };
 
+  const selectElement = (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger className="w-full sm:w-80 text-left">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent id={id}>
+        {refs.map((ref) => (
+          <SelectItem key={ref.name} value={ref.name}>
+            <div className="flex items-center gap-2">
+              {getRefIcon(ref.type)}
+              <span>{ref.displayName}</span>
+              {ref.sha && (
+                <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                  {ref.sha.substring(0, 7)}
+                </span>
+              )}
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+
+  if (!label) {
+    return selectElement;
+  }
+
   return (
     <div className="space-y-1">
       <label
@@ -249,26 +278,7 @@ const RefSelector: FC<RefSelectorProps> = ({
       >
         {label}
       </label>
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="w-full sm:w-80">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent id={id}>
-          {refs.map((ref) => (
-            <SelectItem key={ref.name} value={ref.name}>
-              <div className="flex items-center gap-2">
-                {getRefIcon(ref.type)}
-                <span>{ref.displayName}</span>
-                {ref.sha && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-                    {ref.sha.substring(0, 7)}
-                  </span>
-                )}
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      {selectElement}
     </div>
   );
 };
@@ -296,6 +306,7 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
   const commitMessageId = useId();
   const [compareFrom, setCompareFrom] = useState(defaultCompareFrom);
   const [compareTo, setCompareTo] = useState(defaultCompareTo);
+  const [selectedCommit, setSelectedCommit] = useState<string | null>(null);
 
   // Context for inserting line comments into chat
   const { insertText, setNonEmptyCommentCount } = useDiffLineComment();
@@ -339,6 +350,10 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
   const commitMutation = useCommitFiles(projectId);
   const pushMutation = usePushCommits(projectId);
   const commitAndPushMutation = useCommitAndPush(projectId);
+  const commitDetailsMutation = useCommitDetails(projectId);
+
+  // Commit details display state
+  const [showCommitDetails, setShowCommitDetails] = useState(false);
 
   // Transform revisions data to GitRef format
   const gitRefs: GitRef[] =
@@ -385,6 +400,124 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
           })),
         ]
       : [];
+
+  // Filter commits only (with sha) for the commit selector
+  const commitOnlyRefs = useMemo(
+    () => gitRefs.filter((ref) => ref.type === "commit" && ref.sha),
+    [gitRefs],
+  );
+
+  // Build commit selector options: uncommitted changes + commits
+  const commitSelectorRefs = useMemo<GitRef[]>(
+    () => [
+      {
+        name: "working" as const,
+        type: "working" as const,
+        displayName: i18n._("Uncommitted changes"),
+      },
+      ...commitOnlyRefs,
+    ],
+    [commitOnlyRefs, i18n],
+  );
+
+  // Find parent commit in the list (the commit that comes after in the array = older = parent)
+  const findParentCommitRef = useCallback(
+    (commitName: string): GitRef | undefined => {
+      const commitIndex = commitOnlyRefs.findIndex(
+        (ref) => ref.name === commitName,
+      );
+      if (commitIndex === -1 || commitIndex >= commitOnlyRefs.length - 1) {
+        return undefined;
+      }
+      return commitOnlyRefs[commitIndex + 1];
+    },
+    [commitOnlyRefs],
+  );
+
+  // Check if fromRef is the parent of toRef
+  const isParentChildPair = useCallback(
+    (fromRef: string, toRef: string): boolean => {
+      if (!toRef.startsWith("commit:")) return false;
+      const parentRef = findParentCommitRef(toRef);
+      if (!parentRef) return false;
+      // Check if from matches the parent commit
+      return fromRef === parentRef.name;
+    },
+    [findParentCommitRef],
+  );
+
+  // Handler for single commit selection
+  const handleCommitSelect = useCallback(
+    (commitName: GitRef["name"]) => {
+      if (commitName === "working") {
+        setSelectedCommit("working");
+        setCompareFrom("HEAD");
+        setCompareTo("working");
+        return;
+      }
+      const commit = commitSelectorRefs.find((ref) => ref.name === commitName);
+      if (commit?.sha) {
+        setSelectedCommit(commitName);
+        // Find parent commit in the list, or use sha^ as fallback
+        const parentRef = findParentCommitRef(commitName);
+        if (parentRef) {
+          setCompareFrom(parentRef.name);
+        } else {
+          // Fallback to sha^ for the first commit in the list
+          setCompareFrom(`${commit.sha}^`);
+        }
+        setCompareTo(commitName);
+      }
+    },
+    [commitSelectorRefs, findParentCommitRef],
+  );
+
+  // Sync selectedCommit based on from/to values
+  useEffect(() => {
+    // Check for uncommitted changes match
+    if (compareFrom === "HEAD" && compareTo === "working") {
+      setSelectedCommit("working");
+      return;
+    }
+
+    // Check for commit match: from should be the parent of to
+    if (isParentChildPair(compareFrom, compareTo)) {
+      setSelectedCommit(compareTo);
+      return;
+    }
+
+    // No match found
+    setSelectedCommit(null);
+  }, [compareFrom, compareTo, isParentChildPair]);
+
+  const handleFromChange = useCallback((value: GitRef["name"]) => {
+    setCompareFrom(value);
+  }, []);
+
+  const handleToChange = useCallback((value: GitRef["name"]) => {
+    setCompareTo(value);
+  }, []);
+
+  // Get the SHA from selectedCommit (extract from "commit:sha" format)
+  const selectedCommitSha = useMemo(() => {
+    if (!selectedCommit || selectedCommit === "working") return null;
+    if (selectedCommit.startsWith("commit:")) {
+      return selectedCommit.slice(7);
+    }
+    return null;
+  }, [selectedCommit]);
+
+  // Load commit details when toggled on and commit is selected
+  useEffect(() => {
+    if (showCommitDetails && selectedCommitSha) {
+      commitDetailsMutation.mutate({ sha: selectedCommitSha });
+    }
+  }, [showCommitDetails, selectedCommitSha, commitDetailsMutation.mutate]);
+
+  // Toggle commit details visibility
+  const handleToggleCommitDetails = useCallback(() => {
+    setShowCommitDetails((prev) => !prev);
+  }, []);
 
   const loadDiff = useCallback(() => {
     if (compareFrom && compareTo && compareFrom !== compareTo) {
@@ -588,15 +721,36 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
           <RefSelector
             label={i18n._("Compare from")}
             value={compareFrom}
-            onValueChange={setCompareFrom}
+            onValueChange={handleFromChange}
             refs={gitRefs.filter((ref) => ref.name !== "working")}
           />
           <RefSelector
             label={i18n._("Compare to")}
             value={compareTo}
-            onValueChange={setCompareTo}
+            onValueChange={handleToChange}
             refs={gitRefs}
           />
+          {commitSelectorRefs.length > 0 && (
+            <div className="flex items-end gap-2">
+              <RefSelector
+                label={i18n._("Single commit")}
+                value={selectedCommit ?? ""}
+                onValueChange={handleCommitSelect}
+                refs={commitSelectorRefs}
+              />
+              {selectedCommitSha && (
+                <Button
+                  className="mb-0.5"
+                  onClick={handleToggleCommitDetails}
+                  size="sm"
+                  variant={showCommitDetails ? "default" : "outline"}
+                  title={i18n._("Show commit details")}
+                >
+                  <Info className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          )}
           <div className="flex flex-wrap items-center gap-3 ml-auto">
             <DiffOptionToggle
               label={<Trans id="diff.options.split" />}
@@ -647,6 +801,47 @@ const DiffModalContent: FC<DiffModalContentProps> = ({
             </Button>
           </div>
         </div>
+
+        {/* Commit details section - shown when toggle is active and commit is selected */}
+        {showCommitDetails && selectedCommitSha && (
+          <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            {commitDetailsMutation.isPending && (
+              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>
+                  <Trans id="diff.loading" />
+                </span>
+              </div>
+            )}
+            {commitDetailsMutation.data?.success && (
+              <div className="space-y-3">
+                <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                  {commitDetailsMutation.data.data.message}
+                </h3>
+                {commitDetailsMutation.data.data.body && (
+                  <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap font-mono">
+                    {commitDetailsMutation.data.data.body}
+                  </p>
+                )}
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {commitDetailsMutation.data.data.author} •{" "}
+                  {new Date(
+                    commitDetailsMutation.data.data.date,
+                  ).toLocaleString()}{" "}
+                  •{" "}
+                  <span className="font-mono">
+                    {commitDetailsMutation.data.data.sha.substring(0, 7)}
+                  </span>
+                </div>
+              </div>
+            )}
+            {commitDetailsMutation.isError && (
+              <p className="text-red-600 dark:text-red-400">
+                {i18n._("Failed to load commit details")}
+              </p>
+            )}
+          </div>
+        )}
 
         {diffError && (
           <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-lg p-4">

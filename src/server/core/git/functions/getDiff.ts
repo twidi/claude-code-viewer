@@ -16,6 +16,11 @@ const extractRef = (refText: string) => {
       return undefined;
     }
 
+    // Support parent commit syntax: sha^ or sha~N
+    if (/^[a-f0-9]+[\^~]/.test(refText)) {
+      return refText;
+    }
+
     throw new Error(`Invalid ref text: ${refText}`);
   }
 

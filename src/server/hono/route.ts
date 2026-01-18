@@ -425,6 +425,25 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           return response;
         })
 
+        .get(
+          "/api/projects/:projectId/git/commits/:sha",
+          zValidator(
+            "param",
+            z.object({ projectId: z.string(), sha: z.string() }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              gitController
+                .getCommitDetailsRoute({
+                  ...c.req.valid("param"),
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
         /**
          * ClaudeCodeController Routes
          */
