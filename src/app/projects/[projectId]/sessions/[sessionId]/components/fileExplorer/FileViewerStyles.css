@@ -6,6 +6,11 @@
  * a normal file viewer.
  */
 .file-viewer-mode {
+  /* Allow table columns to size based on content instead of fixed widths */
+  .unified-diff-table {
+    table-layout: auto !important;
+  }
+
   /* Hide the "+" operator in front of each line */
   .diff-line-content-operator {
     display: none !important;
@@ -14,6 +19,34 @@
   /* Hide the empty column for old line numbers (since we only have new lines) */
   .diff-line-num span:first-child {
     display: none;
+  }
+
+  /* Use inline display to collapse the flex container around the single visible line number */
+  .diff-line-num .flex {
+    display: inline;
+  }
+
+  /* Also hide the spacer between old/new line numbers */
+  .diff-line-num .flex > span:nth-child(2) {
+    display: none;
+  }
+
+  /* Remove fixed width on the new line number span so it sizes to content */
+  .diff-line-num .flex > span:nth-child(3) {
+    width: unset !important;
+  }
+
+  /**
+   * Make line number column width automatic based on content.
+   * The library sets fixed width via inline styles, so we need !important.
+   * The "+" button will be shown over the line number via its absolute positioning
+   */
+  .diff-line-num {
+    width: max-content !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
 }
 

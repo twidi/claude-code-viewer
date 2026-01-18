@@ -1,7 +1,13 @@
 "use client";
 
 import { Trans } from "@lingui/react";
-import { FolderOpen, MessageSquarePlus } from "lucide-react";
+import {
+  FileIcon,
+  FolderOpen,
+  MessageSquarePlus,
+  PanelLeft,
+  PanelLeftClose,
+} from "lucide-react";
 import type { FC, ReactNode } from "react";
 import { useCallback, useId, useState } from "react";
 import { PersistentDialogShell } from "@/components/PersistentDialogShell";
@@ -9,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFileExplorerComment } from "@/contexts/FileExplorerCommentContext";
 import { useFileLineComments } from "@/hooks/useFileLineComments";
+import { cn } from "@/lib/utils";
 import { formatFileLineComments } from "@/lib/utils/fileLineComments";
 import { EmptyState } from "./EmptyState";
 import { FileTree } from "./FileTree";
@@ -83,9 +90,13 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
 
   // Local state
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [viewOptions, setViewOptions] = useState<FileViewOptions>(
     DEFAULT_FILE_VIEW_OPTIONS,
   );
+
+  // On mobile: show sidebar if no file selected OR manually opened
+  const showSidebarOnMobile = !selectedFile || sidebarOpen;
 
   // Send all comments to chat
   const handleSendAllComments = useCallback(() => {
@@ -104,14 +115,30 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
     // Only set file if it's not a directory (directories end with / or are "/")
     if (filePath !== "/" && !filePath.endsWith("/")) {
       setSelectedFile(filePath);
+      setSidebarOpen(false); // Auto-close sidebar on mobile when file selected
     }
   }, []);
 
   return (
     <>
       <PersistentDialogShell.Header>
+        {/* Mobile sidebar toggle - only shown when a file is selected */}
+        {selectedFile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden shrink-0"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+          >
+            {sidebarOpen ? (
+              <PanelLeftClose className="w-4 h-4" />
+            ) : (
+              <PanelLeft className="w-4 h-4" />
+            )}
+          </Button>
+        )}
         <FolderOpen className="w-5 h-5" />
-        <span className="font-semibold">
+        <span className="font-semibold truncate">
           <Trans id="file_explorer.title" /> — {projectName}
         </span>
 
@@ -137,7 +164,12 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
         {/* Main content - two panel layout */}
         <div className="flex-1 flex overflow-hidden min-h-0">
           {/* Left panel - File tree */}
-          <div className="w-64 md:w-72 lg:w-80 border-r border-gray-200 dark:border-gray-700 overflow-hidden shrink-0 flex flex-col">
+          <div
+            className={cn(
+              "w-full md:w-72 lg:w-80 border-r border-gray-200 dark:border-gray-700 overflow-hidden shrink-0 flex-col",
+              showSidebarOnMobile ? "flex" : "hidden md:flex",
+            )}
+          >
             {/* Search bar */}
             <div className="p-2 border-b border-gray-200 dark:border-gray-700 shrink-0">
               <FileTreeSearch
@@ -158,17 +190,33 @@ const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
           </div>
 
           {/* Right panel - File viewer */}
-          <div className="flex-1 overflow-hidden relative">
+          <div
+            className={cn(
+              "flex-1 overflow-hidden relative flex flex-col",
+              showSidebarOnMobile && selectedFile && "hidden md:block",
+            )}
+          >
             {selectedFile ? (
-              <FileViewer
-                projectId={projectId}
-                filePath={selectedFile}
-                options={viewOptions}
-                comments={comments}
-                onAddComment={handleAddComment}
-                onUpdateComment={handleUpdateComment}
-                onRemoveComment={handleRemoveComment}
-              />
+              <>
+                {/* File path header */}
+                <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 shrink-0">
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <FileIcon className="w-4 h-4 shrink-0" />
+                    <span className="font-mono truncate">{selectedFile}</span>
+                  </div>
+                </div>
+                <div className="flex-1 overflow-hidden relative">
+                  <FileViewer
+                    projectId={projectId}
+                    filePath={selectedFile}
+                    options={viewOptions}
+                    comments={comments}
+                    onAddComment={handleAddComment}
+                    onUpdateComment={handleUpdateComment}
+                    onRemoveComment={handleRemoveComment}
+                  />
+                </div>
+              </>
             ) : (
               <EmptyState />
             )}
@@ -232,6 +280,7 @@ export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
         badgeCount: nonEmptyCommentCount,
       }}
       resetKey={resetKey}
+      fullWidth
       closeConfirmation={{
         shouldConfirm: () => nonEmptyCommentCount > 0,
         title: <Trans id="diff.close_confirm.title" />,

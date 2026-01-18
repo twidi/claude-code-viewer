@@ -62,6 +62,12 @@ interface PersistentDialogShellProps {
    */
   closeConfirmation?: CloseConfirmationConfig;
 
+  /**
+   * When true, the dialog uses full viewport width (95vw) without max-width constraint.
+   * When false (default), the dialog is limited to max-w-7xl (1280px).
+   */
+  fullWidth?: boolean;
+
   /** Custom className for the content container */
   className?: string;
 
@@ -142,6 +148,7 @@ const PersistentDialogShellBase: FC<PersistentDialogShellProps> = ({
   config,
   resetKey,
   closeConfirmation,
+  fullWidth,
   className,
   children,
 }) => {
@@ -277,7 +284,8 @@ const PersistentDialogShellBase: FC<PersistentDialogShellProps> = ({
         <div
           className={cn(
             "relative z-10 bg-background rounded-lg shadow-lg border",
-            "max-w-7xl w-[95vw] h-[90vh] overflow-hidden flex flex-col",
+            "w-[95vw] h-[90vh] overflow-hidden flex flex-col",
+            !fullWidth && "max-w-7xl",
             "transition-all duration-200",
             isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
             className,

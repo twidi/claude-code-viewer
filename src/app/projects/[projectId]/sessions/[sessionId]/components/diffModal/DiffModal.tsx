@@ -908,6 +908,7 @@ export const DiffModal: FC<DiffModalProps> = ({
         badgeCount: nonEmptyCommentCount,
       }}
       resetKey={resetKey}
+      fullWidth
       closeConfirmation={{
         shouldConfirm: () => nonEmptyCommentCount > 0,
         title: <Trans id="diff.close_confirm.title" />,
