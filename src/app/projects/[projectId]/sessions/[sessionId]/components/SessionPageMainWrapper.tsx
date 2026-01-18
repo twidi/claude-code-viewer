@@ -6,6 +6,8 @@ import { PersistentDialogsProvider } from "@/contexts/PersistentDialogsContext";
 import { Loading } from "../../../../../../components/Loading";
 import { useProject } from "../../../hooks/useProject";
 import { useGitCurrentRevisions } from "../hooks/useGit";
+import { DiffModal } from "./diffModal";
+import { FileExplorerDialog } from "./fileExplorer/FileExplorerDialog";
 import { SessionPageMain } from "./SessionPageMain";
 import { SessionSidebar } from "./sessionSidebar/SessionSidebar";
 import type { Tab } from "./sessionSidebar/schema";
@@ -51,6 +53,23 @@ export const SessionPageMainWrapper: FC<{
               initialTab={tab}
             />
           </Suspense>
+
+          {/* Dialogs rendered outside SessionPageMain - they stay mounted across session changes */}
+          <DiffModal
+            projectId={projectId}
+            projectName={projectName}
+            branchName={currentBranch}
+            revisionsData={revisionsData}
+          />
+          {projectPath && (
+            <FileExplorerDialog
+              projectId={projectId}
+              projectPath={projectPath}
+              projectName={projectName}
+              branchName={currentBranch}
+            />
+          )}
+
           <Suspense fallback={<Loading />}>
             <SessionPageMain
               key={sessionId}

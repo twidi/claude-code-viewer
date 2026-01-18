@@ -63,13 +63,10 @@ import type { PermissionMode } from "@/types/session-process";
 import { firstUserMessageToTitle } from "../../../services/firstCommandToTitle";
 import { useExportSession } from "../hooks/useExportSession";
 import type { useGitCurrentRevisions } from "../hooks/useGit";
-import { useGitCurrentRevisions as useGitCurrentRevisionsHook } from "../hooks/useGit";
 import { useInterruptAndChangePermissionMutation } from "../hooks/useInterruptAndChangePermissionMutation";
 import { useSession } from "../hooks/useSession";
 import { useSessionProcess } from "../hooks/useSessionProcess";
 import { ConversationList } from "./conversationList/ConversationList";
-import { DiffModal } from "./diffModal";
-import { FileExplorerDialog } from "./fileExplorer/FileExplorerDialog";
 import { ChatActionMenu } from "./resumeChat/ChatActionMenu";
 import { ContinueChat } from "./resumeChat/ContinueChat";
 import { PermissionModeSelector } from "./resumeChat/PermissionModeSelector";
@@ -121,7 +118,7 @@ const SessionPageMainContent: FC<
   setIsMobileSidebarOpen,
   projectPath,
   currentBranch,
-  revisionsData: revisionsDataProp,
+  revisionsData: _revisionsData,
   projectName,
   sessionData,
 }) => {
@@ -132,8 +129,6 @@ const SessionPageMainContent: FC<
     Boolean(sessionId) && sessionData !== null && sessionData !== undefined;
   const { currentPermissionRequest, isDialogOpen, onPermissionResponse } =
     usePermissionRequests();
-  const { data: revisionsDataFallback } = useGitCurrentRevisionsHook(projectId);
-  const revisionsData = revisionsDataProp ?? revisionsDataFallback;
   const exportSession = useExportSession();
   const { data: allSchedulerJobs } = useSchedulerJobs();
   const search = useSearch({
@@ -876,24 +871,6 @@ const SessionPageMainContent: FC<
           )}
         </div>
       </div>
-
-      {isExistingSession && (
-        <DiffModal
-          key={projectId}
-          projectId={projectId}
-          projectName={projectName}
-          revisionsData={revisionsData}
-        />
-      )}
-
-      {isExistingSession && projectPath && (
-        <FileExplorerDialog
-          key={`file-explorer-${projectId}`}
-          projectId={projectId}
-          projectPath={projectPath}
-          projectName={projectName}
-        />
-      )}
 
       <PermissionDialog
         permissionRequest={currentPermissionRequest}

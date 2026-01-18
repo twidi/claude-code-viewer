@@ -9,7 +9,6 @@ import {
   Loader2,
   MessageSquarePlus,
   RefreshCcwIcon,
-  X,
 } from "lucide-react";
 import type { FC } from "react";
 import {
@@ -20,18 +19,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { createPortal } from "react-dom";
 import { toast } from "sonner";
+import { PersistentDialogShell } from "@/components/PersistentDialogShell";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -45,7 +36,6 @@ import {
   hasNonEmptyComment,
   useDiffLineComment,
 } from "@/contexts/DiffLineCommentContext";
-import { usePersistentDialog } from "@/contexts/PersistentDialogsContext";
 import { useFileLineComments } from "@/hooks/useFileLineComments";
 import { cn } from "@/lib/utils";
 import { formatFileLineComments } from "@/lib/utils/fileLineComments";
@@ -306,16 +296,27 @@ const RefSelector: FC<RefSelectorProps> = ({
   );
 };
 
-export const DiffModal: FC<DiffModalProps> = ({
+// ============================================================================
+// DiffModalContent - internal component that gets remounted on resetKey change
+// ============================================================================
+
+interface DiffModalContentProps {
+  projectId: string;
+  projectName: string;
+  defaultCompareFrom: string;
+  defaultCompareTo: string;
+  revisionsData: DiffModalProps["revisionsData"];
+}
+
+const DiffModalContent: FC<DiffModalContentProps> = ({
   projectId,
   projectName,
-  defaultCompareFrom = "HEAD",
-  defaultCompareTo = "working",
+  defaultCompareFrom,
+  defaultCompareTo,
   revisionsData: parentRevisionsData,
 }) => {
   const { i18n } = useLingui();
   const commitMessageId = useId();
-  const contentRef = useRef<HTMLDivElement>(null);
   const [compareFrom, setCompareFrom] = useState(defaultCompareFrom);
   const [compareTo, setCompareTo] = useState(defaultCompareTo);
 
@@ -331,73 +332,6 @@ export const DiffModal: FC<DiffModalProps> = ({
     resetComments,
     nonEmptyCommentCount,
   } = useFileLineComments({ setContextCommentCount: setNonEmptyCommentCount });
-
-  // State for close confirmation dialog
-  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
-
-  // Register as a persistent dialog
-  const dialogConfig = useMemo(
-    () => ({
-      id: "git",
-      icon: GitCompareIcon,
-      label: <Trans id="control.git" />,
-      description: projectName,
-    }),
-    [projectName],
-  );
-  const { isVisible, hide: hideDialog } = usePersistentDialog(dialogConfig);
-
-  // Handle hide with confirmation if there are non-empty comments
-  const handleHide = useCallback(() => {
-    if (nonEmptyCommentCount > 0) {
-      setShowCloseConfirm(true);
-    } else {
-      hideDialog();
-    }
-  }, [nonEmptyCommentCount, hideDialog]);
-
-  // Force hide (after confirmation)
-  const handleForceHide = useCallback(() => {
-    setShowCloseConfirm(false);
-    hideDialog();
-  }, [hideDialog]);
-
-  const handleSendAllComments = useCallback(() => {
-    if (nonEmptyCommentCount === 0) return;
-
-    const commentsArray = Array.from(comments.values());
-    const formatted = formatFileLineComments(commentsArray);
-    insertText(formatted);
-
-    // Clear all comments after sending
-    resetComments();
-
-    // Minimize dialog and focus chat input (focus happens in insertText callback)
-    hideDialog();
-  }, [comments, insertText, nonEmptyCommentCount, hideDialog, resetComments]);
-
-  // Handle Escape key to hide
-  useEffect(() => {
-    if (!isVisible) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleHide();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown, true);
-    return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [isVisible, handleHide]);
-
-  // Handle click outside to hide
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleHide();
-    }
-  };
 
   // File selection state (FR-002: all selected by default)
   const [selectedFiles, setSelectedFiles] = useState<Map<string, boolean>>(
@@ -494,8 +428,7 @@ export const DiffModal: FC<DiffModalProps> = ({
     }
   }, [diffData]);
 
-  // Load diff when refs change, but NOT when visibility changes
-  // This preserves scroll/selection state when hiding/showing
+  // Load diff when refs change
   const hasLoadedRef = useRef(false);
   useEffect(() => {
     if (compareFrom && compareTo) {
@@ -507,6 +440,17 @@ export const DiffModal: FC<DiffModalProps> = ({
   const handleCompare = () => {
     loadDiff();
   };
+
+  const handleSendAllComments = useCallback(() => {
+    if (nonEmptyCommentCount === 0) return;
+
+    const commentsArray = Array.from(comments.values());
+    const formatted = formatFileLineComments(commentsArray);
+    insertText(formatted);
+
+    // Clear all comments after sending
+    resetComments();
+  }, [comments, insertText, nonEmptyCommentCount, resetComments]);
 
   // File selection handlers
   const handleToggleFile = (filePath: string) => {
@@ -649,50 +593,16 @@ export const DiffModal: FC<DiffModalProps> = ({
     commitMessage.trim().length === 0 ||
     commitMutation.isPending;
 
-  // Render as portal with custom overlay (stays mounted, visibility controlled by CSS)
-  return createPortal(
-    <div
-      className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center",
-        isVisible ? "visible" : "invisible pointer-events-none",
-      )}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="diff-modal-title"
-    >
-      {/* Overlay/backdrop */}
-      <div
-        className={cn(
-          "absolute inset-0 bg-black/50 transition-opacity duration-200",
-          isVisible ? "opacity-100" : "opacity-0",
-        )}
-        onClick={handleOverlayClick}
-        onKeyDown={(e) => e.key === "Escape" && handleHide()}
-      />
-
-      {/* Dialog content */}
-      <div
-        ref={contentRef}
-        className={cn(
-          "relative z-10 bg-background rounded-lg shadow-lg border",
-          "max-w-7xl w-[95vw] h-[90vh] overflow-hidden flex flex-col gap-4 px-2 md:px-8 py-6",
-          "transition-all duration-200",
-          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
-        )}
-      >
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={handleHide}
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
-          aria-label="Close"
-        >
-          <X className="h-4 w-4" />
-        </button>
-
-        <h2 id="diff-modal-title" className="text-lg font-semibold">
+  return (
+    <>
+      <PersistentDialogShell.Header>
+        <GitCompareIcon className="w-5 h-5" />
+        <span className="font-semibold">
           <Trans id="control.git" /> — {projectName}
-        </h2>
+        </span>
+      </PersistentDialogShell.Header>
+
+      <PersistentDialogShell.Content className="gap-4 px-2 md:px-8 py-6">
         <div className="flex flex-wrap items-end gap-2">
           <RefSelector
             label={i18n._("Compare from")}
@@ -965,36 +875,59 @@ export const DiffModal: FC<DiffModalProps> = ({
             </div>
           </div>
         )}
+      </PersistentDialogShell.Content>
+    </>
+  );
+};
 
-        {/* Confirmation dialog for closing with unsent comments */}
-        <Dialog open={showCloseConfirm} onOpenChange={setShowCloseConfirm}>
-          <DialogContent className="max-w-md" showCloseButton={false}>
-            <DialogHeader>
-              <DialogTitle>
-                <Trans id="diff.close_confirm.title" />
-              </DialogTitle>
-              <DialogDescription>
-                <Trans
-                  id="diff.close_confirm.description"
-                  values={{ count: nonEmptyCommentCount }}
-                />
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setShowCloseConfirm(false)}
-              >
-                <Trans id="diff.close_confirm.cancel" />
-              </Button>
-              <Button variant="destructive" onClick={handleForceHide}>
-                <Trans id="diff.close_confirm.confirm" />
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>,
-    document.body,
+// ============================================================================
+// DiffModal - wrapper component that uses PersistentDialogShell
+// ============================================================================
+
+export const DiffModal: FC<DiffModalProps> = ({
+  projectId,
+  projectName,
+  branchName,
+  defaultCompareFrom = "HEAD",
+  defaultCompareTo = "working",
+  revisionsData,
+}) => {
+  // Get nonEmptyCommentCount from context for badge and close confirmation
+  const { nonEmptyCommentCount } = useDiffLineComment();
+
+  // Build resetKey: reset when projectId or branchName changes
+  const resetKey = branchName ? `${projectId}-${branchName}` : projectId;
+
+  return (
+    <PersistentDialogShell
+      dialogId="git"
+      config={{
+        icon: GitCompareIcon,
+        label: <Trans id="control.git" />,
+        description: projectName,
+        badgeCount: nonEmptyCommentCount,
+      }}
+      resetKey={resetKey}
+      closeConfirmation={{
+        shouldConfirm: () => nonEmptyCommentCount > 0,
+        title: <Trans id="diff.close_confirm.title" />,
+        description: (
+          <Trans
+            id="diff.close_confirm.description"
+            values={{ count: nonEmptyCommentCount }}
+          />
+        ),
+        cancelLabel: <Trans id="diff.close_confirm.cancel" />,
+        confirmLabel: <Trans id="diff.close_confirm.confirm" />,
+      }}
+    >
+      <DiffModalContent
+        projectId={projectId}
+        projectName={projectName}
+        defaultCompareFrom={defaultCompareFrom}
+        defaultCompareTo={defaultCompareTo}
+        revisionsData={revisionsData}
+      />
+    </PersistentDialogShell>
   );
 };

@@ -31,6 +31,7 @@ export interface DiffSummary {
 export interface DiffModalProps {
   projectId: string;
   projectName: string;
+  branchName?: string;
   defaultCompareFrom?: string;
   defaultCompareTo?: string;
   revisionsData?:

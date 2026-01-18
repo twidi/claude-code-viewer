@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -16,6 +17,8 @@ export interface PersistentDialog {
   label: ReactNode;
   /** Additional context shown in tooltip (e.g., project name) */
   description?: ReactNode;
+  /** Badge count displayed on the sidebar icon (e.g., unsent comment count) */
+  badgeCount?: number;
 }
 
 interface PersistentDialogsContextValue {
@@ -152,10 +155,20 @@ export function usePersistentDialog(dialog: PersistentDialog): {
 
   const { register, unregister, visibleDialogId, show, hide, toggle } = context;
 
+  // Store dialog.id in a ref so we can access it in cleanup without adding
+  // dialog to the dependency array (which would cause unregister on every config change)
+  const dialogIdRef = useRef(dialog.id);
+  dialogIdRef.current = dialog.id;
+
+  // Unregister only on unmount (not on config changes)
+  useEffect(() => {
+    return () => unregister(dialogIdRef.current);
+  }, [unregister]);
+
+  // Register on mount and re-register when dialog config changes (for dynamic badgeCount)
   useEffect(() => {
     register(dialog);
-    return () => unregister(dialog.id);
-  }, [register, unregister, dialog]);
+  }, [register, dialog]);
 
   return {
     isVisible: visibleDialogId === dialog.id,

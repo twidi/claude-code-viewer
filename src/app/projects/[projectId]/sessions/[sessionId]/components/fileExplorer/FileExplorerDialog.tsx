@@ -1,31 +1,14 @@
 "use client";
 
-import { Trans, useLingui } from "@lingui/react";
-import { FolderOpen, MessageSquarePlus, X } from "lucide-react";
+import { Trans } from "@lingui/react";
+import { FolderOpen, MessageSquarePlus } from "lucide-react";
 import type { FC, ReactNode } from "react";
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { createPortal } from "react-dom";
+import { useCallback, useId, useState } from "react";
+import { PersistentDialogShell } from "@/components/PersistentDialogShell";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { useFileExplorerComment } from "@/contexts/FileExplorerCommentContext";
-import { usePersistentDialog } from "@/contexts/PersistentDialogsContext";
 import { useFileLineComments } from "@/hooks/useFileLineComments";
-import { cn } from "@/lib/utils";
 import { formatFileLineComments } from "@/lib/utils/fileLineComments";
 import { EmptyState } from "./EmptyState";
 import { FileTree } from "./FileTree";
@@ -36,6 +19,7 @@ export interface FileExplorerDialogProps {
   projectId: string;
   projectPath: string;
   projectName: string;
+  branchName?: string;
 }
 
 /**
@@ -65,24 +49,21 @@ const OptionToggle: FC<{
   );
 };
 
-/**
- * FileExplorerDialog - Main dialog for browsing project files.
- *
- * Features:
- * - Minimizable dialog (persisted via PersistentDialogsContext)
- * - Two-panel layout: FileTree on left, FileViewer on right
- * - View options toggles (Wrap, Syntax)
- * - Line comments that can be sent to chat
- * - Close confirmation if unsent comments exist
- */
-export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
+// ============================================================================
+// FileExplorerDialogContent - internal component that gets remounted on resetKey change
+// ============================================================================
+
+interface FileExplorerDialogContentProps {
+  projectId: string;
+  projectPath: string;
+  projectName: string;
+}
+
+const FileExplorerDialogContent: FC<FileExplorerDialogContentProps> = ({
   projectId,
   projectPath,
   projectName,
 }) => {
-  const { i18n } = useLingui();
-  const contentRef = useRef<HTMLDivElement>(null);
-
   // Context for inserting comments into chat
   const { insertText, setNonEmptyCommentCount } = useFileExplorerComment();
 
@@ -101,37 +82,9 @@ export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
 
   // Local state
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const [viewOptions, setViewOptions] = useState<FileViewOptions>(
     DEFAULT_FILE_VIEW_OPTIONS,
   );
-
-  // Register as a persistent dialog
-  const dialogConfig = useMemo(
-    () => ({
-      id: "file-explorer",
-      icon: FolderOpen,
-      label: <Trans id="control.files" />,
-      description: projectName,
-    }),
-    [projectName],
-  );
-  const { isVisible, hide: hideDialog } = usePersistentDialog(dialogConfig);
-
-  // Handle hide with confirmation if there are non-empty comments
-  const handleHide = useCallback(() => {
-    if (nonEmptyCommentCount > 0) {
-      setShowCloseConfirm(true);
-    } else {
-      hideDialog();
-    }
-  }, [nonEmptyCommentCount, hideDialog]);
-
-  // Force hide (after confirmation)
-  const handleForceHide = useCallback(() => {
-    setShowCloseConfirm(false);
-    hideDialog();
-  }, [hideDialog]);
 
   // Send all comments to chat
   const handleSendAllComments = useCallback(() => {
@@ -141,12 +94,9 @@ export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
     const formatted = formatFileLineComments(commentsArray);
     insertText(formatted);
 
-    // Clear all comments after sending
+    // Clear all comments after sending (focus happens in insertText callback)
     resetComments();
-
-    // Minimize dialog and focus chat input (focus happens in insertText callback)
-    hideDialog();
-  }, [comments, insertText, nonEmptyCommentCount, resetComments, hideDialog]);
+  }, [comments, insertText, nonEmptyCommentCount, resetComments]);
 
   // Handle file selection
   const handleFileSelect = useCallback((filePath: string) => {
@@ -156,97 +106,33 @@ export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
     }
   }, []);
 
-  // Handle Escape key to hide
-  useEffect(() => {
-    if (!isVisible) return;
+  return (
+    <>
+      <PersistentDialogShell.Header>
+        <FolderOpen className="w-5 h-5" />
+        <span className="font-semibold">
+          <Trans id="file_explorer.title" /> — {projectName}
+        </span>
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        handleHide();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown, true);
-    return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [isVisible, handleHide]);
-
-  // Handle click outside to hide
-  const handleOverlayClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleHide();
-    }
-  };
-
-  // Render as portal with custom overlay (stays mounted, visibility controlled by CSS)
-  return createPortal(
-    <div
-      className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center",
-        isVisible ? "visible" : "invisible pointer-events-none",
-      )}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="file-explorer-dialog-title"
-    >
-      {/* Overlay/backdrop */}
-      <div
-        className={cn(
-          "absolute inset-0 bg-black/50 transition-opacity duration-200",
-          isVisible ? "opacity-100" : "opacity-0",
-        )}
-        onClick={handleOverlayClick}
-        onKeyDown={(e) => e.key === "Escape" && handleHide()}
-      />
-
-      {/* Dialog content */}
-      <div
-        ref={contentRef}
-        className={cn(
-          "relative z-10 bg-background rounded-lg shadow-lg border",
-          "max-w-7xl w-[95vw] h-[90vh] overflow-hidden flex flex-col",
-          "transition-all duration-200",
-          isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
-        )}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
-          <h2
-            id="file-explorer-dialog-title"
-            className="text-lg font-semibold flex items-center gap-2"
-          >
-            <FolderOpen className="w-5 h-5" />
-            <Trans id="file_explorer.title" /> — {projectName}
-          </h2>
-
-          <div className="flex items-center gap-2">
-            {/* View options */}
-            <OptionToggle
-              label={<Trans id="diff.options.wrap" />}
-              checked={viewOptions.wrap}
-              onChange={(wrap) => setViewOptions((prev) => ({ ...prev, wrap }))}
-            />
-            <OptionToggle
-              label={<Trans id="diff.options.highlight" />}
-              checked={viewOptions.highlight}
-              onChange={(highlight) =>
-                setViewOptions((prev) => ({ ...prev, highlight }))
-              }
-            />
-
-            {/* Close button */}
-            <button
-              type="button"
-              onClick={handleHide}
-              className="ml-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              aria-label={i18n._("Close")}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
+        <div className="flex items-center gap-2 ml-auto">
+          {/* View options */}
+          <OptionToggle
+            label={<Trans id="diff.options.wrap" />}
+            checked={viewOptions.wrap}
+            onChange={(wrap) => setViewOptions((prev) => ({ ...prev, wrap }))}
+          />
+          <OptionToggle
+            label={<Trans id="diff.options.highlight" />}
+            checked={viewOptions.highlight}
+            onChange={(highlight) =>
+              setViewOptions((prev) => ({ ...prev, highlight }))
+            }
+          />
+          {/* Close button is automatically added by PersistentDialogShell.Header */}
         </div>
+      </PersistentDialogShell.Header>
 
+      <PersistentDialogShell.Content>
         {/* Main content - two panel layout */}
         <div className="flex-1 flex overflow-hidden min-h-0">
           {/* Left panel - File tree */}
@@ -294,36 +180,65 @@ export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
             )}
           </div>
         </div>
-      </div>
+      </PersistentDialogShell.Content>
+    </>
+  );
+};
 
-      {/* Confirmation dialog for closing with unsent comments */}
-      <Dialog open={showCloseConfirm} onOpenChange={setShowCloseConfirm}>
-        <DialogContent className="max-w-md" showCloseButton={false}>
-          <DialogHeader>
-            <DialogTitle>
-              <Trans id="diff.close_confirm.title" />
-            </DialogTitle>
-            <DialogDescription>
-              <Trans
-                id="diff.close_confirm.description"
-                values={{ count: nonEmptyCommentCount }}
-              />
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowCloseConfirm(false)}
-            >
-              <Trans id="diff.close_confirm.cancel" />
-            </Button>
-            <Button variant="destructive" onClick={handleForceHide}>
-              <Trans id="diff.close_confirm.confirm" />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>,
-    document.body,
+// ============================================================================
+// FileExplorerDialog - wrapper component that uses PersistentDialogShell
+// ============================================================================
+
+/**
+ * FileExplorerDialog - Main dialog for browsing project files.
+ *
+ * Features:
+ * - Minimizable dialog (persisted via PersistentDialogsContext)
+ * - Two-panel layout: FileTree on left, FileViewer on right
+ * - View options toggles (Wrap, Syntax)
+ * - Line comments that can be sent to chat
+ * - Close confirmation if unsent comments exist
+ */
+export const FileExplorerDialog: FC<FileExplorerDialogProps> = ({
+  projectId,
+  projectPath,
+  projectName,
+  branchName,
+}) => {
+  // Get nonEmptyCommentCount from context for badge and close confirmation
+  const { nonEmptyCommentCount } = useFileExplorerComment();
+
+  // Build resetKey: reset when projectId or branchName changes
+  const resetKey = branchName ? `${projectId}-${branchName}` : projectId;
+
+  return (
+    <PersistentDialogShell
+      dialogId="file-explorer"
+      config={{
+        icon: FolderOpen,
+        label: <Trans id="control.files" />,
+        description: projectName,
+        badgeCount: nonEmptyCommentCount,
+      }}
+      resetKey={resetKey}
+      closeConfirmation={{
+        shouldConfirm: () => nonEmptyCommentCount > 0,
+        title: <Trans id="diff.close_confirm.title" />,
+        description: (
+          <Trans
+            id="diff.close_confirm.description"
+            values={{ count: nonEmptyCommentCount }}
+          />
+        ),
+        cancelLabel: <Trans id="diff.close_confirm.cancel" />,
+        confirmLabel: <Trans id="diff.close_confirm.confirm" />,
+      }}
+    >
+      <FileExplorerDialogContent
+        projectId={projectId}
+        projectPath={projectPath}
+        projectName={projectName}
+      />
+    </PersistentDialogShell>
   );
 };
