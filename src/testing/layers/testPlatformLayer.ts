@@ -69,6 +69,9 @@ export const testPlatformLayer = (overrides?: {
         locale: overrides?.userConfig?.locale ?? DEFAULT_LOCALE,
         theme: overrides?.userConfig?.theme ?? "system",
         searchHotkey: overrides?.userConfig?.searchHotkey ?? "command-k",
+        simplifiedView: overrides?.userConfig?.simplifiedView ?? false,
+        autoAbortAfterMinutes:
+          overrides?.userConfig?.autoAbortAfterMinutes ?? "120",
       }),
   });
 

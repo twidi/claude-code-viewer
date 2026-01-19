@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
+  EnrichedSchedulerJob,
   NewSchedulerJob,
   SchedulerJob,
   UpdateSchedulerJob,
@@ -16,17 +17,17 @@ const schedulerKeys = {
 };
 
 /**
- * Hook to fetch all scheduler jobs
+ * Hook to fetch all scheduler jobs (enriched with project info)
  *
  * @example
  * const { data: jobs, isLoading, error } = useSchedulerJobs();
  *
- * @returns Query result containing array of SchedulerJob
+ * @returns Query result containing array of EnrichedSchedulerJob
  */
 export const useSchedulerJobs = () => {
   return useQuery({
     queryKey: schedulerKeys.jobs(),
-    queryFn: async (): Promise<SchedulerJob[]> => {
+    queryFn: async (): Promise<EnrichedSchedulerJob[]> => {
       const response = await honoClient.api.scheduler.jobs.$get();
       if (!response.ok) {
         throw new Error("Failed to fetch scheduler jobs");
@@ -172,4 +173,9 @@ export const useDeleteSchedulerJob = () => {
 };
 
 // Export types for external use
-export type { SchedulerJob, NewSchedulerJob, UpdateSchedulerJob };
+export type {
+  EnrichedSchedulerJob,
+  NewSchedulerJob,
+  SchedulerJob,
+  UpdateSchedulerJob,
+};

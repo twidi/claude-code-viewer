@@ -1,11 +1,14 @@
 import { Context, Effect, Layer } from "effect";
 import type { PublicSessionProcess } from "../../../../types/session-process";
+import type { UserConfig } from "../../../lib/config/config";
 import type { ControllerResponse } from "../../../lib/effect/toEffectResponse";
 import type { InferEffect } from "../../../lib/effect/types";
 import { UserConfigService } from "../../platform/services/UserConfigService";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
 import type { UserMessageInput } from "../functions/createMessageGenerator";
+import * as CCSessionProcess from "../models/CCSessionProcess";
 import { ClaudeCodeLifeCycleService } from "../services/ClaudeCodeLifeCycleService";
+import { SessionProcessNotFoundError } from "../services/ClaudeCodeSessionProcessService";
 
 const LayerImpl = Effect.gen(function* () {
   const projectRepository = yield* ProjectRepository;
@@ -17,17 +20,24 @@ const LayerImpl = Effect.gen(function* () {
       const publicSessionProcesses =
         yield* claudeCodeLifeCycleService.getPublicSessionProcesses();
 
+      // Filter out processes without a sessionId (new conversations that haven't received init yet)
+      // and map to public representation
+      const processes: PublicSessionProcess[] = [];
+      for (const p of publicSessionProcesses) {
+        const sessionId = CCSessionProcess.getSessionId(p);
+        if (sessionId !== undefined) {
+          processes.push({
+            id: p.def.sessionProcessId,
+            projectId: p.def.projectId,
+            sessionId,
+            status: CCSessionProcess.getPublicStatus(p),
+            permissionMode: p.def.permissionMode,
+          });
+        }
+      }
+
       return {
-        response: {
-          processes: publicSessionProcesses.map(
-            (p): PublicSessionProcess => ({
-              id: p.def.sessionProcessId,
-              projectId: p.def.projectId,
-              sessionId: p.sessionId,
-              status: p.type === "paused" ? "paused" : "running",
-            }),
-          ),
-        },
+        response: { processes },
         status: 200,
       } as const satisfies ControllerResponse;
     });
@@ -36,9 +46,11 @@ const LayerImpl = Effect.gen(function* () {
     projectId: string;
     input: UserMessageInput;
     baseSessionId?: string | undefined;
+    permissionModeOverride?: NonNullable<UserConfig["permissionMode"]>;
   }) =>
     Effect.gen(function* () {
-      const { projectId, input, baseSessionId } = options;
+      const { projectId, input, baseSessionId, permissionModeOverride } =
+        options;
 
       const { project } = yield* projectRepository.getProject(projectId);
       const userConfig = yield* userConfigService.getUserConfig();
@@ -50,13 +62,18 @@ const LayerImpl = Effect.gen(function* () {
         } as const satisfies ControllerResponse;
       }
 
+      // Use override if provided, otherwise use userConfig
+      const effectiveUserConfig = permissionModeOverride
+        ? { ...userConfig, permissionMode: permissionModeOverride }
+        : userConfig;
+
       const result = yield* claudeCodeLifeCycleService.startTask({
         baseSession: {
           cwd: project.meta.projectPath,
           projectId,
           sessionId: baseSessionId,
         },
-        userConfig,
+        userConfig: effectiveUserConfig,
         input,
       });
 
@@ -92,11 +109,53 @@ const LayerImpl = Effect.gen(function* () {
         } as const satisfies ControllerResponse;
       }
 
-      const result = yield* claudeCodeLifeCycleService.continueTask({
-        sessionProcessId,
-        input,
-        baseSessionId,
-      });
+      const continueResult = yield* claudeCodeLifeCycleService
+        .continueTask({
+          sessionProcessId,
+          input,
+          baseSessionId,
+        })
+        .pipe(Effect.either);
+
+      // If session process not found (e.g., server restarted), fallback to starting a new process
+      if (
+        continueResult._tag === "Left" &&
+        continueResult.left instanceof SessionProcessNotFoundError
+      ) {
+        console.log(
+          `Session process ${sessionProcessId} not found, falling back to startTask`,
+        );
+        const userConfig = yield* userConfigService.getUserConfig();
+        const startResult = yield* claudeCodeLifeCycleService.startTask({
+          baseSession: {
+            cwd: project.meta.projectPath,
+            projectId,
+            sessionId: baseSessionId,
+          },
+          userConfig,
+          input,
+        });
+
+        const { sessionId } = yield* startResult.yieldSessionInitialized();
+
+        return {
+          response: {
+            sessionProcess: {
+              id: startResult.sessionProcess.def.sessionProcessId,
+              projectId,
+              sessionId,
+            },
+          },
+          status: 201,
+        } as const satisfies ControllerResponse;
+      }
+
+      // Re-throw other errors
+      if (continueResult._tag === "Left") {
+        return yield* Effect.fail(continueResult.left);
+      }
+
+      const result = continueResult.right;
 
       return {
         response: {

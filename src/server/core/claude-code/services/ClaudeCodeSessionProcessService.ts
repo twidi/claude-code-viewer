@@ -6,7 +6,7 @@ import * as CCSessionProcess from "../models/CCSessionProcess";
 import type * as CCTask from "../models/ClaudeCodeTask";
 import type { InitMessageContext } from "../types";
 
-class SessionProcessNotFoundError extends Data.TaggedError(
+export class SessionProcessNotFoundError extends Data.TaggedError(
   "SessionProcessNotFoundError",
 )<{
   sessionProcessId: string;
@@ -198,15 +198,25 @@ const LayerImpl = Effect.gen(function* () {
       yield* Ref.set(processesRef, updatedProcesses);
 
       if (currentStatus !== nextState.type) {
+        // Filter to public processes that have a sessionId
+        const publicProcesses = updatedProcesses
+          .filter(CCSessionProcess.isPublic)
+          .flatMap((process) => {
+            const sessionId = CCSessionProcess.getSessionId(process);
+            if (sessionId === undefined) return [];
+            return [
+              {
+                id: process.def.sessionProcessId,
+                projectId: process.def.projectId,
+                sessionId,
+                status: CCSessionProcess.getPublicStatus(process),
+                permissionMode: process.def.permissionMode,
+              },
+            ];
+          });
+
         yield* eventBus.emit("sessionProcessChanged", {
-          processes: updatedProcesses
-            .filter(CCSessionProcess.isPublic)
-            .map((process) => ({
-              id: process.def.sessionProcessId,
-              projectId: process.def.projectId,
-              sessionId: process.sessionId,
-              status: process.type === "paused" ? "paused" : "running",
-            })),
+          processes: publicProcesses,
           changed: nextState,
         });
       }
@@ -374,7 +384,13 @@ const LayerImpl = Effect.gen(function* () {
 
     return Effect.gen(function* () {
       const currentProcess = yield* getSessionProcess(sessionProcessId);
-      if (currentProcess.type !== "file_created") {
+      // Allow transition from both file_created and initialized states
+      // The initialized case happens for local commands like /compact
+      // that don't produce assistant messages
+      if (
+        currentProcess.type !== "file_created" &&
+        currentProcess.type !== "initialized"
+      ) {
         return yield* Effect.fail(
           new IllegalStateChangeError({
             from: currentProcess.type,

@@ -73,8 +73,16 @@ export const CommandCompletion = forwardRef<
   // 状態が変更された時のリセット処理
   if (isOpen !== shouldBeOpen) {
     setIsOpen(shouldBeOpen);
-    setSelectedIndex(-1);
+    // Always select first item when opening
+    setSelectedIndex(shouldBeOpen && filteredCommands.length > 0 ? 0 : -1);
   }
+
+  // Always keep first item selected when list changes and dropdown is open
+  useEffect(() => {
+    if (isOpen && filteredCommands.length > 0) {
+      setSelectedIndex(0);
+    }
+  }, [isOpen, filteredCommands]);
 
   // メモ化されたコマンド選択処理
   const handleCommandSelect = useCallback(
@@ -124,6 +132,18 @@ export const CommandCompletion = forwardRef<
             requestAnimationFrame(() => scrollToSelected(newIndex));
             return newIndex;
           });
+          return true;
+        case "Home":
+          e.preventDefault();
+          setSelectedIndex(0);
+          requestAnimationFrame(() => scrollToSelected(0));
+          return true;
+        case "End":
+          e.preventDefault();
+          setSelectedIndex(filteredCommands.length - 1);
+          requestAnimationFrame(() =>
+            scrollToSelected(filteredCommands.length - 1),
+          );
           return true;
         case "Enter":
         case "Tab":

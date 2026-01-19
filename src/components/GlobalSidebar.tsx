@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react";
 import { useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { InfoIcon, LogOut, SearchIcon, SettingsIcon } from "lucide-react";
-import { type FC, type ReactNode, Suspense, useState } from "react";
+import { type FC, type ReactNode, Suspense, useEffect, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "./AuthProvider";
 import { Loading } from "./Loading";
 import { NotificationSettings } from "./NotificationSettings";
+import { PersistentDialogIndicators } from "./PersistentDialogIndicators";
 import { useSearch } from "./SearchProvider";
 import { SettingsControls } from "./SettingsControls";
 import { SystemInfoCard } from "./SystemInfoCard";
@@ -30,6 +31,7 @@ interface GlobalSidebarProps {
   additionalTabs?: SidebarTab[];
   defaultActiveTab?: string;
   headerButton?: ReactNode;
+  onTabChange?: (tabId: string) => void;
 }
 
 export const GlobalSidebar: FC<GlobalSidebarProps> = ({
@@ -38,6 +40,7 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
   additionalTabs = [],
   defaultActiveTab,
   headerButton,
+  onTabChange,
 }) => {
   const { openSearch } = useSearch();
   const { authEnabled, logout } = useAuth();
@@ -109,12 +112,21 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
   );
   const [isExpanded, setIsExpanded] = useState(!!defaultActiveTab);
 
+  // Sync activeTab with defaultActiveTab when it changes (e.g., from URL navigation)
+  useEffect(() => {
+    if (defaultActiveTab && defaultActiveTab !== activeTab) {
+      setActiveTab(defaultActiveTab);
+      setIsExpanded(true);
+    }
+  }, [defaultActiveTab, activeTab]);
+
   const handleTabClick = (tabId: string) => {
     if (activeTab === tabId && isExpanded) {
       setIsExpanded(false);
     } else {
       setActiveTab(tabId);
       setIsExpanded(true);
+      onTabChange?.(tabId);
     }
   };
 
@@ -157,7 +169,8 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
               </TooltipContent>
             </Tooltip>
           </div>
-          <div className="flex-1 flex flex-col p-2 space-y-1">
+          {/* Tabs - aligned to top */}
+          <div className="flex flex-col p-2 space-y-1 border-b border-sidebar-border">
             {allTabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -185,6 +198,11 @@ export const GlobalSidebar: FC<GlobalSidebarProps> = ({
               );
             })}
           </div>
+          {/* Persistent dialog indicators - centered in remaining space */}
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <PersistentDialogIndicators />
+          </div>
+
           {/* Logout button at bottom - only show when auth is enabled */}
           {authEnabled && (
             <div className="p-2 border-t border-sidebar-border">

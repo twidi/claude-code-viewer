@@ -9,6 +9,7 @@ export function createMockSessionMeta(
   return {
     messageCount: 0,
     firstUserMessage: null,
+    modelName: null,
     cost: {
       totalUsd: 0,
       breakdown: {
@@ -24,6 +25,7 @@ export function createMockSessionMeta(
         cacheReadTokens: 0,
       },
     },
+    currentContextUsage: null,
     ...overrides,
   };
 }

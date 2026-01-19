@@ -1,5 +1,3 @@
-import { useLingui } from "@lingui/react";
-import { CheckIcon, FileIcon, FolderIcon } from "lucide-react";
 import type React from "react";
 import {
   forwardRef,
@@ -10,21 +8,22 @@ import {
   useRef,
   useState,
 } from "react";
-import { Button } from "../../../../../components/ui/button";
+import {
+  type FileSearchEntry,
+  FileSearchResults,
+  type FileSearchResultsRef,
+} from "../../../../../components/FileSearchResults";
 import {
   Collapsible,
   CollapsibleContent,
 } from "../../../../../components/ui/collapsible";
-import {
-  type FileCompletionEntry,
-  useFileCompletion,
-} from "../../../../../hooks/useFileCompletion";
 import { cn } from "../../../../../lib/utils";
 
 type FileCompletionProps = {
   projectId: string;
   inputValue: string;
-  onFileSelect: (filePath: string) => void;
+  cursorIndex: number;
+  onFileSelect: (newMessage: string, newCursorPosition: number) => void;
   className?: string;
 };
 
@@ -32,199 +31,131 @@ export type FileCompletionRef = {
   handleKeyDown: (e: React.KeyboardEvent) => boolean;
 };
 
-// Parse the @ completion from input value
-const parseFileCompletionFromInput = (input: string) => {
-  // Find the last @ symbol
-  const lastAtIndex = input.lastIndexOf("@");
+// Parse the @ completion from input value, considering cursor position
+const parseFileCompletionFromInput = (input: string, cursorIndex: number) => {
+  // Find the last @ symbol BEFORE the cursor
+  const textBeforeCursor = input.slice(0, cursorIndex);
+  const lastAtIndex = textBeforeCursor.lastIndexOf("@");
+
   if (lastAtIndex === -1) {
-    return { shouldShow: false, searchPath: "", beforeAt: "", afterAt: "" };
+    return {
+      shouldShow: false,
+      searchPath: "",
+      beforeAt: "",
+      textAfterCursor: "",
+    };
   }
 
-  // Get the text before and after @
+  // Get the text before @
   const beforeAt = input.slice(0, lastAtIndex);
-  const afterAt = input.slice(lastAtIndex + 1);
 
-  // Check if we're in the middle of a word after @ (no space after the path)
-  const parts = afterAt.split(/\s/);
-  const searchPath = parts[0] || "";
+  // The search path is the text between @ and cursor
+  const searchPath = input.slice(lastAtIndex + 1, cursorIndex);
 
-  // Don't show completion if there's a space after the path (user has finished typing the path)
-  // This includes cases like "@hoge " where parts = ["hoge", ""]
-  const hasSpaceAfterPath = parts.length > 1;
+  // Text after the cursor (to preserve when selecting)
+  const textAfterCursor = input.slice(cursorIndex);
+
+  // Don't show completion if there's whitespace in the search path
+  // (means user moved cursor past a completed path)
+  const hasSpaceInSearchPath = /\s/.test(searchPath);
 
   return {
-    shouldShow: !hasSpaceAfterPath,
+    shouldShow: !hasSpaceInSearchPath,
     searchPath,
     beforeAt,
-    afterAt,
+    textAfterCursor,
   };
 };
 
 export const FileCompletion = forwardRef<
   FileCompletionRef,
   FileCompletionProps
->(({ projectId, inputValue, onFileSelect, className }, ref) => {
-  const { i18n } = useLingui();
+>(({ projectId, inputValue, cursorIndex, onFileSelect, className }, ref) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
+  // Track the searchPath when user dismissed with Escape to prevent auto-reopen
+  const [dismissedSearchPath, setDismissedSearchPath] = useState<string | null>(
+    null,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const searchResultsRef = useRef<FileSearchResultsRef>(null);
 
   // Parse the input to extract the path being completed
-  const { shouldShow, searchPath, beforeAt, afterAt } = useMemo(
-    () => parseFileCompletionFromInput(inputValue),
-    [inputValue],
+  const { shouldShow, searchPath, beforeAt, textAfterCursor } = useMemo(
+    () => parseFileCompletionFromInput(inputValue, cursorIndex),
+    [inputValue, cursorIndex],
   );
 
-  // Determine the base path and filter term
-  const { basePath, filterTerm } = useMemo(() => {
-    if (!searchPath) {
-      return { basePath: "/", filterTerm: "" };
+  // Track previous shouldShow to detect when completion is newly triggered
+  const prevShouldShowRef = useRef(shouldShow);
+
+  // Reset dismissed state when:
+  // 1. searchPath changes (user typed something new after @)
+  // 2. shouldShow transitions from false to true (user typed a new @)
+  useEffect(() => {
+    const prevShouldShow = prevShouldShowRef.current;
+    prevShouldShowRef.current = shouldShow;
+
+    if (dismissedSearchPath !== null) {
+      if (
+        searchPath !== dismissedSearchPath ||
+        (!prevShouldShow && shouldShow)
+      ) {
+        setDismissedSearchPath(null);
+      }
     }
-
-    const lastSlashIndex = searchPath.lastIndexOf("/");
-    if (lastSlashIndex === -1) {
-      return { basePath: "/", filterTerm: searchPath };
-    }
-
-    const path = searchPath.slice(0, lastSlashIndex + 1);
-    const term = searchPath.slice(lastSlashIndex + 1);
-    return {
-      basePath: path === "/" ? "/" : path,
-      filterTerm: term,
-    };
-  }, [searchPath]);
-
-  // Fetch file completion data
-  const { data: completionData, isLoading } = useFileCompletion(
-    projectId,
-    basePath,
-    shouldShow,
-  );
-
-  // Filter entries based on the current filter term
-  const filteredEntries = useMemo(() => {
-    if (!completionData?.entries) return [];
-
-    if (!filterTerm) {
-      return completionData.entries;
-    }
-
-    return completionData.entries.filter((entry) =>
-      entry.name.toLowerCase().includes(filterTerm.toLowerCase()),
-    );
-  }, [completionData?.entries, filterTerm]);
+  }, [searchPath, dismissedSearchPath, shouldShow]);
 
   // Determine if completion should be shown
-  const shouldBeOpen = shouldShow && !isLoading && filteredEntries.length > 0;
+  const isDismissed = dismissedSearchPath === searchPath;
+  const shouldBeOpen = shouldShow && !isDismissed;
 
-  // Update open state when it should change
-  if (isOpen !== shouldBeOpen) {
+  // Update open state
+  useEffect(() => {
     setIsOpen(shouldBeOpen);
-    setSelectedIndex(-1);
-  }
+  }, [shouldBeOpen]);
 
-  // Handle file/directory selection with different behaviors for different triggers
+  // Handle file/directory selection
   const handleEntrySelect = useCallback(
-    (entry: FileCompletionEntry, forceClose = false) => {
+    (entry: FileSearchEntry) => {
       const fullPath = entry.path;
 
-      // For directories, add a trailing slash to continue completion (unless forced to close)
-      // For files or when forced to close, add a space to end completion
+      // For directories: add "/" to continue completion
+      // For files or select-folder: add " " to end completion
+      const isDirectory = entry.type === "directory";
 
-      // Reconstruct the message with the selected path
-      const remainingText = afterAt.split(/\s/).slice(1).join(" ");
-      const newMessage =
-        `${beforeAt}@${fullPath}${remainingText}`.trim() +
-        (entry.type === "directory" && !forceClose ? "/" : " ");
+      let newMessage: string;
+      let newCursorPosition: number;
 
-      onFileSelect(newMessage);
+      if (isDirectory) {
+        // Directory: add "/" and preserve text after cursor
+        newMessage = `${beforeAt}@${fullPath}/${textAfterCursor}`;
+        newCursorPosition = beforeAt.length + 1 + fullPath.length + 1;
+      } else {
+        // File or select-folder: add space (if needed) and preserve text after cursor
+        const needsSpace =
+          textAfterCursor.length === 0 || !/^\s/.test(textAfterCursor);
+        const spacer = needsSpace ? " " : "";
+        newMessage = `${beforeAt}@${fullPath}${spacer}${textAfterCursor}`;
+        newCursorPosition =
+          beforeAt.length + 1 + fullPath.length + spacer.length;
+      }
 
-      // Close completion if it's a file, or if forced to close
-      if (entry.type === "file" || forceClose) {
+      onFileSelect(newMessage, newCursorPosition);
+
+      // Close completion if it's a file or select-folder
+      if (entry.type === "file" || entry.type === "select-folder") {
         setIsOpen(false);
-        setSelectedIndex(-1);
+        setDismissedSearchPath(fullPath);
       }
     },
-    [beforeAt, afterAt, onFileSelect],
+    [beforeAt, textAfterCursor, onFileSelect],
   );
 
-  // Scroll to selected entry
-  const scrollToSelected = useCallback((index: number) => {
-    if (index >= 0 && listRef.current) {
-      // ボタン要素を直接検索
-      const buttons = listRef.current.querySelectorAll('button[role="option"]');
-      const selectedButton = buttons[index] as HTMLElement;
-      if (selectedButton) {
-        selectedButton.scrollIntoView({
-          block: "nearest",
-          behavior: "smooth",
-        });
-      }
-    }
-  }, []);
-
-  // Keyboard navigation
-  const handleKeyboardNavigation = useCallback(
-    (e: React.KeyboardEvent): boolean => {
-      if (!isOpen || filteredEntries.length === 0) return false;
-
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setSelectedIndex((prev) => {
-            const newIndex = prev < filteredEntries.length - 1 ? prev + 1 : 0;
-            requestAnimationFrame(() => scrollToSelected(newIndex));
-            return newIndex;
-          });
-          return true;
-        case "ArrowUp":
-          e.preventDefault();
-          setSelectedIndex((prev) => {
-            const newIndex = prev > 0 ? prev - 1 : filteredEntries.length - 1;
-            requestAnimationFrame(() => scrollToSelected(newIndex));
-            return newIndex;
-          });
-          return true;
-        case "Enter":
-          if (selectedIndex >= 0 && selectedIndex < filteredEntries.length) {
-            e.preventDefault();
-            const selectedEntry = filteredEntries[selectedIndex];
-            if (selectedEntry) {
-              // Enter always closes completion (even for directories)
-              handleEntrySelect(selectedEntry, true);
-            }
-            return true;
-          }
-          break;
-        case "Tab":
-          if (selectedIndex >= 0 && selectedIndex < filteredEntries.length) {
-            e.preventDefault();
-            const selectedEntry = filteredEntries[selectedIndex];
-            if (selectedEntry) {
-              // Tab: continue completion for directories, close for files
-              handleEntrySelect(selectedEntry, selectedEntry.type === "file");
-            }
-            return true;
-          }
-          break;
-        case "Escape":
-          e.preventDefault();
-          setIsOpen(false);
-          setSelectedIndex(-1);
-          return true;
-      }
-      return false;
-    },
-    [
-      isOpen,
-      filteredEntries.length,
-      selectedIndex,
-      handleEntrySelect,
-      scrollToSelected,
-      filteredEntries,
-    ],
-  );
+  // Handle dismiss (Escape)
+  const handleDismiss = useCallback(() => {
+    setIsOpen(false);
+    setDismissedSearchPath(searchPath);
+  }, [searchPath]);
 
   // Handle clicks outside the component
   useEffect(() => {
@@ -234,7 +165,6 @@ export const FileCompletion = forwardRef<
         !containerRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
-        setSelectedIndex(-1);
       }
     };
 
@@ -246,12 +176,14 @@ export const FileCompletion = forwardRef<
   useImperativeHandle(
     ref,
     () => ({
-      handleKeyDown: handleKeyboardNavigation,
+      handleKeyDown: (e: React.KeyboardEvent) => {
+        return searchResultsRef.current?.handleKeyDown(e) ?? false;
+      },
     }),
-    [handleKeyboardNavigation],
+    [],
   );
 
-  if (!shouldShow || isLoading || filteredEntries.length === 0) {
+  if (!shouldShow) {
     return null;
   }
 
@@ -259,69 +191,16 @@ export const FileCompletion = forwardRef<
     <div ref={containerRef} className={cn("relative", className)}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleContent>
-          <div
-            ref={listRef}
-            className="absolute z-50 w-full bg-popover border border-border rounded-lg shadow-xl overflow-hidden"
-            style={{ height: "15rem" }}
-            role="listbox"
-            aria-label={i18n._("Available files and directories")}
-          >
-            <div className="h-full overflow-y-auto">
-              {filteredEntries.length > 0 && (
-                <div className="p-1.5">
-                  <div
-                    className="px-3 py-2 text-xs font-semibold text-muted-foreground/80 border-b border-border/50 mb-1 flex items-center gap-2"
-                    role="presentation"
-                  >
-                    <FileIcon className="w-3.5 h-3.5" />
-                    Files & Directories ({filteredEntries.length})
-                    {basePath !== "/" && (
-                      <span className="text-xs font-mono text-muted-foreground/70">
-                        in {basePath}
-                      </span>
-                    )}
-                  </div>
-                  {filteredEntries.map((entry, index) => (
-                    <Button
-                      key={entry.path}
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        "w-full justify-start text-left font-mono text-sm h-9 px-3 min-w-0 transition-colors duration-150",
-                        index === selectedIndex
-                          ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-foreground border border-blue-500/20"
-                          : "hover:bg-accent/50",
-                      )}
-                      onClick={() =>
-                        handleEntrySelect(entry, entry.type === "file")
-                      }
-                      onMouseEnter={() => setSelectedIndex(index)}
-                      role="option"
-                      aria-selected={index === selectedIndex}
-                      aria-label={`${entry.type}: ${entry.name}`}
-                      title={entry.path}
-                    >
-                      {entry.type === "directory" ? (
-                        <FolderIcon className="w-3.5 h-3.5 mr-2 text-blue-500 dark:text-blue-400 flex-shrink-0" />
-                      ) : (
-                        <FileIcon className="w-3.5 h-3.5 mr-2 text-gray-500 dark:text-gray-400 flex-shrink-0" />
-                      )}
-                      <span className="font-medium truncate min-w-0">
-                        {entry.name}
-                      </span>
-                      {entry.type === "directory" && (
-                        <span className="text-muted-foreground ml-1 flex-shrink-0">
-                          /
-                        </span>
-                      )}
-                      {index === selectedIndex && (
-                        <CheckIcon className="w-3.5 h-3.5 ml-auto text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
+          <div className="absolute z-50 w-full">
+            <FileSearchResults
+              ref={searchResultsRef}
+              projectId={projectId}
+              searchQuery={searchPath}
+              onSelect={handleEntrySelect}
+              onDismiss={handleDismiss}
+              isOpen={isOpen}
+              fixedHeight="20rem"
+            />
           </div>
         </CollapsibleContent>
       </Collapsible>

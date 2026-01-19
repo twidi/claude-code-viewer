@@ -29,20 +29,28 @@ export const AssistantConversationContent: FC<{
   content: AssistantMessageContent;
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   getAgentIdForToolUse: (toolUseId: string) => string | undefined;
+  getKnownAgentIds: () => string[];
   getSidechainConversationByPrompt: (
     prompt: string,
   ) => SidechainConversation | undefined;
   getSidechainConversations: (rootUuid: string) => SidechainConversation[];
   projectId: string;
   sessionId: string;
+  /**
+   * Timestamp of the conversation message containing this tool_use.
+   * Used for finding pending agent sessions.
+   */
+  conversationTimestamp: string;
 }> = ({
   content,
   getToolResult,
   getAgentIdForToolUse,
+  getKnownAgentIds,
   getSidechainConversationByPrompt,
   getSidechainConversations,
   projectId,
   sessionId,
+  conversationTimestamp,
 }) => {
   const { resolvedTheme } = useTheme();
   const syntaxTheme = resolvedTheme === "dark" ? oneDark : oneLight;
@@ -103,6 +111,8 @@ export const AssistantConversationContent: FC<{
           projectId={projectId}
           sessionId={sessionId}
           agentId={agentId}
+          toolUseTimestamp={conversationTimestamp}
+          knownAgentIds={getKnownAgentIds()}
           getSidechainConversationByPrompt={getSidechainConversationByPrompt}
           getSidechainConversations={getSidechainConversations}
           getToolResult={getToolResult}

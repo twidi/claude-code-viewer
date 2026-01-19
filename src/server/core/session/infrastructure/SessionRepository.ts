@@ -103,6 +103,7 @@ const LayerImpl = Effect.gen(function* () {
               meta: {
                 messageCount: 0,
                 firstUserMessage: null,
+                modelName: null,
                 cost: {
                   totalUsd: 0,
                   breakdown: {
@@ -118,6 +119,7 @@ const LayerImpl = Effect.gen(function* () {
                     cacheReadTokens: 0,
                   },
                 },
+                currentContextUsage: null,
               },
               conversations: virtualConversation.conversations,
               lastModifiedAt:
@@ -278,6 +280,7 @@ const LayerImpl = Effect.gen(function* () {
               firstUserMessage: firstUserText
                 ? parseUserMessage(firstUserText)
                 : null,
+              modelName: null,
               cost: {
                 totalUsd: 0,
                 breakdown: {
@@ -293,6 +296,7 @@ const LayerImpl = Effect.gen(function* () {
                   cacheReadTokens: 0,
                 },
               },
+              currentContextUsage: null,
             },
           };
         })

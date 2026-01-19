@@ -3,8 +3,10 @@ import { Context, Effect, Layer } from "effect";
 import type { ControllerResponse } from "../../../lib/effect/toEffectResponse";
 import type { InferEffect } from "../../../lib/effect/types";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
+import { fuzzySearchFiles } from "../functions/fuzzySearchFiles";
 import { getDirectoryListing } from "../functions/getDirectoryListing";
 import { getFileCompletion } from "../functions/getFileCompletion";
+import { getFileContent } from "../functions/getFileContent";
 
 const LayerImpl = Effect.gen(function* () {
   const projectRepository = yield* ProjectRepository;
@@ -79,9 +81,100 @@ const LayerImpl = Effect.gen(function* () {
       }
     });
 
+  const fuzzySearchFilesRoute = (options: {
+    projectId: string;
+    basePath: string;
+    query: string;
+    limit?: number;
+  }) =>
+    Effect.gen(function* () {
+      const { projectId, basePath, query, limit } = options;
+
+      const { project } = yield* projectRepository.getProject(projectId);
+
+      if (project.meta.projectPath === null) {
+        return {
+          response: { error: "Project path not found" },
+          status: 400,
+        } as const satisfies ControllerResponse;
+      }
+
+      const projectPath = project.meta.projectPath;
+
+      try {
+        const result = yield* Effect.promise(() =>
+          fuzzySearchFiles(projectPath, basePath, query, limit),
+        );
+        return {
+          response: result,
+          status: 200,
+        } as const satisfies ControllerResponse;
+      } catch (error) {
+        console.error("Fuzzy search error:", error);
+        return {
+          response: { error: "Failed to search files" },
+          status: 500,
+        } as const satisfies ControllerResponse;
+      }
+    });
+
+  const getFileContentRoute = (options: {
+    projectId: string;
+    filePath: string;
+  }) =>
+    Effect.gen(function* () {
+      const { projectId, filePath } = options;
+
+      const { project } = yield* projectRepository.getProject(projectId);
+
+      if (project.meta.projectPath === null) {
+        return {
+          response: { error: "Project path not found" },
+          status: 400,
+        } as const satisfies ControllerResponse;
+      }
+
+      const projectPath = project.meta.projectPath;
+
+      const result = yield* getFileContent(projectPath, filePath);
+
+      if (result.type === "error") {
+        // Map error types to HTTP status codes
+        switch (result.error) {
+          case "path_traversal":
+            return {
+              response: { error: result.message },
+              status: 400,
+            } as const satisfies ControllerResponse;
+          case "not_found":
+            return {
+              response: { error: result.message },
+              status: 404,
+            } as const satisfies ControllerResponse;
+          case "not_file":
+            return {
+              response: { error: result.message },
+              status: 400,
+            } as const satisfies ControllerResponse;
+          case "read_error":
+            return {
+              response: { error: result.message },
+              status: 500,
+            } as const satisfies ControllerResponse;
+        }
+      }
+
+      return {
+        response: result.data,
+        status: 200,
+      } as const satisfies ControllerResponse;
+    });
+
   return {
     getFileCompletionRoute,
     getDirectoryListingRoute,
+    fuzzySearchFilesRoute,
+    getFileContentRoute,
   };
 });
 

@@ -7,6 +7,7 @@ export interface UseMessageCompletionResult {
     relative: { top: number; left: number };
     absolute: { top: number; left: number };
   };
+  cursorIndex: number;
   containerRef: React.RefObject<HTMLDivElement | null>;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   commandCompletionRef: React.RefObject<CommandCompletionRef | null>;
@@ -18,14 +19,16 @@ export interface UseMessageCompletionResult {
       }
     | undefined;
   handleChange: (value: string, onChange: (value: string) => void) => void;
+  handleSelect: (e: React.SyntheticEvent<HTMLTextAreaElement>) => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => boolean;
   handleCommandSelect: (
     command: string,
     onSelect: (command: string) => void,
   ) => void;
   handleFileSelect: (
-    filePath: string,
-    onSelect: (filePath: string) => void,
+    newMessage: string,
+    newCursorPosition: number,
+    onSelect: (newMessage: string) => void,
   ) => void;
 }
 
@@ -37,6 +40,7 @@ export function useMessageCompletion(): UseMessageCompletionResult {
     relative: { top: number; left: number };
     absolute: { top: number; left: number };
   }>({ relative: { top: 0, left: 0 }, absolute: { top: 0, left: 0 } });
+  const [cursorIndex, setCursorIndex] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -104,15 +108,37 @@ export function useMessageCompletion(): UseMessageCompletionResult {
 
   const handleChange = useCallback(
     (value: string, onChange: (value: string) => void) => {
-      if (value.endsWith("@") || value.endsWith("/")) {
+      // Update cursor index from textarea
+      const textarea = textareaRef.current;
+      const newCursorIndex = textarea?.selectionStart ?? value.length;
+
+      // Update cursor position for widget positioning when:
+      // - @ is typed anywhere (file completion)
+      // - / is typed as the first character (command completion)
+      const charTyped = value.slice(newCursorIndex - 1, newCursorIndex);
+      const isAtTyped = charTyped === "@";
+      const isSlashAtStart = charTyped === "/" && newCursorIndex === 1;
+
+      if (isAtTyped || isSlashAtStart) {
         const position = getCursorPosition();
         if (position) {
           setCursorPosition(position);
         }
       }
+
+      if (textarea) {
+        setCursorIndex(newCursorIndex);
+      }
       onChange(value);
     },
     [getCursorPosition],
+  );
+
+  const handleSelect = useCallback(
+    (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+      setCursorIndex(e.currentTarget.selectionStart);
+    },
+    [],
   );
 
   const handleKeyDown = useCallback(
@@ -139,21 +165,36 @@ export function useMessageCompletion(): UseMessageCompletionResult {
   );
 
   const handleFileSelect = useCallback(
-    (filePath: string, onSelect: (filePath: string) => void) => {
-      onSelect(filePath);
-      textareaRef.current?.focus();
+    (
+      newMessage: string,
+      newCursorPosition: number,
+      onSelect: (newMessage: string) => void,
+    ) => {
+      onSelect(newMessage);
+      setCursorIndex(newCursorPosition);
+
+      // Reposition cursor after React updates the textarea
+      requestAnimationFrame(() => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+          textarea.focus();
+          textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+        }
+      });
     },
     [],
   );
 
   return {
     cursorPosition,
+    cursorIndex,
     containerRef,
     textareaRef,
     commandCompletionRef,
     fileCompletionRef,
     getCursorPosition,
     handleChange,
+    handleSelect,
     handleKeyDown,
     handleCommandSelect,
     handleFileSelect,

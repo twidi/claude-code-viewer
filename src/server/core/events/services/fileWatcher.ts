@@ -2,7 +2,7 @@ import { type FSWatcher, watch } from "node:fs";
 import { Path } from "@effect/platform";
 import { Context, Effect, Layer, Ref } from "effect";
 import { ApplicationContext } from "../../platform/services/ApplicationContext";
-import { encodeProjectIdFromSessionFilePath } from "../../project/functions/id";
+import { encodeProjectId } from "../../project/functions/id";
 import { parseSessionFilePath } from "../functions/parseSessionFilePath";
 import { EventBus } from "./EventBus";
 
@@ -56,13 +56,12 @@ export class FileWatcherService extends Context.Tag("FileWatcherService")<
                   const fileMatch = parseSessionFilePath(filename);
                   if (fileMatch === null) return;
 
-                  // Build full path to get encoded projectId
-                  const fullPath = path.join(
+                  // Build projectId from the parsed projectId path component
+                  const projectPath = path.join(
                     claudeCodePaths.claudeProjectsDirPath,
-                    filename,
+                    fileMatch.projectId,
                   );
-                  const encodedProjectId =
-                    encodeProjectIdFromSessionFilePath(fullPath);
+                  const encodedProjectId = encodeProjectId(projectPath);
 
                   // Determine debounce key based on file type
                   const debounceKey =

@@ -1,142 +1,9 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import parseGitDiff, {
-  type AnyChunk,
-  type AnyFileChange,
-} from "parse-git-diff";
 import {
   executeGitCommand,
   parseLines,
   stripAnsiColors,
 } from "../functions/utils";
-import type {
-  GitComparisonResult,
-  GitDiff,
-  GitDiffFile,
-  GitDiffHunk,
-  GitDiffLine,
-  GitResult,
-} from "../types";
-
-/**
- * Convert parse-git-diff file change to GitDiffFile
- */
-function convertToGitDiffFile(
-  fileChange: AnyFileChange,
-  fileStats: Map<string, { additions: number; deletions: number }>,
-): GitDiffFile {
-  let filePath: string;
-  let status: GitDiffFile["status"];
-  let oldPath: string | undefined;
-
-  switch (fileChange.type) {
-    case "AddedFile":
-      filePath = fileChange.path;
-      status = "added";
-      break;
-    case "DeletedFile":
-      filePath = fileChange.path;
-      status = "deleted";
-      break;
-    case "RenamedFile":
-      filePath = fileChange.pathAfter;
-      oldPath = fileChange.pathBefore;
-      status = "renamed";
-      break;
-    case "ChangedFile":
-      filePath = fileChange.path;
-      status = "modified";
-      break;
-    default:
-      // Fallback for any unknown types
-      filePath = "";
-      status = "modified";
-  }
-
-  // Get stats from numstat
-  const stats = fileStats.get(filePath) ||
-    fileStats.get(oldPath || "") || { additions: 0, deletions: 0 };
-
-  return {
-    filePath,
-    status,
-    additions: stats.additions,
-    deletions: stats.deletions,
-    oldPath,
-  };
-}
-
-/**
- * Convert parse-git-diff chunk to GitDiffHunk
- */
-function convertToGitDiffHunk(chunk: AnyChunk): GitDiffHunk {
-  if (chunk.type !== "Chunk") {
-    // For non-standard chunks, return empty hunk
-    return {
-      oldStart: 0,
-      oldCount: 0,
-      newStart: 0,
-      newCount: 0,
-      header: "",
-      lines: [],
-    };
-  }
-
-  const lines: GitDiffLine[] = [];
-
-  for (const change of chunk.changes) {
-    let line: GitDiffLine;
-
-    switch (change.type) {
-      case "AddedLine":
-        line = {
-          type: "added",
-          content: change.content,
-          newLineNumber: change.lineAfter,
-        };
-        break;
-      case "DeletedLine":
-        line = {
-          type: "deleted",
-          content: change.content,
-          oldLineNumber: change.lineBefore,
-        };
-        break;
-      case "UnchangedLine":
-        line = {
-          type: "context",
-          content: change.content,
-          oldLineNumber: change.lineBefore,
-          newLineNumber: change.lineAfter,
-        };
-        break;
-      case "MessageLine":
-        // This is likely a hunk header or context line
-        line = {
-          type: "context",
-          content: change.content,
-        };
-        break;
-      default:
-        // Fallback for unknown line types
-        line = {
-          type: "context",
-          content: "",
-        };
-    }
-
-    lines.push(line);
-  }
-
-  return {
-    oldStart: chunk.fromFileRange.start,
-    oldCount: chunk.fromFileRange.lines,
-    newStart: chunk.toFileRange.start,
-    newCount: chunk.toFileRange.lines,
-    header: `@@ -${chunk.fromFileRange.start},${chunk.fromFileRange.lines} +${chunk.toFileRange.start},${chunk.toFileRange.lines} @@${chunk.context ? ` ${chunk.context}` : ""}`,
-    lines,
-  };
-}
+import type { GitFileStatus, GitRawDiffResult, GitResult } from "../types";
 
 const extractRef = (refText: string) => {
   const [group, ref] = refText.split(":");
@@ -147,6 +14,11 @@ const extractRef = (refText: string) => {
 
     if (refText === "working") {
       return undefined;
+    }
+
+    // Support parent commit syntax: sha^ or sha~N
+    if (/^[a-f0-9]+[\^~]/.test(refText)) {
+      return refText;
     }
 
     throw new Error(`Invalid ref text: ${refText}`);
@@ -170,9 +42,9 @@ async function getUntrackedFiles(cwd: string): Promise<GitResult<string[]>> {
 
   try {
     const untrackedFiles = parseLines(statusResult.data)
-      .map((line) => stripAnsiColors(line)) // Remove ANSI color codes first
+      .map((line) => stripAnsiColors(line))
       .filter((line) => line.startsWith("??"))
-      .map((line) => line.slice(3));
+      .map((line) => line.slice(3).trim());
 
     return {
       success: true,
@@ -190,58 +62,137 @@ async function getUntrackedFiles(cwd: string): Promise<GitResult<string[]>> {
 }
 
 /**
- * Create artificial diff for an untracked file (all lines as additions)
+ * Mark untracked files with intent-to-add so they appear in git diff
  */
-async function createUntrackedFileDiff(
+async function addIntentToAdd(
   cwd: string,
-  filePath: string,
-): Promise<GitDiff | null> {
-  try {
-    const fullPath = resolve(cwd, filePath);
-    const content = await readFile(fullPath, "utf8");
-    const lines = content.split("\n");
-
-    const diffLines: GitDiffLine[] = lines.map((line, index) => ({
-      type: "added" as const,
-      content: line,
-      newLineNumber: index + 1,
-    }));
-
-    const file: GitDiffFile = {
-      filePath,
-      status: "added",
-      additions: lines.length,
-      deletions: 0,
-    };
-
-    const hunk: GitDiffHunk = {
-      oldStart: 0,
-      oldCount: 0,
-      newStart: 1,
-      newCount: lines.length,
-      header: `@@ -0,0 +1,${lines.length} @@`,
-      lines: diffLines,
-    };
-
-    return {
-      file,
-      hunks: [hunk],
-    };
-  } catch (error) {
-    // Skip files that can't be read (e.g., binary files, permission errors)
-    console.warn(`Failed to read untracked file ${filePath}:`, error);
-    return null;
+  files: string[],
+): Promise<GitResult<void>> {
+  if (files.length === 0) {
+    return { success: true, data: undefined };
   }
+
+  const result = await executeGitCommand(["add", "-N", ...files], cwd);
+  if (!result.success) {
+    return result;
+  }
+  return { success: true, data: undefined };
 }
 
 /**
- * Get Git diff between two references (branches, commits, tags)
+ * Remove intent-to-add marks from files
+ */
+async function resetIntentToAdd(
+  cwd: string,
+  files: string[],
+): Promise<GitResult<void>> {
+  if (files.length === 0) {
+    return { success: true, data: undefined };
+  }
+
+  const result = await executeGitCommand(
+    ["reset", "HEAD", "--", ...files],
+    cwd,
+  );
+  if (!result.success) {
+    // Non-critical error, just log it
+    console.warn("Failed to reset intent-to-add files:", result.error);
+  }
+  return { success: true, data: undefined };
+}
+
+/**
+ * Parse numstat output to get file statistics
+ */
+function parseNumstat(
+  numstatOutput: string,
+): Map<string, { additions: number; deletions: number }> {
+  const fileStats = new Map<string, { additions: number; deletions: number }>();
+  const lines = parseLines(numstatOutput);
+
+  for (const line of lines) {
+    const parts = line.split("\t");
+    if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
+      const additions = parts[0] === "-" ? 0 : Number.parseInt(parts[0], 10);
+      const deletions = parts[1] === "-" ? 0 : Number.parseInt(parts[1], 10);
+      // Handle renamed files: "old path" => "new path" or just "path"
+      let filePath = parts[2];
+      if (parts.length >= 4 && parts[3]) {
+        // Renamed file: use the new path as the key
+        filePath = parts[3];
+      }
+      fileStats.set(filePath, { additions, deletions });
+    }
+  }
+
+  return fileStats;
+}
+
+/**
+ * Parse name-status output to get file statuses
+ * Returns a map of filePath -> { status, oldFilePath? }
+ */
+function parseNameStatus(
+  nameStatusOutput: string,
+): Map<string, { status: GitFileStatus; oldFilePath?: string }> {
+  const fileStatuses = new Map<
+    string,
+    { status: GitFileStatus; oldFilePath?: string }
+  >();
+  const lines = parseLines(nameStatusOutput);
+
+  for (const line of lines) {
+    const parts = line.split("\t");
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      const statusCode = parts[0].charAt(0);
+      let status: GitFileStatus;
+      let filePath: string;
+      let oldFilePath: string | undefined;
+
+      switch (statusCode) {
+        case "A":
+          status = "added";
+          filePath = parts[1];
+          break;
+        case "D":
+          status = "deleted";
+          filePath = parts[1];
+          break;
+        case "M":
+          status = "modified";
+          filePath = parts[1];
+          break;
+        case "R":
+          status = "renamed";
+          oldFilePath = parts[1];
+          filePath = parts[2] ?? parts[1];
+          break;
+        case "C":
+          status = "copied";
+          oldFilePath = parts[1];
+          filePath = parts[2] ?? parts[1];
+          break;
+        default:
+          status = "modified";
+          filePath = parts[1];
+      }
+
+      fileStatuses.set(filePath, { status, oldFilePath });
+    }
+  }
+
+  return fileStatuses;
+}
+
+/**
+ * Get Git diff between two references as raw diff output.
+ * Returns the raw diff string that can be passed directly to @git-diff-view/react.
  */
 export const getDiff = async (
   cwd: string,
   fromRefText: string,
   toRefText: string,
-): Promise<GitResult<GitComparisonResult>> => {
+): Promise<GitResult<GitRawDiffResult>> => {
   const fromRef = extractRef(fromRefText);
   const toRef = extractRef(toRefText);
 
@@ -249,7 +200,7 @@ export const getDiff = async (
     return {
       success: true,
       data: {
-        diffs: [],
+        rawDiff: "",
         files: [],
         summary: {
           totalFiles: 0,
@@ -264,98 +215,96 @@ export const getDiff = async (
     throw new Error(`Invalid fromRef: ${fromRefText}`);
   }
 
-  const commandArgs = toRef === undefined ? [fromRef] : [fromRef, toRef];
+  const isWorkingDirectory = toRef === undefined;
+  let untrackedFiles: string[] = [];
 
-  // Get diff with numstat for file statistics
-  const numstatResult = await executeGitCommand(
-    ["diff", "--numstat", ...commandArgs],
-    cwd,
-  );
-
-  if (!numstatResult.success) {
-    return numstatResult;
+  // If comparing to working directory, include untracked files via intent-to-add
+  if (isWorkingDirectory) {
+    const untrackedResult = await getUntrackedFiles(cwd);
+    if (untrackedResult.success && untrackedResult.data.length > 0) {
+      untrackedFiles = untrackedResult.data;
+      const addResult = await addIntentToAdd(cwd, untrackedFiles);
+      if (!addResult.success) {
+        console.warn("Failed to add intent-to-add for untracked files");
+      }
+    }
   }
 
-  // Get diff with full content
-  const diffResult = await executeGitCommand(
-    ["diff", "--unified=5", ...commandArgs],
-    cwd,
-  );
-
-  if (!diffResult.success) {
-    return diffResult;
-  }
+  // Create a set of untracked files for quick lookup
+  const untrackedSet = new Set(untrackedFiles);
 
   try {
-    // Parse numstat output to get file statistics
-    const fileStats = new Map<
-      string,
-      { additions: number; deletions: number }
-    >();
-    const numstatLines = parseLines(numstatResult.data);
+    const commandArgs = isWorkingDirectory ? [fromRef] : [fromRef, toRef];
 
-    for (const line of numstatLines) {
-      const parts = line.split("\t");
-      if (parts.length >= 3 && parts[0] && parts[1] && parts[2]) {
-        const additions = parts[0] === "-" ? 0 : parseInt(parts[0], 10);
-        const deletions = parts[1] === "-" ? 0 : parseInt(parts[1], 10);
-        const filePath = parts[2];
-        fileStats.set(filePath, { additions, deletions });
-      }
+    // Get diff with numstat for file statistics
+    const numstatResult = await executeGitCommand(
+      ["diff", "--numstat", ...commandArgs],
+      cwd,
+    );
+
+    if (!numstatResult.success) {
+      return numstatResult;
     }
 
-    // Parse diff output using parse-git-diff
-    const parsedDiff = parseGitDiff(diffResult.data);
+    // Get diff with name-status for file statuses
+    const nameStatusResult = await executeGitCommand(
+      ["diff", "--name-status", ...commandArgs],
+      cwd,
+    );
 
-    const files: GitDiffFile[] = [];
-    const diffs: GitDiff[] = [];
+    if (!nameStatusResult.success) {
+      return nameStatusResult;
+    }
+
+    // Get raw diff output
+    const diffResult = await executeGitCommand(
+      ["diff", "--unified=5", ...commandArgs],
+      cwd,
+    );
+
+    if (!diffResult.success) {
+      return diffResult;
+    }
+
+    // Parse numstat for summary
+    const fileStats = parseNumstat(numstatResult.data);
+
+    // Parse name-status for file statuses
+    const fileStatuses = parseNameStatus(nameStatusResult.data);
+
     let totalAdditions = 0;
     let totalDeletions = 0;
+    const files: Array<{
+      filePath: string;
+      additions: number;
+      deletions: number;
+      status: GitFileStatus;
+      oldFilePath?: string;
+    }> = [];
 
-    for (const fileChange of parsedDiff.files) {
-      // Convert to GitDiffFile format
-      const file = convertToGitDiffFile(fileChange, fileStats);
-      files.push(file);
+    for (const [filePath, stats] of fileStats) {
+      const statusInfo = fileStatuses.get(filePath);
+      // If file is in untracked set, mark as untracked; otherwise use status from git
+      const status: GitFileStatus = untrackedSet.has(filePath)
+        ? "untracked"
+        : (statusInfo?.status ?? "modified");
 
-      // Convert chunks to hunks
-      const hunks: GitDiffHunk[] = [];
-      for (const chunk of fileChange.chunks) {
-        const hunk = convertToGitDiffHunk(chunk);
-        hunks.push(hunk);
-      }
-
-      diffs.push({
-        file,
-        hunks,
+      files.push({
+        filePath,
+        additions: stats.additions,
+        deletions: stats.deletions,
+        status,
+        oldFilePath: statusInfo?.oldFilePath,
       });
-
-      totalAdditions += file.additions;
-      totalDeletions += file.deletions;
-    }
-
-    // Include untracked files when comparing to working directory
-    if (toRef === undefined) {
-      const untrackedResult = await getUntrackedFiles(cwd);
-      if (untrackedResult.success) {
-        for (const untrackedFile of untrackedResult.data) {
-          const untrackedDiff = await createUntrackedFileDiff(
-            cwd,
-            untrackedFile,
-          );
-          if (untrackedDiff) {
-            files.push(untrackedDiff.file);
-            diffs.push(untrackedDiff);
-            totalAdditions += untrackedDiff.file.additions;
-          }
-        }
-      }
+      totalAdditions += stats.additions;
+      totalDeletions += stats.deletions;
     }
 
     return {
       success: true,
       data: {
+        rawDiff: diffResult.data,
         files,
-        diffs,
         summary: {
           totalFiles: files.length,
           totalAdditions,
@@ -363,14 +312,11 @@ export const getDiff = async (
         },
       },
     };
-  } catch (error) {
-    return {
-      success: false,
-      error: {
-        code: "PARSE_ERROR",
-        message: `Failed to parse diff: ${error instanceof Error ? error.message : "Unknown error"}`,
-      },
-    };
+  } finally {
+    // Always cleanup intent-to-add marks
+    if (untrackedFiles.length > 0) {
+      await resetIntentToAdd(cwd, untrackedFiles);
+    }
   }
 };
 
@@ -381,6 +327,6 @@ export async function compareBranches(
   cwd: string,
   baseBranch: string,
   targetBranch: string,
-): Promise<GitResult<GitComparisonResult>> {
+): Promise<GitResult<GitRawDiffResult>> {
   return getDiff(cwd, baseBranch, targetBranch);
 }

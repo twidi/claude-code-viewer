@@ -6,6 +6,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Effect } from "effect";
 import { AgentSessionLayer } from "./core/agent-session";
 import { AgentSessionController } from "./core/agent-session/presentation/AgentSessionController";
+import { AutoAbortService } from "./core/auto-abort/AutoAbortService";
 import { ClaudeCodeController } from "./core/claude-code/presentation/ClaudeCodeController";
 import { ClaudeCodePermissionController } from "./core/claude-code/presentation/ClaudeCodePermissionController";
 import { ClaudeCodeSessionProcessController } from "./core/claude-code/presentation/ClaudeCodeSessionProcessController";
@@ -32,7 +33,10 @@ import { SessionRepository } from "./core/session/infrastructure/SessionReposito
 import { VirtualConversationDatabase } from "./core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "./core/session/presentation/SessionController";
 import { SessionMetaService } from "./core/session/services/SessionMetaService";
-import { honoApp } from "./hono/app";
+import { StarredSessionsConfigBaseDir } from "./core/starred-session/config";
+import { StarredSessionController } from "./core/starred-session/presentation/StarredSessionController";
+import { StarredSessionService } from "./core/starred-session/StarredSessionService";
+import { honoApp, injectWebSocket } from "./hono/app";
 import { InitializeService } from "./hono/initialize";
 import { AuthMiddleware } from "./hono/middleware/auth.middleware";
 import { routes } from "./hono/route";
@@ -79,6 +83,7 @@ export const startServer = async (options: CliOptions) => {
       Effect.provide(SchedulerController.Live),
       Effect.provide(FeatureFlagController.Live),
       Effect.provide(SearchController.Live),
+      Effect.provide(StarredSessionController.Live),
     )
     .pipe(
       /** Application */
@@ -87,15 +92,21 @@ export const startServer = async (options: CliOptions) => {
       Effect.provide(AuthMiddleware.Live),
     )
     .pipe(
+      /** Domain - Services with cross-dependencies */
+      Effect.provide(AutoAbortService.Live),
+      Effect.provide(SchedulerService.Live),
+    )
+    .pipe(
       /** Domain */
       Effect.provide(ClaudeCodeLifeCycleService.Live),
       Effect.provide(ClaudeCodePermissionService.Live),
       Effect.provide(ClaudeCodeSessionProcessService.Live),
       Effect.provide(ClaudeCodeService.Live),
       Effect.provide(GitService.Live),
-      Effect.provide(SchedulerService.Live),
       Effect.provide(SchedulerConfigBaseDir.Live),
       Effect.provide(SearchService.Live),
+      Effect.provide(StarredSessionService.Live),
+      Effect.provide(StarredSessionsConfigBaseDir.Live),
     )
     .pipe(
       /** Infrastructure */
@@ -123,7 +134,7 @@ export const startServer = async (options: CliOptions) => {
   // biome-ignore lint/style/noProcessEnv: allow only here
   const hostname = options.hostname ?? process.env.HOSTNAME ?? "localhost";
 
-  serve(
+  const server = serve(
     {
       fetch: honoApp.fetch,
       port: parseInt(port, 10),
@@ -133,4 +144,7 @@ export const startServer = async (options: CliOptions) => {
       console.log(`Server is running on http://${hostname}:${info.port}`);
     },
   );
+
+  // Inject WebSocket support into the HTTP server for terminal and other real-time features
+  injectWebSocket(server);
 };

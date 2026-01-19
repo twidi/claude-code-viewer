@@ -1,7 +1,16 @@
 import { Trans, useLingui } from "@lingui/react";
+import { FolderIcon } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
+import { processFile } from "@/app/projects/[projectId]/components/chatForm/fileUtils";
 import { InlineCompletion } from "@/app/projects/[projectId]/components/chatForm/InlineCompletion";
 import { useMessageCompletion } from "@/app/projects/[projectId]/components/chatForm/useMessageCompletion";
+import { AttachButton } from "@/components/AttachButton";
+import {
+  AttachmentList,
+  type ExistingAttachment,
+  type PendingAttachment,
+} from "@/components/AttachmentList";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -23,16 +32,30 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import type {
+  DocumentBlockParam,
+  ImageBlockParam,
+} from "@/server/core/claude-code/schema";
+import type {
+  EnrichedSchedulerJob,
   NewSchedulerJob,
-  SchedulerJob,
 } from "@/server/core/scheduler/schema";
 import { CronExpressionBuilder } from "./CronExpressionBuilder";
+
+/** Minimal project info needed for the project selector */
+type ProjectOption = {
+  id: string;
+  meta: {
+    projectName: string | null;
+  };
+};
 
 export interface SchedulerJobDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  job: SchedulerJob | null;
+  job: EnrichedSchedulerJob | null;
   projectId: string;
+  projectName: string;
+  projects: ProjectOption[];
   currentSessionId: string;
   onSubmit: (job: NewSchedulerJob) => void;
   isSubmitting?: boolean;
@@ -43,13 +66,18 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   onOpenChange,
   job,
   projectId,
+  projectName,
+  projects,
   onSubmit,
   isSubmitting = false,
 }) => {
   const { _, i18n } = useLingui();
 
   const [name, setName] = useState("");
-  const [scheduleType, setScheduleType] = useState<"cron" | "reserved">("cron");
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId);
+  const [scheduleType, setScheduleType] = useState<
+    "cron" | "reserved" | "queued"
+  >("cron");
   const [cronExpression, setCronExpression] = useState("0 9 * * *");
   const [reservedDateTime, setReservedDateTime] = useState(() => {
     const now = new Date();
@@ -62,6 +90,14 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
     "skip",
   );
 
+  // Attachment state
+  const [existingAttachments, setExistingAttachments] = useState<
+    ExistingAttachment[]
+  >([]);
+  const [pendingAttachments, setPendingAttachments] = useState<
+    PendingAttachment[]
+  >([]);
+
   // Message completion hook
   const completion = useMessageCompletion();
 
@@ -69,6 +105,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
   useEffect(() => {
     if (job) {
       setName(job.name);
+      setSelectedProjectId(job.message.projectId);
       setScheduleType(job.schedule.type);
       if (job.schedule.type === "cron") {
         setCronExpression(job.schedule.expression);
@@ -85,9 +122,33 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       }
       setMessageContent(job.message.content);
       setEnabled(job.enabled);
+
+      // Initialize attachments from job
+      const attachments: ExistingAttachment[] = [];
+      if (job.message.images) {
+        for (const image of job.message.images) {
+          attachments.push({
+            type: "image",
+            data: image,
+            id: `existing-image-${Math.random().toString(36).slice(2)}`,
+          });
+        }
+      }
+      if (job.message.documents) {
+        for (const doc of job.message.documents) {
+          attachments.push({
+            type: "document",
+            data: doc,
+            id: `existing-doc-${Math.random().toString(36).slice(2)}`,
+          });
+        }
+      }
+      setExistingAttachments(attachments);
+      setPendingAttachments([]);
     } else {
       // Reset form for new job
       setName("");
+      setSelectedProjectId(projectId);
       setScheduleType("cron");
       setCronExpression("0 9 * * *");
       const now = new Date();
@@ -101,51 +162,123 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
       setMessageContent("");
       setEnabled(true);
       setConcurrencyPolicy("skip");
+      setExistingAttachments([]);
+      setPendingAttachments([]);
     }
-  }, [job]);
+  }, [job, projectId]);
 
-  const handleSubmit = () => {
+  const handleFilesSelected = (files: File[]) => {
+    const newAttachments: PendingAttachment[] = files.map((file) => ({
+      type: "file",
+      file,
+      id: `new-${file.name}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    }));
+    setPendingAttachments((prev) => [...prev, ...newAttachments]);
+  };
+
+  const handleRemoveExisting = (id: string) => {
+    setExistingAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const handleRemovePending = (id: string) => {
+    setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const handleSubmit = async () => {
+    // Determine the schedule based on type
+    let schedule: NewSchedulerJob["schedule"];
+
+    if (scheduleType === "cron") {
+      schedule = {
+        type: "cron",
+        expression: cronExpression,
+        concurrencyPolicy,
+      };
+    } else if (scheduleType === "reserved") {
+      // datetime-local returns "YYYY-MM-DDTHH:mm" in local time
+      // We need to treat this as local time and convert to UTC
+      const match = reservedDateTime.match(
+        /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
+      );
+      if (!match) {
+        throw new Error("Invalid datetime format");
+      }
+      const year = Number(match[1]);
+      const month = Number(match[2]);
+      const day = Number(match[3]);
+      const hours = Number(match[4]);
+      const minutes = Number(match[5]);
+      const localDate = new Date(year, month - 1, day, hours, minutes);
+      schedule = {
+        type: "reserved",
+        reservedExecutionTime: localDate.toISOString(),
+      };
+    } else {
+      // Queued jobs should not be created/edited via this dialog
+      // but we handle it for type safety - use the original job's schedule
+      if (job?.schedule.type === "queued") {
+        schedule = job.schedule;
+      } else {
+        throw new Error("Invalid schedule type");
+      }
+    }
+
+    // Process pending attachments into blocks
+    const newImages: ImageBlockParam[] = [];
+    const newDocuments: DocumentBlockParam[] = [];
+
+    for (const attachment of pendingAttachments) {
+      if (attachment.type === "image") {
+        // Already-read image
+        newImages.push(attachment.data);
+      } else {
+        // File reference - read now
+        const result = await processFile(attachment.file);
+        if (result === null) continue;
+
+        if (result.type === "image") {
+          newImages.push(result.block);
+        } else if (result.type === "document") {
+          newDocuments.push(result.block);
+        } else if (result.type === "text") {
+          newDocuments.push({
+            type: "document",
+            source: {
+              type: "text",
+              media_type: "text/plain",
+              data: result.content,
+            },
+          });
+        }
+      }
+    }
+
+    // Combine existing and new attachments
+    const existingImages = existingAttachments
+      .filter(
+        (a): a is ExistingAttachment & { type: "image" } => a.type === "image",
+      )
+      .map((a) => a.data);
+    const existingDocs = existingAttachments
+      .filter(
+        (a): a is ExistingAttachment & { type: "document" } =>
+          a.type === "document",
+      )
+      .map((a) => a.data);
+
+    const finalImages = [...existingImages, ...newImages];
+    const finalDocuments = [...existingDocs, ...newDocuments];
+
     const newJob: NewSchedulerJob = {
       name,
-      schedule:
-        scheduleType === "cron"
-          ? {
-              type: "cron",
-              expression: cronExpression,
-              concurrencyPolicy,
-            }
-          : {
-              type: "reserved",
-              // datetime-local returns "YYYY-MM-DDTHH:mm" in local time
-              // We need to treat this as local time and convert to UTC
-              reservedExecutionTime: (() => {
-                // datetime-local format: "YYYY-MM-DDTHH:mm"
-                // Parse as local time and convert to ISO string (UTC)
-                const match = reservedDateTime.match(
-                  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
-                );
-                if (!match) {
-                  throw new Error("Invalid datetime format");
-                }
-                const year = Number(match[1]);
-                const month = Number(match[2]);
-                const day = Number(match[3]);
-                const hours = Number(match[4]);
-                const minutes = Number(match[5]);
-                const localDate = new Date(
-                  year,
-                  month - 1,
-                  day,
-                  hours,
-                  minutes,
-                );
-                return localDate.toISOString();
-              })(),
-            },
+      schedule,
       message: {
         content: messageContent,
-        projectId,
-        baseSessionId: null,
+        projectId: selectedProjectId,
+        // Preserve baseSessionId when editing, null for new jobs
+        baseSessionId: job?.message.baseSessionId ?? null,
+        images: finalImages.length > 0 ? finalImages : undefined,
+        documents: finalDocuments.length > 0 ? finalDocuments : undefined,
       },
       enabled,
     };
@@ -172,6 +305,37 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Project Selection (create mode) or Info (edit mode) */}
+          <div className="flex items-center gap-2 rounded-lg border p-3 bg-muted/50">
+            <FolderIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="text-sm text-muted-foreground flex-shrink-0">
+                <Trans id="scheduler.form.project" />
+              </span>
+              {job ? (
+                <Badge variant="secondary" className="truncate">
+                  {job.projectName ?? projectName}
+                </Badge>
+              ) : (
+                <Select
+                  value={selectedProjectId}
+                  onValueChange={setSelectedProjectId}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger className="flex-1 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.meta.projectName ?? project.id}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
           {/* Enabled Toggle */}
           <div className="flex items-center justify-between rounded-lg border p-4">
             <div className="space-y-0.5">
@@ -212,25 +376,33 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
             <Label>
               <Trans id="scheduler.form.schedule_type" />
             </Label>
-            <Select
-              value={scheduleType}
-              onValueChange={(value: "cron" | "reserved") =>
-                setScheduleType(value)
-              }
-              disabled={isSubmitting}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cron">
-                  <Trans id="scheduler.form.schedule_type.cron" />
-                </SelectItem>
-                <SelectItem value="reserved">
-                  <Trans id="scheduler.form.schedule_type.reserved" />
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            {scheduleType === "queued" ? (
+              <div className="rounded-lg border border-amber-500/50 bg-amber-50 dark:bg-amber-950/30 p-3">
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  <Trans id="scheduler.form.queued_notice" />
+                </p>
+              </div>
+            ) : (
+              <Select
+                value={scheduleType}
+                onValueChange={(value: "cron" | "reserved") =>
+                  setScheduleType(value)
+                }
+                disabled={isSubmitting}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cron">
+                    <Trans id="scheduler.form.schedule_type.cron" />
+                  </SelectItem>
+                  <SelectItem value="reserved">
+                    <Trans id="scheduler.form.schedule_type.reserved" />
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Schedule Configuration */}
@@ -239,7 +411,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
               value={cronExpression}
               onChange={setCronExpression}
             />
-          ) : (
+          ) : scheduleType === "reserved" ? (
             <div className="space-y-2">
               <Label htmlFor="reserved-datetime">
                 <Trans id="scheduler.form.reserved_time" />
@@ -255,7 +427,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
                 <Trans id="scheduler.form.reserved_time.hint" />
               </p>
             </div>
-          )}
+          ) : null}
 
           {/* Message Content */}
           <div className="space-y-2">
@@ -270,6 +442,7 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
                 onChange={(e) =>
                   completion.handleChange(e.target.value, setMessageContent)
                 }
+                onSelect={completion.handleSelect}
                 onKeyDown={(e) => completion.handleKeyDown(e)}
                 placeholder={i18n._({
                   id: "scheduler.form.message.placeholder",
@@ -294,13 +467,18 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
               <InlineCompletion
                 projectId={projectId}
                 message={messageContent}
+                cursorIndex={completion.cursorIndex}
                 commandCompletionRef={completion.commandCompletionRef}
                 fileCompletionRef={completion.fileCompletionRef}
                 handleCommandSelect={(cmd) =>
                   completion.handleCommandSelect(cmd, setMessageContent)
                 }
-                handleFileSelect={(file) =>
-                  completion.handleFileSelect(file, setMessageContent)
+                handleFileSelect={(newMessage, newCursorPosition) =>
+                  completion.handleFileSelect(
+                    newMessage,
+                    newCursorPosition,
+                    setMessageContent,
+                  )
                 }
                 cursorPosition={completion.cursorPosition}
               />
@@ -308,6 +486,24 @@ export const SchedulerJobDialog: FC<SchedulerJobDialogProps> = ({
             <p className="text-xs text-muted-foreground">
               <Trans id="scheduler.form.message.hint" />
             </p>
+          </div>
+
+          {/* Attachments */}
+          <div className="space-y-2">
+            <Label>
+              <Trans id="scheduler.form.attachments" />
+            </Label>
+            <AttachmentList
+              existingAttachments={existingAttachments}
+              pendingAttachments={pendingAttachments}
+              onRemoveExisting={handleRemoveExisting}
+              onRemovePending={handleRemovePending}
+              disabled={isSubmitting}
+            />
+            <AttachButton
+              onFilesSelected={handleFilesSelected}
+              disabled={isSubmitting}
+            />
           </div>
 
           {/* Concurrency Policy (only for cron schedules) */}

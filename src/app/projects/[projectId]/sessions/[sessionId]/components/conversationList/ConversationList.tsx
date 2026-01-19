@@ -1,6 +1,7 @@
 import { Trans } from "@lingui/react";
 import { AlertTriangle, ChevronDown, ExternalLink } from "lucide-react";
 import { type FC, useCallback, useMemo } from "react";
+import { useConfig } from "@/app/hooks/useConfig";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Collapsible,
@@ -9,12 +10,150 @@ import {
 } from "@/components/ui/collapsible";
 import type { Conversation } from "@/lib/conversation-schema";
 import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolResultContentSchema";
+import type { AssistantMessageContent } from "@/lib/conversation-schema/message/AssistantMessageSchema";
+import type { UserMessageContent } from "@/lib/conversation-schema/message/UserMessageSchema";
 import { calculateDuration } from "@/lib/date/formatDuration";
 import type { SchedulerJob } from "@/server/core/scheduler/schema";
 import type { ErrorJsonl } from "../../../../../../../server/core/types";
 import { useSidechain } from "../../hooks/useSidechain";
+import { AssistantConversationContent } from "./AssistantConversationContent";
+import { CollapsedContents } from "./CollapsedContents";
 import { ConversationItem } from "./ConversationItem";
 import { ScheduledMessageNotice } from "./ScheduledMessageNotice";
+
+export type AssistantConversation = Extract<
+  Conversation,
+  { type: "assistant" }
+>;
+
+/**
+ * A content item with its source conversation UUID for keying
+ */
+export type ContentWithUuid = {
+  content: AssistantMessageContent;
+  uuid: string;
+  contentIndex: number;
+  timestamp: string;
+};
+
+/**
+ * Check if a user message content array is a tool_result
+ */
+const isToolResultContent = (
+  content: string | UserMessageContent[],
+): boolean => {
+  if (typeof content === "string") return false;
+  const firstItem = content[0];
+  return (
+    typeof firstItem === "object" &&
+    firstItem !== null &&
+    "type" in firstItem &&
+    firstItem.type === "tool_result"
+  );
+};
+
+/**
+ * Simplified view element types:
+ * - user: A user message (not tool_result)
+ * - text: A single text content from an assistant message
+ * - collapsed: A group of non-text contents from assistant messages
+ */
+type SimplifiedViewElement =
+  | {
+      type: "user";
+      conversation: Extract<Conversation, { type: "user" }>;
+    }
+  | {
+      type: "text";
+      content: AssistantMessageContent;
+      uuid: string;
+      contentIndex: number;
+      timestamp: string;
+    }
+  | {
+      type: "collapsed";
+      contents: ContentWithUuid[];
+    };
+
+/**
+ * Add a non-text content to the last collapsed group if it exists,
+ * otherwise create a new collapsed group
+ */
+const addToOrCreateCollapsedElement = (
+  elements: SimplifiedViewElement[],
+  content: AssistantMessageContent,
+  uuid: string,
+  contentIndex: number,
+  timestamp: string,
+): void => {
+  const lastElement = elements[elements.length - 1];
+  if (lastElement?.type === "collapsed") {
+    // Merge with existing collapsed group
+    lastElement.contents.push({ content, uuid, contentIndex, timestamp });
+  } else {
+    // Create new collapsed group
+    elements.push({
+      type: "collapsed",
+      contents: [{ content, uuid, contentIndex, timestamp }],
+    });
+  }
+};
+
+/**
+ * Build simplified view elements from filtered conversations.
+ * - User messages become "user" elements
+ * - Assistant text contents become "text" elements
+ * - Assistant non-text contents (tools, thinking) are grouped into "collapsed" elements
+ *
+ * Non-text contents from messages with text are grouped with non-text contents
+ * from subsequent messages, ensuring proper grouping even in live mode.
+ */
+const buildSimplifiedViewElements = (
+  conversations: (Conversation | ErrorJsonl)[],
+): SimplifiedViewElement[] => {
+  const elements: SimplifiedViewElement[] = [];
+
+  for (const conv of conversations) {
+    // Skip errors
+    if (conv.type === "x-error") continue;
+
+    // Handle user messages
+    if (conv.type === "user") {
+      elements.push({ type: "user", conversation: conv });
+      continue;
+    }
+
+    // Handle assistant messages - split into text and non-text contents
+    if (conv.type === "assistant") {
+      for (let i = 0; i < conv.message.content.length; i++) {
+        const content = conv.message.content[i];
+        if (content === undefined) continue;
+
+        if (content.type === "text") {
+          // Text content becomes its own element
+          elements.push({
+            type: "text",
+            content,
+            uuid: conv.uuid,
+            contentIndex: i,
+            timestamp: conv.timestamp,
+          });
+        } else {
+          // Non-text content goes into collapsed group
+          addToOrCreateCollapsedElement(
+            elements,
+            content,
+            conv.uuid,
+            i,
+            conv.timestamp,
+          );
+        }
+      }
+    }
+  }
+
+  return elements;
+};
 
 /**
  * Type guard to check if toolUseResult contains agentId.
@@ -55,6 +194,10 @@ const getConversationKey = (conversation: Conversation) => {
 
   if (conversation.type === "queue-operation") {
     return `queue-operation_${conversation.operation}_${conversation.sessionId}_${conversation.timestamp}`;
+  }
+
+  if (conversation.type === "progress") {
+    return `progress_${conversation.uuid}`;
   }
 
   conversation satisfies never;
@@ -123,6 +266,7 @@ type ConversationListProps = {
   getToolResult: (toolUseId: string) => ToolResultContent | undefined;
   projectId: string;
   sessionId: string;
+  projectName: string;
   scheduledJobs: SchedulerJob[];
 };
 
@@ -131,13 +275,53 @@ export const ConversationList: FC<ConversationListProps> = ({
   getToolResult,
   projectId,
   sessionId,
+  projectName,
   scheduledJobs,
 }) => {
+  const { config } = useConfig();
+  const simplifiedView = config?.simplifiedView ?? false;
+
   const validConversations = useMemo(
     () =>
       conversations.filter((conversation) => conversation.type !== "x-error"),
     [conversations],
   );
+
+  // In simplified view, only show user messages (without isMeta and not tool_result) and assistant messages
+  const filteredConversations = useMemo(() => {
+    if (!simplifiedView) {
+      return conversations;
+    }
+    return conversations.filter((conversation) => {
+      if (conversation.type === "x-error") {
+        return false;
+      }
+      if (conversation.type === "user") {
+        // Filter out meta messages
+        if (conversation.isMeta === true) {
+          return false;
+        }
+        // Filter out tool_result messages (they appear between assistant tool_use messages)
+        if (isToolResultContent(conversation.message.content)) {
+          return false;
+        }
+        return true;
+      }
+      if (conversation.type === "assistant") {
+        return true;
+      }
+      // Filter out: system, summary, file-history-snapshot, queue-operation
+      return false;
+    });
+  }, [conversations, simplifiedView]);
+
+  // In simplified view, build elements with proper content grouping
+  const simplifiedViewElements = useMemo(() => {
+    if (!simplifiedView) {
+      return null;
+    }
+    return buildSimplifiedViewElements(filteredConversations);
+  }, [filteredConversations, simplifiedView]);
   const {
     isRootSidechain,
     getSidechainConversations,
@@ -157,20 +341,7 @@ export const ConversationList: FC<ConversationListProps> = ({
       if (conv.type !== "user" || conv.isSidechain) {
         return false;
       }
-      // Tool result messages have array content starting with tool_result
-      const content = conv.message.content;
-      if (Array.isArray(content)) {
-        const firstItem = content[0];
-        if (
-          typeof firstItem === "object" &&
-          firstItem !== null &&
-          "type" in firstItem &&
-          firstItem.type === "tool_result"
-        ) {
-          return false;
-        }
-      }
-      return true;
+      return !isToolResultContent(conv.message.content);
     };
 
     // First, identify turn boundaries (indices of real user messages)
@@ -261,67 +432,162 @@ export const ConversationList: FC<ConversationListProps> = ({
     [toolUseIdToAgentIdMap],
   );
 
+  /**
+   * Returns all known agent IDs from the toolUseIdToAgentIdMap.
+   * Used by TaskModal to exclude these agents when searching for pending tasks.
+   */
+  const getKnownAgentIds = useCallback((): string[] => {
+    return Array.from(toolUseIdToAgentIdMap.values());
+  }, [toolUseIdToAgentIdMap]);
+
+  const renderConversation = (conversation: Conversation | ErrorJsonl) => {
+    if (conversation.type === "x-error") {
+      return (
+        <SchemaErrorDisplay
+          key={`error_${conversation.line}`}
+          errorLine={conversation.line}
+        />
+      );
+    }
+
+    const elm = (
+      <ConversationItem
+        key={getConversationKey(conversation)}
+        conversation={conversation}
+        getToolResult={getToolResult}
+        getAgentIdForToolUse={getAgentIdForToolUse}
+        getKnownAgentIds={getKnownAgentIds}
+        getTurnDuration={getTurnDuration}
+        isRootSidechain={isRootSidechain}
+        getSidechainConversations={getSidechainConversations}
+        getSidechainConversationByPrompt={getSidechainConversationByPrompt}
+        existsRelatedTaskCall={existsRelatedTaskCall}
+        projectId={projectId}
+        sessionId={sessionId}
+      />
+    );
+
+    const isSidechain =
+      conversation.type !== "summary" &&
+      conversation.type !== "file-history-snapshot" &&
+      conversation.type !== "queue-operation" &&
+      conversation.isSidechain;
+
+    if (isSidechain) {
+      return null;
+    }
+
+    return (
+      <li
+        className={`w-full flex ${
+          isSidechain ||
+          conversation.type === "assistant" ||
+          conversation.type === "system" ||
+          conversation.type === "summary"
+            ? "justify-start"
+            : "justify-end"
+        } animate-in fade-in slide-in-from-bottom-2 duration-300`}
+        key={getConversationKey(conversation)}
+      >
+        <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
+          {elm}
+        </div>
+      </li>
+    );
+  };
+
+  // Render simplified view with properly grouped elements
+  if (simplifiedView && simplifiedViewElements) {
+    return (
+      <>
+        <ul>
+          {simplifiedViewElements.map((element, index) => {
+            if (element.type === "user") {
+              return renderConversation(element.conversation);
+            }
+
+            if (element.type === "text") {
+              // Render text content directly
+              return (
+                <li
+                  key={`text-${element.uuid}-${element.contentIndex}`}
+                  className="w-full flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300"
+                >
+                  <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
+                    <ul className="w-full">
+                      <li>
+                        <AssistantConversationContent
+                          content={element.content}
+                          getToolResult={getToolResult}
+                          getAgentIdForToolUse={getAgentIdForToolUse}
+                          getKnownAgentIds={getKnownAgentIds}
+                          getSidechainConversationByPrompt={
+                            getSidechainConversationByPrompt
+                          }
+                          getSidechainConversations={getSidechainConversations}
+                          projectId={projectId}
+                          sessionId={sessionId}
+                          conversationTimestamp={element.timestamp}
+                        />
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+              );
+            }
+
+            if (element.type === "collapsed") {
+              const firstContent = element.contents[0];
+              const key =
+                firstContent !== undefined
+                  ? `collapsed-${firstContent.uuid}-${firstContent.contentIndex}`
+                  : `collapsed-${index}`;
+              return (
+                <li key={key} className="w-full flex justify-start">
+                  <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
+                    <CollapsedContents
+                      contents={element.contents}
+                      getToolResult={getToolResult}
+                      getAgentIdForToolUse={getAgentIdForToolUse}
+                      getKnownAgentIds={getKnownAgentIds}
+                      getSidechainConversations={getSidechainConversations}
+                      getSidechainConversationByPrompt={
+                        getSidechainConversationByPrompt
+                      }
+                      projectId={projectId}
+                      sessionId={sessionId}
+                    />
+                  </div>
+                </li>
+              );
+            }
+
+            return null;
+          })}
+        </ul>
+        <ScheduledMessageNotice
+          scheduledJobs={scheduledJobs}
+          projectId={projectId}
+          sessionId={sessionId}
+          projectName={projectName}
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <ul>
-        {conversations.flatMap((conversation) => {
-          if (conversation.type === "x-error") {
-            return (
-              <SchemaErrorDisplay
-                key={`error_${conversation.line}`}
-                errorLine={conversation.line}
-              />
-            );
-          }
-
-          const elm = (
-            <ConversationItem
-              key={getConversationKey(conversation)}
-              conversation={conversation}
-              getToolResult={getToolResult}
-              getAgentIdForToolUse={getAgentIdForToolUse}
-              getTurnDuration={getTurnDuration}
-              isRootSidechain={isRootSidechain}
-              getSidechainConversations={getSidechainConversations}
-              getSidechainConversationByPrompt={
-                getSidechainConversationByPrompt
-              }
-              existsRelatedTaskCall={existsRelatedTaskCall}
-              projectId={projectId}
-              sessionId={sessionId}
-            />
-          );
-
-          const isSidechain =
-            conversation.type !== "summary" &&
-            conversation.type !== "file-history-snapshot" &&
-            conversation.type !== "queue-operation" &&
-            conversation.isSidechain;
-
-          if (isSidechain) {
-            return [];
-          }
-
-          return [
-            <li
-              className={`w-full flex ${
-                isSidechain ||
-                conversation.type === "assistant" ||
-                conversation.type === "system" ||
-                conversation.type === "summary"
-                  ? "justify-start"
-                  : "justify-end"
-              } animate-in fade-in slide-in-from-bottom-2 duration-300`}
-              key={getConversationKey(conversation)}
-            >
-              <div className="w-full max-w-3xl lg:max-w-4xl sm:w-[90%] md:w-[85%]">
-                {elm}
-              </div>
-            </li>,
-          ];
-        })}
+        {filteredConversations.map((conversation) =>
+          renderConversation(conversation),
+        )}
       </ul>
-      <ScheduledMessageNotice scheduledJobs={scheduledJobs} />
+      <ScheduledMessageNotice
+        scheduledJobs={scheduledJobs}
+        projectId={projectId}
+        sessionId={sessionId}
+        projectName={projectName}
+      />
     </>
   );
 };

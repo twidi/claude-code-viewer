@@ -9,59 +9,78 @@ import { FileCompletion, type FileCompletionRef } from "./FileCompletion";
 interface PositionStyle {
   top: number;
   left: number;
-  placement: "above" | "below";
 }
 
+// Widget heights (must match respective component styles)
+// CommandCompletion: height: "15rem" = 240px
+const COMMAND_COMPLETION_HEIGHT = 240;
+// FileCompletion: height: "20rem" = 320px
+const FILE_COMPLETION_HEIGHT = 320;
+// Approximate line height for cursor offset
+const LINE_HEIGHT = 24;
+// Safety margin for viewport edge detection
+const VIEWPORT_MARGIN = 20;
+// Margin between widget and cursor
+const WIDGET_MARGIN = 8;
+
+type CompletionType = "command" | "file";
+
+/**
+ * Calculates the final top position for the completion popup.
+ *
+ * The popup is positioned directly using the calculated top value.
+ * For "below": widget top starts just below the cursor line
+ * For "above": widget top is calculated so the widget appears above the cursor
+ *
+ * Note: FileCompletion has a nested structure where the actual content (listRef)
+ * is positioned absolutely within a relative container. The CSS classes
+ * top-full/bottom-full don't work as expected with this structure, so we
+ * calculate the final position directly.
+ */
 const calculateOptimalPosition = (
   relativeCursorPosition: { top: number; left: number },
   absoluteCursorPosition: { top: number; left: number },
-  itemCount: number,
+  completionType: CompletionType,
 ): PositionStyle => {
   const viewportHeight =
     typeof window !== "undefined" ? window.innerHeight : 800;
   const viewportCenter = viewportHeight / 2;
 
-  // Calculate dynamic height based on item count
-  // Header: ~48px, Each item: 36px (h-9), Padding: 12px
-  const headerHeight = 48;
-  const itemHeight = 36;
-  const padding = 12;
-  const maxItems = 5;
-  const visibleItems = Math.min(itemCount, maxItems);
-  const estimatedCompletionHeight =
-    headerHeight + itemHeight * visibleItems + padding;
+  // Use the height of the widget that will be displayed
+  const estimatedHeight =
+    completionType === "command"
+      ? COMMAND_COMPLETION_HEIGHT
+      : FILE_COMPLETION_HEIGHT;
 
-  // Determine preferred placement based on viewport position
+  // Determine preferred placement based on cursor position in viewport
   const isInUpperHalf = absoluteCursorPosition.top < viewportCenter;
 
-  // Check if there's enough space for preferred placement
-  const spaceBelow = viewportHeight - absoluteCursorPosition.top;
-  const spaceAbove = absoluteCursorPosition.top;
+  // Calculate available space
+  const spaceBelow =
+    viewportHeight - absoluteCursorPosition.top - LINE_HEIGHT - VIEWPORT_MARGIN;
+  const spaceAbove = absoluteCursorPosition.top - VIEWPORT_MARGIN;
 
-  let placement: "above" | "below";
   let top: number;
 
-  if (isInUpperHalf && spaceBelow >= estimatedCompletionHeight + 20) {
-    // Cursor in upper half and enough space below - place below
-    placement = "below";
-    top = relativeCursorPosition.top + 24;
-  } else if (!isInUpperHalf && spaceAbove >= estimatedCompletionHeight + 20) {
-    // Cursor in lower half and enough space above - place above
-    placement = "above";
-    top = relativeCursorPosition.top - estimatedCompletionHeight - 16;
+  if (isInUpperHalf && spaceBelow >= estimatedHeight) {
+    // Cursor in upper half with enough space below - place below
+    // Widget top = cursor position + line height
+    top = relativeCursorPosition.top + LINE_HEIGHT;
+  } else if (!isInUpperHalf && spaceAbove >= estimatedHeight) {
+    // Cursor in lower half with enough space above - place above
+    // Widget top = cursor position - widget height - margin
+    top = relativeCursorPosition.top - estimatedHeight - WIDGET_MARGIN;
   } else {
-    // Use whichever side has more space
+    // Fallback: use whichever side has more space
     if (spaceBelow > spaceAbove) {
-      placement = "below";
-      top = relativeCursorPosition.top + 24;
+      top = relativeCursorPosition.top + LINE_HEIGHT;
     } else {
-      placement = "above";
-      top = relativeCursorPosition.top - estimatedCompletionHeight - 16;
+      top = relativeCursorPosition.top - estimatedHeight - WIDGET_MARGIN;
     }
   }
 
   // Ensure left position stays within viewport bounds
-  const estimatedCompletionWidth = 512; // Current w-lg width
+  const estimatedCompletionWidth = 512;
   const viewportWidth =
     typeof window !== "undefined" ? window.innerWidth : 1200;
   const maxLeft = viewportWidth - estimatedCompletionWidth - 16;
@@ -73,17 +92,17 @@ const calculateOptimalPosition = (
   return {
     top,
     left: adjustedLeft,
-    placement,
   };
 };
 
 export const InlineCompletion: FC<{
   projectId: string;
   message: string;
+  cursorIndex: number;
   commandCompletionRef: RefObject<CommandCompletionRef | null>;
   fileCompletionRef: RefObject<FileCompletionRef | null>;
   handleCommandSelect: (command: string) => void;
-  handleFileSelect: (filePath: string) => void;
+  handleFileSelect: (newMessage: string, newCursorPosition: number) => void;
   cursorPosition: {
     relative: { top: number; left: number };
     absolute: { top: number; left: number };
@@ -91,19 +110,30 @@ export const InlineCompletion: FC<{
 }> = ({
   projectId,
   message,
+  cursorIndex,
   commandCompletionRef,
   fileCompletionRef,
   handleCommandSelect,
   handleFileSelect,
   cursorPosition,
 }) => {
+  // Determine which completion widget will be shown
+  // Command completion: message starts with "/"
+  // File completion: message contains "@" before cursor
+  const completionType: CompletionType = useMemo(() => {
+    if (message.startsWith("/")) {
+      return "command";
+    }
+    return "file";
+  }, [message]);
+
   const position = useMemo(() => {
     return calculateOptimalPosition(
       cursorPosition.relative,
       cursorPosition.absolute,
-      5,
+      completionType,
     );
-  }, [cursorPosition]);
+  }, [cursorPosition, completionType]);
 
   return (
     <div
@@ -122,18 +152,13 @@ export const InlineCompletion: FC<{
         projectId={projectId}
         inputValue={message}
         onCommandSelect={handleCommandSelect}
-        className={`absolute left-0 right-0 ${
-          position.placement === "above" ? "bottom-full mb-2" : "top-full mt-1"
-        }`}
       />
       <FileCompletion
         ref={fileCompletionRef}
         projectId={projectId}
         inputValue={message}
+        cursorIndex={cursorIndex}
         onFileSelect={handleFileSelect}
-        className={`absolute left-0 right-0 ${
-          position.placement === "above" ? "bottom-full mb-2" : "top-full mt-1"
-        }`}
       />
     </div>
   );

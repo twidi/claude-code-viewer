@@ -5,6 +5,7 @@ import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { useTheme } from "../../hooks/useTheme";
 import { MarkdownLink } from "./MarkdownLink";
@@ -26,7 +27,7 @@ export const MarkdownContent: FC<MarkdownContentProps> = ({
       className={`prose prose-neutral dark:prose-invert max-w-none ${className}`}
     >
       <Markdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
           h1({ children, ...props }) {
             return (

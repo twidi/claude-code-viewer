@@ -1,4 +1,3 @@
-import { readFile } from "node:fs/promises";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { compareBranches, getDiff } from "./getDiff";
 import * as utils from "./utils";
@@ -11,8 +10,6 @@ vi.mock("./utils", async (importOriginal) => {
   };
 });
 
-vi.mock("node:fs/promises");
-
 describe("getDiff", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,11 +18,14 @@ describe("getDiff", () => {
   describe("正常系", () => {
     it("2つのブランチ間のdiffを取得できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `5\t2\tsrc/file1.ts
 10\t0\tsrc/file2.ts`;
+
+      const mockNameStatusOutput = `M\tsrc/file1.ts
+A\tsrc/file2.ts`;
 
       const mockDiffOutput = `diff --git a/src/file1.ts b/src/file1.ts
 index abc123..def456 100644
@@ -53,6 +53,10 @@ index 0000000..ghi789
         })
         .mockResolvedValueOnce({
           success: true,
+          data: mockNameStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockDiffOutput,
         });
 
@@ -62,18 +66,20 @@ index 0000000..ghi789
       if (result.success) {
         expect(result.data.files).toHaveLength(2);
         expect(result.data.files[0]?.filePath).toBe("src/file1.ts");
-        expect(result.data.files[0]?.status).toBe("modified");
         expect(result.data.files[0]?.additions).toBe(5);
         expect(result.data.files[0]?.deletions).toBe(2);
+        expect(result.data.files[0]?.status).toBe("modified");
 
         expect(result.data.files[1]?.filePath).toBe("src/file2.ts");
-        expect(result.data.files[1]?.status).toBe("added");
         expect(result.data.files[1]?.additions).toBe(10);
         expect(result.data.files[1]?.deletions).toBe(0);
+        expect(result.data.files[1]?.status).toBe("added");
 
         expect(result.data.summary.totalFiles).toBe(2);
         expect(result.data.summary.totalAdditions).toBe(15);
         expect(result.data.summary.totalDeletions).toBe(2);
+
+        expect(result.data.rawDiff).toBe(mockDiffOutput);
       }
 
       expect(utils.executeGitCommand).toHaveBeenCalledWith(
@@ -89,10 +95,12 @@ index 0000000..ghi789
 
     it("HEADとworking directoryの比較ができる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:HEAD";
-      const toRef = "compare:working";
+      const fromRef = "HEAD";
+      const toRef = "working";
 
+      const mockStatusOutput = `?? src/untracked.ts`;
       const mockNumstatOutput = `3\t1\tsrc/modified.ts`;
+      const mockNameStatusOutput = `M\tsrc/modified.ts`;
       const mockDiffOutput = `diff --git a/src/modified.ts b/src/modified.ts
 index abc123..def456 100644
 --- a/src/modified.ts
@@ -100,16 +108,22 @@ index abc123..def456 100644
 @@ -1,3 +1,5 @@
  const value = 1;`;
 
-      const mockStatusOutput = `## main
-M  src/modified.ts
-?? src/untracked.ts`;
-
-      vi.mocked(readFile).mockResolvedValue("line1\nline2\nline3");
-
       vi.mocked(utils.executeGitCommand)
         .mockResolvedValueOnce({
           success: true,
+          data: mockStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: "", // git add -N result
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockNumstatOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: mockNameStatusOutput,
         })
         .mockResolvedValueOnce({
           success: true,
@@ -117,34 +131,35 @@ M  src/modified.ts
         })
         .mockResolvedValueOnce({
           success: true,
-          data: mockStatusOutput,
+          data: "", // git reset HEAD result
         });
 
       const result = await getDiff(mockCwd, fromRef, toRef);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        // modified file + untracked file
         expect(result.data.files.length).toBeGreaterThanOrEqual(1);
         const modifiedFile = result.data.files.find(
           (f) => f.filePath === "src/modified.ts",
         );
         expect(modifiedFile).toBeDefined();
+        expect(modifiedFile?.additions).toBe(3);
+        expect(modifiedFile?.deletions).toBe(1);
         expect(modifiedFile?.status).toBe("modified");
       }
     });
 
     it("同一refの場合は空の結果を返す", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:main";
+      const fromRef = "branch:main";
+      const toRef = "branch:main";
 
       const result = await getDiff(mockCwd, fromRef, toRef);
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.files).toHaveLength(0);
-        expect(result.data.diffs).toHaveLength(0);
+        expect(result.data.rawDiff).toBe("");
         expect(result.data.summary.totalFiles).toBe(0);
         expect(result.data.summary.totalAdditions).toBe(0);
         expect(result.data.summary.totalDeletions).toBe(0);
@@ -153,12 +168,13 @@ M  src/modified.ts
       expect(utils.executeGitCommand).not.toHaveBeenCalled();
     });
 
-    it.skip("削除されたファイルを処理できる", async () => {
+    it("削除されたファイルを処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `0\t10\tsrc/deleted.ts`;
+      const mockNameStatusOutput = `D\tsrc/deleted.ts`;
       const mockDiffOutput = `diff --git a/src/deleted.ts b/src/deleted.ts
 deleted file mode 100644
 index abc123..0000000 100644
@@ -183,6 +199,10 @@ index abc123..0000000 100644
         })
         .mockResolvedValueOnce({
           success: true,
+          data: mockNameStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockDiffOutput,
         });
 
@@ -192,18 +212,19 @@ index abc123..0000000 100644
       if (result.success) {
         expect(result.data.files).toHaveLength(1);
         expect(result.data.files[0]?.filePath).toBe("src/deleted.ts");
-        expect(result.data.files[0]?.status).toBe("deleted");
         expect(result.data.files[0]?.additions).toBe(0);
         expect(result.data.files[0]?.deletions).toBe(10);
+        expect(result.data.files[0]?.status).toBe("deleted");
       }
     });
 
-    it.skip("名前変更されたファイルを処理できる", async () => {
+    it("名前変更されたファイルを処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `0\t0\tnew-name.ts`;
+      const mockNameStatusOutput = `R100\told-name.ts\tnew-name.ts`;
       const mockDiffOutput = `diff --git a/old-name.ts b/new-name.ts
 similarity index 100%
 rename from old-name.ts
@@ -217,6 +238,10 @@ index abc123..abc123 100644`;
         })
         .mockResolvedValueOnce({
           success: true,
+          data: mockNameStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockDiffOutput,
         });
 
@@ -225,24 +250,31 @@ index abc123..abc123 100644`;
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.files).toHaveLength(1);
-        expect(result.data.files[0]?.status).toBe("renamed");
         expect(result.data.files[0]?.filePath).toBe("new-name.ts");
-        expect(result.data.files[0]?.oldPath).toBe("old-name.ts");
+        expect(result.data.files[0]?.additions).toBe(0);
+        expect(result.data.files[0]?.deletions).toBe(0);
+        expect(result.data.files[0]?.status).toBe("renamed");
+        expect(result.data.files[0]?.oldFilePath).toBe("old-name.ts");
       }
     });
 
     it("空のdiffを処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = "";
+      const mockNameStatusOutput = "";
       const mockDiffOutput = "";
 
       vi.mocked(utils.executeGitCommand)
         .mockResolvedValueOnce({
           success: true,
           data: mockNumstatOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: mockNameStatusOutput,
         })
         .mockResolvedValueOnce({
           success: true,
@@ -254,7 +286,7 @@ index abc123..abc123 100644`;
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.files).toHaveLength(0);
-        expect(result.data.diffs).toHaveLength(0);
+        expect(result.data.rawDiff).toBe("");
         expect(result.data.summary.totalFiles).toBe(0);
       }
     });
@@ -263,8 +295,8 @@ index abc123..abc123 100644`;
   describe("エラー系", () => {
     it("ディレクトリが存在しない場合", async () => {
       const mockCwd = "/nonexistent/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       vi.mocked(utils.executeGitCommand).mockResolvedValue({
         success: false,
@@ -286,8 +318,8 @@ index abc123..abc123 100644`;
 
     it("Gitリポジトリでない場合", async () => {
       const mockCwd = "/test/not-a-repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       vi.mocked(utils.executeGitCommand).mockResolvedValue({
         success: false,
@@ -309,8 +341,8 @@ index abc123..abc123 100644`;
 
     it("ブランチが見つからない場合", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:nonexistent";
-      const toRef = "compare:feature";
+      const fromRef = "branch:nonexistent";
+      const toRef = "branch:feature";
 
       vi.mocked(utils.executeGitCommand).mockResolvedValue({
         success: false,
@@ -334,8 +366,8 @@ index abc123..abc123 100644`;
 
     it("numstatコマンドが失敗した場合", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       vi.mocked(utils.executeGitCommand).mockResolvedValue({
         success: false,
@@ -358,7 +390,7 @@ index abc123..abc123 100644`;
     it("無効なfromRefの場合", async () => {
       const mockCwd = "/test/repo";
       const fromRef = "invalidref";
-      const toRef = "compare:feature";
+      const toRef = "branch:feature";
 
       await expect(getDiff(mockCwd, fromRef, toRef)).rejects.toThrow(
         "Invalid ref text",
@@ -369,10 +401,11 @@ index abc123..abc123 100644`;
   describe("エッジケース", () => {
     it("サブディレクトリから実行しても動作する", async () => {
       const mockCwd = "/test/repo/subdirectory";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `3\t1\tsrc/file.ts`;
+      const mockNameStatusOutput = `M\tsrc/file.ts`;
       const mockDiffOutput = `diff --git a/src/file.ts b/src/file.ts
 index abc123..def456 100644
 --- a/src/file.ts
@@ -387,6 +420,10 @@ index abc123..def456 100644
         })
         .mockResolvedValueOnce({
           success: true,
+          data: mockNameStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockDiffOutput,
         });
 
@@ -396,6 +433,7 @@ index abc123..def456 100644
       if (result.success) {
         expect(result.data.files).toHaveLength(1);
         expect(result.data.files[0]?.filePath).toBe("src/file.ts");
+        expect(result.data.files[0]?.status).toBe("modified");
       }
 
       // Verify that git commands are executed in the subdirectory
@@ -407,11 +445,14 @@ index abc123..def456 100644
 
     it("特殊文字を含むファイル名を処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `5\t2\tsrc/file with spaces.ts
 3\t1\tsrc/日本語ファイル.ts`;
+
+      const mockNameStatusOutput = `M\tsrc/file with spaces.ts
+M\tsrc/日本語ファイル.ts`;
 
       const mockDiffOutput = `diff --git a/src/file with spaces.ts b/src/file with spaces.ts
 index abc123..def456 100644
@@ -433,6 +474,10 @@ index abc123..def456 100644
         })
         .mockResolvedValueOnce({
           success: true,
+          data: mockNameStatusOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
           data: mockDiffOutput,
         });
 
@@ -448,10 +493,11 @@ index abc123..def456 100644
 
     it("バイナリファイルの変更を処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = `-\t-\timage.png`;
+      const mockNameStatusOutput = `M\timage.png`;
       const mockDiffOutput = `diff --git a/image.png b/image.png
 index abc123..def456 100644
 Binary files a/image.png and b/image.png differ`;
@@ -460,6 +506,10 @@ Binary files a/image.png and b/image.png differ`;
         .mockResolvedValueOnce({
           success: true,
           data: mockNumstatOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: mockNameStatusOutput,
         })
         .mockResolvedValueOnce({
           success: true,
@@ -474,17 +524,22 @@ Binary files a/image.png and b/image.png differ`;
         expect(result.data.files[0]?.filePath).toBe("image.png");
         expect(result.data.files[0]?.additions).toBe(0);
         expect(result.data.files[0]?.deletions).toBe(0);
+        expect(result.data.files[0]?.status).toBe("modified");
       }
     });
 
     it("大量のファイル変更を処理できる", async () => {
       const mockCwd = "/test/repo";
-      const fromRef = "base:main";
-      const toRef = "compare:feature";
+      const fromRef = "branch:main";
+      const toRef = "branch:feature";
 
       const mockNumstatOutput = Array.from(
         { length: 100 },
         (_, i) => `1\t1\tfile${i}.ts`,
+      ).join("\n");
+      const mockNameStatusOutput = Array.from(
+        { length: 100 },
+        (_, i) => `M\tfile${i}.ts`,
       ).join("\n");
       const mockDiffOutput = Array.from(
         { length: 100 },
@@ -501,6 +556,10 @@ index abc123..def456 100644
         .mockResolvedValueOnce({
           success: true,
           data: mockNumstatOutput,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: mockNameStatusOutput,
         })
         .mockResolvedValueOnce({
           success: true,
@@ -527,10 +586,11 @@ describe("compareBranches", () => {
 
   it("getDiffのショートハンドとして機能する", async () => {
     const mockCwd = "/test/repo";
-    const baseBranch = "base:main";
-    const targetBranch = "compare:feature";
+    const baseBranch = "branch:main";
+    const targetBranch = "branch:feature";
 
     const mockNumstatOutput = `5\t2\tfile.ts`;
+    const mockNameStatusOutput = `M\tfile.ts`;
     const mockDiffOutput = `diff --git a/file.ts b/file.ts
 index abc123..def456 100644
 --- a/file.ts
@@ -545,6 +605,10 @@ index abc123..def456 100644
       })
       .mockResolvedValueOnce({
         success: true,
+        data: mockNameStatusOutput,
+      })
+      .mockResolvedValueOnce({
+        success: true,
         data: mockDiffOutput,
       });
 
@@ -554,6 +618,7 @@ index abc123..def456 100644
     if (result.success) {
       expect(result.data.files).toHaveLength(1);
       expect(result.data.files[0]?.filePath).toBe("file.ts");
+      expect(result.data.files[0]?.status).toBe("modified");
     }
   });
 });

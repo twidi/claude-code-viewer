@@ -38,37 +38,76 @@ describe("parseSessionFilePath", () => {
     });
   });
 
-  describe("agent session files", () => {
+  describe("agent session files in subagents directory", () => {
+    it("parses agent file in subagents directory", () => {
+      const result = parseSessionFilePath(
+        "project-name/session-id/subagents/agent-abc123.jsonl",
+      );
+      expect(result).toEqual({
+        type: "agent",
+        projectId: "project-name",
+        sessionId: "session-id",
+        agentSessionId: "abc123",
+      });
+    });
+
+    it("parses agent file with UUID-like IDs", () => {
+      const result = parseSessionFilePath(
+        "my-project/550e8400-e29b-41d4-a716-446655440000/subagents/agent-a1b2c3d.jsonl",
+      );
+      expect(result).toEqual({
+        type: "agent",
+        projectId: "my-project",
+        sessionId: "550e8400-e29b-41d4-a716-446655440000",
+        agentSessionId: "a1b2c3d",
+      });
+    });
+
+    it("parses agent file with complex project path", () => {
+      const result = parseSessionFilePath(
+        "-home-twidi-dev-claude-code-viewer/23bd8b05-5ca4-467c-ae56-bea71289107f/subagents/agent-aa63fb8.jsonl",
+      );
+      expect(result).toEqual({
+        type: "agent",
+        projectId: "-home-twidi-dev-claude-code-viewer",
+        sessionId: "23bd8b05-5ca4-467c-ae56-bea71289107f",
+        agentSessionId: "aa63fb8",
+      });
+    });
+  });
+
+  describe("legacy flat agent files at project root", () => {
     it("parses agent file with simple hash", () => {
       const result = parseSessionFilePath("project-name/agent-abc123.jsonl");
       expect(result).toEqual({
         type: "agent",
         projectId: "project-name",
+        sessionId: null,
         agentSessionId: "abc123",
       });
     });
 
-    it("parses agent file with UUID-like hash", () => {
+    it("parses agent file with UUID-like agent ID", () => {
       const result = parseSessionFilePath(
         "my-project/agent-550e8400-e29b-41d4-a716-446655440000.jsonl",
       );
       expect(result).toEqual({
         type: "agent",
         projectId: "my-project",
+        sessionId: null,
         agentSessionId: "550e8400-e29b-41d4-a716-446655440000",
       });
     });
 
-    it("parses agent file with nested path (greedy match for projectId)", () => {
-      // For agent files, the regex matches everything before /agent-
-      // This correctly captures the full project path
+    it("parses agent file with complex project path", () => {
       const result = parseSessionFilePath(
-        "home/user/projects/my-app/agent-def456.jsonl",
+        "-home-twidi-dev-claude-code-viewer/agent-aa63fb8.jsonl",
       );
       expect(result).toEqual({
         type: "agent",
-        projectId: "home/user/projects/my-app",
-        agentSessionId: "def456",
+        projectId: "-home-twidi-dev-claude-code-viewer",
+        sessionId: null,
+        agentSessionId: "aa63fb8",
       });
     });
   });
@@ -119,6 +158,7 @@ describe("parseSessionFilePath", () => {
       expect(result).toEqual({
         type: "agent",
         projectId: "agent-project",
+        sessionId: null,
         agentSessionId: "abc123",
       });
     });

@@ -3,6 +3,7 @@ import type { ControllerResponse } from "../../../lib/effect/toEffectResponse";
 import type { InferEffect } from "../../../lib/effect/types";
 import { ProjectRepository } from "../../project/infrastructure/ProjectRepository";
 import { getDiff } from "../functions/getDiff";
+import { getFileStatus } from "../functions/getFileStatus";
 import type { CommitErrorCode, PushErrorCode } from "../schema";
 import { GitService } from "../services/GitService";
 
@@ -372,12 +373,72 @@ const LayerImpl = Effect.gen(function* () {
       } as const satisfies ControllerResponse;
     });
 
+  const getFileStatusRoute = (options: { projectId: string }) =>
+    Effect.gen(function* () {
+      const { projectId } = options;
+
+      const { project } = yield* projectRepository.getProject(projectId);
+
+      if (project.meta.projectPath === null) {
+        return {
+          response: { error: "Project path not found" },
+          status: 400,
+        } as const satisfies ControllerResponse;
+      }
+
+      const projectPath = project.meta.projectPath;
+
+      const result = yield* Effect.promise(() => getFileStatus(projectPath));
+
+      return {
+        response: result,
+        status: 200,
+      } as const satisfies ControllerResponse;
+    });
+
+  const getCommitDetailsRoute = (options: { projectId: string; sha: string }) =>
+    Effect.gen(function* () {
+      const { projectId, sha } = options;
+
+      const { project } = yield* projectRepository.getProject(projectId);
+
+      if (project.meta.projectPath === null) {
+        return {
+          response: { error: "Project path not found" },
+          status: 400,
+        } as const satisfies ControllerResponse;
+      }
+
+      const projectPath = project.meta.projectPath;
+
+      const commitResult = yield* Effect.either(
+        gitService.getCommitDetails(projectPath, sha),
+      );
+
+      if (Either.isLeft(commitResult)) {
+        return {
+          response: { success: false, error: "Failed to get commit details" },
+          status: 200,
+        } as const satisfies ControllerResponse;
+      }
+
+      return {
+        response: {
+          success: true,
+          data: commitResult.right,
+        },
+        status: 200,
+      } as const satisfies ControllerResponse;
+    });
+
   return {
     getGitDiff,
     commitFiles,
     pushCommits,
     commitAndPush,
     getCurrentRevisions,
+    getFileStatusRoute,
+    getCommitDetailsRoute,
   };
 });
 

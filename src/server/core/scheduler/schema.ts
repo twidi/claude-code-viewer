@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { documentBlockSchema, imageBlockSchema } from "../claude-code/schema";
 
 // Concurrency policy (for cron jobs only)
 export const concurrencyPolicySchema = z.enum(["skip", "run"]);
@@ -15,9 +16,15 @@ export const reservedScheduleSchema = z.object({
   reservedExecutionTime: z.iso.datetime(),
 });
 
+export const queuedScheduleSchema = z.object({
+  type: z.literal("queued"),
+  targetSessionId: z.string(), // Session to watch for running → paused transition
+});
+
 export const scheduleSchema = z.discriminatedUnion("type", [
   cronScheduleSchema,
   reservedScheduleSchema,
+  queuedScheduleSchema,
 ]);
 
 // Message configuration
@@ -25,6 +32,8 @@ export const messageConfigSchema = z.object({
   content: z.string(),
   projectId: z.string(),
   baseSessionId: z.string().nullable(),
+  images: z.array(imageBlockSchema).optional(),
+  documents: z.array(documentBlockSchema).optional(),
 });
 
 // Job status
@@ -50,12 +59,20 @@ export const schedulerConfigSchema = z.object({
 // Type exports
 export type CronSchedule = z.infer<typeof cronScheduleSchema>;
 export type ReservedSchedule = z.infer<typeof reservedScheduleSchema>;
+export type QueuedSchedule = z.infer<typeof queuedScheduleSchema>;
 export type Schedule = z.infer<typeof scheduleSchema>;
 export type MessageConfig = z.infer<typeof messageConfigSchema>;
 export type JobStatus = z.infer<typeof jobStatusSchema>;
 export type ConcurrencyPolicy = z.infer<typeof concurrencyPolicySchema>;
 export type SchedulerJob = z.infer<typeof schedulerJobSchema>;
 export type SchedulerConfig = z.infer<typeof schedulerConfigSchema>;
+
+// Enriched job with project info (for API responses)
+export const enrichedSchedulerJobSchema = schedulerJobSchema.extend({
+  projectName: z.string().nullable(),
+});
+
+export type EnrichedSchedulerJob = z.infer<typeof enrichedSchedulerJobSchema>;
 
 // New job creation schema (without runtime fields)
 export const newSchedulerJobSchema = schedulerJobSchema

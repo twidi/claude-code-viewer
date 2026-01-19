@@ -29,6 +29,10 @@ export type SSEEventDeclaration = {
   permissionRequested: {
     permissionRequest: PermissionRequest;
   };
+
+  schedulerJobsChanged: {
+    deletedJobId?: string;
+  };
 };
 
 export type SSEEventMap = {

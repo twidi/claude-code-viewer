@@ -1,3 +1,4 @@
+import type { FuzzySearchResult } from "../../server/core/file-system/functions/fuzzySearchFiles";
 import type { DirectoryListingResult } from "../../server/core/file-system/functions/getDirectoryListing";
 import type { FileCompletionResult } from "../../server/core/file-system/functions/getFileCompletion";
 import { honoClient } from "./client";
@@ -160,6 +161,24 @@ export const gitCurrentRevisionsQuery = (projectId: string) =>
     },
   }) as const;
 
+export const gitFileStatusQuery = (projectId: string) =>
+  ({
+    queryKey: ["git", "file-status", projectId],
+    queryFn: async () => {
+      const response = await honoClient.api.projects[":projectId"].git[
+        "file-status"
+      ].$get({
+        param: { projectId },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file status: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+  }) as const;
+
 export const mcpListQuery = (projectId: string) =>
   ({
     queryKey: ["mcp", "list", projectId],
@@ -188,6 +207,32 @@ export const fileCompletionQuery = (projectId: string, basePath: string) =>
 
       if (!response.ok) {
         throw new Error("Failed to fetch file completion");
+      }
+
+      return await response.json();
+    },
+  }) as const;
+
+export const fuzzySearchFilesQuery = (
+  projectId: string,
+  basePath: string,
+  query: string,
+  limit?: number,
+) =>
+  ({
+    queryKey: ["fuzzy-search", projectId, basePath, query, limit],
+    queryFn: async (): Promise<FuzzySearchResult> => {
+      const response = await honoClient.api.fs["fuzzy-search"].$get({
+        query: {
+          projectId,
+          basePath,
+          query,
+          ...(limit !== undefined ? { limit: limit.toString() } : {}),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to search files");
       }
 
       return await response.json();
@@ -276,14 +321,25 @@ export const featureFlagsQuery = {
   },
 } as const;
 
-export const agentSessionQuery = (projectId: string, agentId: string) =>
+export const agentSessionQuery = (
+  projectId: string,
+  sessionId: string,
+  agentId: string,
+) =>
   ({
-    queryKey: ["projects", projectId, "agent-sessions", agentId],
+    queryKey: [
+      "projects",
+      projectId,
+      "sessions",
+      sessionId,
+      "agent-sessions",
+      agentId,
+    ],
     queryFn: async () => {
-      const response = await honoClient.api.projects[":projectId"][
-        "agent-sessions"
-      ][":agentId"].$get({
-        param: { projectId, agentId },
+      const response = await honoClient.api.projects[":projectId"].sessions[
+        ":sessionId"
+      ]["agent-sessions"][":agentId"].$get({
+        param: { projectId, sessionId, agentId },
       });
 
       if (!response.ok) {
@@ -295,6 +351,45 @@ export const agentSessionQuery = (projectId: string, agentId: string) =>
       return await response.json();
     },
   }) as const;
+
+/**
+ * Find a pending agent session by matching prompt and timestamp.
+ *
+ * This is a workaround for foreground Task execution where the agentId
+ * is not available in the session's tool_use message until the task completes.
+ * The frontend calls this when opening a TaskModal for a running task
+ * to find the matching agent file and enable live updates.
+ *
+ * This is NOT a TanStack Query - it's a direct API call function because:
+ * 1. We don't want caching (the result changes as the agent file is created)
+ * 2. We call it imperatively when the modal opens
+ * 3. Once resolved, we store the agentId in component state
+ */
+export const findPendingAgentSession = async (params: {
+  projectId: string;
+  sessionId: string;
+  prompt: string;
+  toolUseTimestamp: string;
+  knownAgentIds: string[];
+}): Promise<{ agentId: string | null }> => {
+  const { projectId, sessionId, prompt, toolUseTimestamp, knownAgentIds } =
+    params;
+
+  const response = await honoClient.api.projects[":projectId"].sessions[
+    ":sessionId"
+  ]["agent-sessions"]["find-pending"].$post({
+    param: { projectId, sessionId },
+    json: { prompt, toolUseTimestamp, knownAgentIds },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to find pending agent session: ${response.statusText}`,
+    );
+  }
+
+  return await response.json();
+};
 
 export const searchQuery = (
   query: string,
@@ -315,6 +410,24 @@ export const searchQuery = (
 
       if (!response.ok) {
         throw new Error(`Failed to search: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+  }) as const;
+
+export const recentSessionsQuery = (cursor?: string) =>
+  ({
+    queryKey: ["sessions", "recent"],
+    queryFn: async () => {
+      const response = await honoClient.api.sessions.recent.$get({
+        query: { cursor },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch recent sessions: ${response.statusText}`,
+        );
       }
 
       return await response.json();

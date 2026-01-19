@@ -36,12 +36,16 @@ import { SearchController } from "../core/search/presentation/SearchController";
 import type { VirtualConversationDatabase } from "../core/session/infrastructure/VirtualConversationDatabase";
 import { SessionController } from "../core/session/presentation/SessionController";
 import type { SessionMetaService } from "../core/session/services/SessionMetaService";
+import type { StarredSessionsConfigBaseDir } from "../core/starred-session/config";
+import { StarredSessionController } from "../core/starred-session/presentation/StarredSessionController";
 import { userConfigSchema } from "../lib/config/config";
 import { effectToResponse } from "../lib/effect/toEffectResponse";
 import type { HonoAppType } from "./app";
+import { upgradeWebSocket } from "./app";
 import { InitializeService } from "./initialize";
 import { AuthMiddleware } from "./middleware/auth.middleware";
 import { configMiddleware } from "./middleware/config.middleware";
+import { terminalRoutes } from "./routes/terminal";
 
 export const routes = (app: HonoAppType, options: CliOptions) =>
   Effect.gen(function* () {
@@ -70,6 +74,7 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
     const schedulerController = yield* SchedulerController;
     const featureFlagController = yield* FeatureFlagController;
     const searchController = yield* SearchController;
+    const starredSessionController = yield* StarredSessionController;
 
     // middleware
     const authMiddlewareService = yield* AuthMiddleware;
@@ -88,6 +93,7 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
       | ClaudeCodeLifeCycleService
       | ProjectRepository
       | SchedulerConfigBaseDir
+      | StarredSessionsConfigBaseDir
     >();
 
     if ((yield* envService.getEnv("NEXT_PHASE")) !== "phase-production-build") {
@@ -97,6 +103,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
         await Runtime.runPromise(runtime)(initializeService.stopCleanup());
       });
     }
+
+    // Mount terminal routes (WebSocket endpoint for terminal, REST endpoint for resize)
+    app.route("/api", terminalRoutes(upgradeWebSocket));
 
     return (
       app
@@ -170,7 +179,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
         .put("/api/config", zValidator("json", userConfigSchema), async (c) => {
           const { ...config } = c.req.valid("json");
 
-          setCookie(c, "ccv-config", JSON.stringify(config));
+          setCookie(c, "ccv-config", JSON.stringify(config), {
+            maxAge: 60 * 60 * 24 * 400, // 400 days (browser max)
+          });
 
           return c.json({
             config,
@@ -194,6 +205,31 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           );
           return response;
         })
+
+        .get(
+          "/api/sessions/recent",
+          zValidator(
+            "query",
+            z.object({
+              limit: z
+                .string()
+                .optional()
+                .transform((v) => (v ? Number.parseInt(v, 10) : undefined)),
+              cursor: z.string().optional(),
+            }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              projectController
+                .getRecentSessions({
+                  ...c.req.valid("query"),
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
 
         .get(
           "/api/projects/:projectId",
@@ -272,20 +308,60 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           },
         )
 
-        .get("/api/projects/:projectId/agent-sessions/:agentId", async (c) => {
-          const { projectId, agentId } = c.req.param();
+        .get(
+          "/api/projects/:projectId/sessions/:sessionId/agent-sessions/:agentId",
+          async (c) => {
+            const { projectId, sessionId, agentId } = c.req.param();
 
-          const response = await effectToResponse(
-            c,
-            agentSessionController
-              .getAgentSession({
-                projectId,
-                agentId,
-              })
-              .pipe(Effect.provide(runtime)),
-          );
-          return response;
-        })
+            const response = await effectToResponse(
+              c,
+              agentSessionController
+                .getAgentSession({
+                  projectId,
+                  sessionId,
+                  agentId,
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
+        /**
+         * Find a pending agent session by matching prompt and timestamp.
+         * This is used when viewing a running foreground Task before its tool_result
+         * is written to the session file (which contains the agentId).
+         */
+        .post(
+          "/api/projects/:projectId/sessions/:sessionId/agent-sessions/find-pending",
+          zValidator(
+            "json",
+            z.object({
+              prompt: z.string(),
+              toolUseTimestamp: z.string(),
+              knownAgentIds: z.array(z.string()),
+            }),
+          ),
+          async (c) => {
+            const { projectId, sessionId } = c.req.param();
+            const { prompt, toolUseTimestamp, knownAgentIds } =
+              c.req.valid("json");
+
+            const response = await effectToResponse(
+              c,
+              agentSessionController
+                .findPendingAgentSession({
+                  projectId,
+                  sessionId,
+                  prompt,
+                  toolUseTimestamp,
+                  knownAgentIds,
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
 
         /**
          * GitController Routes
@@ -377,6 +453,37 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           },
         )
 
+        .get("/api/projects/:projectId/git/file-status", async (c) => {
+          const response = await effectToResponse(
+            c,
+            gitController
+              .getFileStatusRoute({
+                ...c.req.param(),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .get(
+          "/api/projects/:projectId/git/commits/:sha",
+          zValidator(
+            "param",
+            z.object({ projectId: z.string(), sha: z.string() }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              gitController
+                .getCommitDetailsRoute({
+                  ...c.req.valid("param"),
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
         /**
          * ClaudeCodeController Routes
          */
@@ -446,6 +553,9 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
               projectId: z.string(),
               input: userMessageInputSchema,
               baseSessionId: z.string().optional(),
+              permissionModeOverride: z
+                .enum(["acceptEdits", "bypassPermissions", "default", "plan"])
+                .optional(),
             }),
           ),
           async (c) => {
@@ -489,10 +599,59 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           zValidator("json", z.object({ projectId: z.string() })),
           async (c) => {
             const { sessionProcessId } = c.req.param();
-            void Effect.runFork(
-              claudeCodeLifeCycleService.abortTask(sessionProcessId),
-            );
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.abortTask(sessionProcessId),
+              );
+            } catch (error) {
+              // Abort is idempotent - log but don't fail
+              console.error("Error aborting task:", error);
+            }
             return c.json({ message: "Task aborted" });
+          },
+        )
+
+        // stop (graceful, no error - used for permission mode changes)
+        .post(
+          "/api/cc/session-processes/:sessionProcessId/stop",
+          zValidator("json", z.object({ projectId: z.string() })),
+          async (c) => {
+            const { sessionProcessId } = c.req.param();
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.stopTask(sessionProcessId),
+              );
+            } catch (error) {
+              // Stop is idempotent - log but don't fail
+              console.error("Error stopping task:", error);
+            }
+            return c.json({ message: "Task stopped" });
+          },
+        )
+
+        // inject message into running session (streaming input)
+        .post(
+          "/api/cc/session-processes/:sessionProcessId/inject",
+          zValidator("json", userMessageInputSchema),
+          async (c) => {
+            const { sessionProcessId } = c.req.param();
+            const input = c.req.valid("json");
+
+            try {
+              await Runtime.runPromise(runtime)(
+                claudeCodeLifeCycleService.injectMessage({
+                  sessionProcessId,
+                  input,
+                }),
+              );
+              return c.json({ success: true });
+            } catch (error) {
+              const message =
+                error instanceof Error
+                  ? error.message
+                  : "Failed to inject message";
+              return c.json({ success: false, error: message }, 400);
+            }
           },
         )
 
@@ -645,6 +804,53 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
           },
         )
 
+        .get(
+          "/api/fs/fuzzy-search",
+          zValidator(
+            "query",
+            z.object({
+              projectId: z.string(),
+              basePath: z.string().optional().default("/"),
+              query: z.string().min(1),
+              limit: z
+                .string()
+                .optional()
+                .transform((val) => (val ? parseInt(val, 10) : 10)),
+            }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              fileSystemController.fuzzySearchFilesRoute({
+                ...c.req.valid("query"),
+              }),
+            );
+            return response;
+          },
+        )
+
+        .get(
+          "/api/fs/file-content",
+          zValidator(
+            "query",
+            z.object({
+              projectId: z.string(),
+              filePath: z.string(),
+            }),
+          ),
+          async (c) => {
+            const response = await effectToResponse(
+              c,
+              fileSystemController
+                .getFileContentRoute({
+                  ...c.req.valid("query"),
+                })
+                .pipe(Effect.provide(runtime)),
+            );
+            return response;
+          },
+        )
+
         /**
          * SearchController Routes
          */
@@ -682,6 +888,55 @@ export const routes = (app: HonoAppType, options: CliOptions) =>
             featureFlagController.getFlags().pipe(Effect.provide(runtime)),
           );
 
+          return response;
+        })
+
+        /**
+         * StarredSessionController Routes
+         */
+        .get("/api/starred-sessions", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .getStarredSessionIds()
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .post("/api/starred-sessions/:sessionId/toggle", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .toggleStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .post("/api/starred-sessions/:sessionId", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .addStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
+          return response;
+        })
+
+        .delete("/api/starred-sessions/:sessionId", async (c) => {
+          const response = await effectToResponse(
+            c,
+            starredSessionController
+              .removeStar({
+                sessionId: c.req.param("sessionId"),
+              })
+              .pipe(Effect.provide(runtime)),
+          );
           return response;
         })
     );

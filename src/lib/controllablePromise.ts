@@ -28,6 +28,11 @@ export const controllablePromise = <T>(): ControllablePromise<T> => {
     throw new Error("Illegal state: Promise not created");
   }
 
+  // Attach a no-op catch handler to prevent unhandled rejection warnings
+  // when the promise is rejected before anyone awaits it.
+  // The actual error handling happens when the consumer awaits the promise.
+  promise.catch(() => {});
+
   promiseRef.promise = promise;
   promiseRef.resolve = promiseResolve;
   promiseRef.reject = promiseReject;

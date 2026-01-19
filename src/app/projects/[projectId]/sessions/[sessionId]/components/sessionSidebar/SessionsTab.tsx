@@ -1,16 +1,19 @@
 import { Trans } from "@lingui/react";
 import { Link, useSearch } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { CoinsIcon, MessageSquareIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import type { FC } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  useStarredSessionsSet,
+  useToggleStarredSession,
+} from "@/hooks/useStarredSessions";
+import { sortSessionsByStatusAndDate } from "@/lib/session-sorting";
 import { cn } from "@/lib/utils";
-import { formatLocaleDate } from "../../../../../../../lib/date/formatLocaleDate";
 import { useConfig } from "../../../../../../hooks/useConfig";
 import { useProject } from "../../../../hooks/useProject";
-import { firstUserMessageToTitle } from "../../../../services/firstCommandToTitle";
 import { sessionProcessesAtom } from "../../store/sessionProcessesAtom";
+import { SessionListItem } from "./SessionListItem";
 
 export const SessionsTab: FC<{
   currentSessionId: string;
@@ -30,44 +33,23 @@ export const SessionsTab: FC<{
   const search = useSearch({
     from: "/projects/$projectId/session",
   });
+  const starredSessionIds = useStarredSessionsSet();
+  const toggleStar = useToggleStarredSession();
 
   // Preserve current tab state or default to "sessions"
   const currentTab = search.tab ?? "sessions";
 
   const isNewChatActive = currentSessionId === "";
 
-  // Sort sessions: Running > Paused > Others, then by lastModifiedAt (newest first)
-  const sortedSessions = [...sessions].sort((a, b) => {
-    const aProcess = sessionProcesses.find(
-      (process) => process.sessionId === a.id,
-    );
-    const bProcess = sessionProcesses.find(
-      (process) => process.sessionId === b.id,
-    );
+  const sortedSessions = sortSessionsByStatusAndDate(
+    sessions,
+    sessionProcesses,
+    starredSessionIds,
+  );
 
-    const aStatus = aProcess?.status;
-    const bStatus = bProcess?.status;
-
-    // Define priority: running = 0, paused = 1, others = 2
-    const getPriority = (status: "paused" | "running" | undefined) => {
-      if (status === "running") return 0;
-      if (status === "paused") return 1;
-      return 2;
-    };
-
-    const aPriority = getPriority(aStatus);
-    const bPriority = getPriority(bStatus);
-
-    // First sort by priority
-    if (aPriority !== bPriority) {
-      return aPriority - bPriority;
-    }
-
-    // Then sort by lastModifiedAt (newest first)
-    const aTime = a.lastModifiedAt ? new Date(a.lastModifiedAt).getTime() : 0;
-    const bTime = b.lastModifiedAt ? new Date(b.lastModifiedAt).getTime() : 0;
-    return bTime - aTime;
-  });
+  const handleToggleStar = (sessionId: string) => {
+    toggleStar.mutate(sessionId);
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -105,74 +87,22 @@ export const SessionsTab: FC<{
           </div>
         </Link>
         {sortedSessions.map((session) => {
-          const isActive = session.id === currentSessionId;
-          const title =
-            session.meta.firstUserMessage !== null
-              ? firstUserMessageToTitle(session.meta.firstUserMessage)
-              : session.id;
-
           const sessionProcess = sessionProcesses.find(
             (task) => task.sessionId === session.id,
           );
-          const isRunning = sessionProcess?.status === "running";
-          const isPaused = sessionProcess?.status === "paused";
 
           return (
-            <Link
+            <SessionListItem
               key={session.id}
-              to="/projects/$projectId/session"
-              params={{ projectId }}
-              search={{ tab: currentTab, sessionId: session.id }}
-              className={cn(
-                "block rounded-lg p-2.5 transition-all duration-200 hover:bg-blue-50/60 dark:hover:bg-blue-950/40 hover:border-blue-300/60 dark:hover:border-blue-700/60 hover:shadow-sm border border-sidebar-border/40 bg-sidebar/30",
-                isActive &&
-                  "bg-blue-100 dark:bg-blue-900/50 border-blue-400 dark:border-blue-600 shadow-md ring-1 ring-blue-200/50 dark:ring-blue-700/50 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:border-blue-400 dark:hover:border-blue-600",
-              )}
-            >
-              <div className="space-y-1.5">
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-medium line-clamp-2 leading-tight text-sidebar-foreground flex-1">
-                    {title}
-                  </h3>
-                  {(isRunning || isPaused) && (
-                    <Badge
-                      variant={isRunning ? "default" : "secondary"}
-                      className={cn(
-                        "text-xs",
-                        isRunning && "bg-green-500 text-white",
-                        isPaused && "bg-yellow-500 text-white",
-                      )}
-                    >
-                      {isRunning ? (
-                        <Trans id="session.status.running" />
-                      ) : (
-                        <Trans id="session.status.paused" />
-                      )}
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 text-xs text-sidebar-foreground/70">
-                    <div className="flex items-center gap-1">
-                      <MessageSquareIcon className="w-3 h-3" />
-                      <span>{session.meta.messageCount}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <CoinsIcon className="w-3 h-3" />
-                      <span>${session.meta.cost.totalUsd.toFixed(2)}</span>
-                    </div>
-                  </div>
-                  {session.lastModifiedAt && (
-                    <span className="text-xs text-sidebar-foreground/60">
-                      {formatLocaleDate(session.lastModifiedAt, {
-                        locale: config.locale,
-                        target: "time",
-                      })}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </Link>
+              session={session}
+              projectId={projectId}
+              currentTab={currentTab}
+              isActive={session.id === currentSessionId}
+              status={sessionProcess?.status}
+              locale={config.locale}
+              isStarred={starredSessionIds.has(session.id)}
+              onToggleStar={handleToggleStar}
+            />
           );
         })}
 

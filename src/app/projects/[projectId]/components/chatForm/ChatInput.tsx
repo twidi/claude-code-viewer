@@ -5,7 +5,6 @@ import {
   PaperclipIcon,
   SendIcon,
   SparklesIcon,
-  XIcon,
 } from "lucide-react";
 import {
   type FC,
@@ -16,6 +15,13 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { useDiffLineComment } from "@/contexts/DiffLineCommentContext";
+import { useFileExplorerComment } from "@/contexts/FileExplorerCommentContext";
+import { useTerminalComment } from "@/contexts/TerminalCommentContext";
+import {
+  AttachmentList,
+  type PendingAttachment,
+} from "../../../../../components/AttachmentList";
 import { Button } from "../../../../../components/ui/button";
 import { Input } from "../../../../../components/ui/input";
 import { Label } from "../../../../../components/ui/label";
@@ -35,8 +41,13 @@ import type {
 import { useConfig } from "../../../../hooks/useConfig";
 import type { CommandCompletionRef } from "./CommandCompletion";
 import type { FileCompletionRef } from "./FileCompletion";
-import { processFile } from "./fileUtils";
+import {
+  isSupportedMimeType,
+  processFile,
+  processImageImmediately,
+} from "./fileUtils";
 import { InlineCompletion } from "./InlineCompletion";
+import { useDraftMessage } from "./useDraftMessage";
 
 export interface MessageInput {
   text: string;
@@ -57,6 +68,21 @@ export interface ChatInputProps {
   buttonSize?: "sm" | "default" | "lg";
   enableScheduledSend?: boolean;
   baseSessionId?: string | null;
+  /**
+   * When true, shows the send mode dropdown with "Queue Now" instead of "Send Now".
+   * The actual queuing behavior is handled by the parent via onSubmit.
+   */
+  showQueueOption?: boolean;
+  /**
+   * Message to restore to the input (e.g., when user cancels a dialog).
+   * When set, the message text will be populated into the input.
+   */
+  restoredMessage?: MessageInput | null;
+  /**
+   * Callback when the restored message has been applied.
+   * Parent should clear restoredMessage after this is called.
+   */
+  onMessageRestored?: () => void;
 }
 
 export const ChatInput: FC<ChatInputProps> = ({
@@ -72,6 +98,9 @@ export const ChatInput: FC<ChatInputProps> = ({
   buttonSize = "lg",
   enableScheduledSend = false,
   baseSessionId = null,
+  showQueueOption = false,
+  restoredMessage = null,
+  onMessageRestored,
 }) => {
   // Parse minHeight prop to get pixel value (default to 48px for 1.5 lines)
   // Supports both "200px" and Tailwind format like "min-h-[200px]"
@@ -89,14 +118,24 @@ export const ChatInput: FC<ChatInputProps> = ({
   };
   const minHeightValue = parseMinHeight(minHeightProp);
   const { i18n } = useLingui();
-  const [message, setMessage] = useState("");
-  const [attachedFiles, setAttachedFiles] = useState<
-    Array<{ file: File; id: string }>
+  const { draft, setDraft, clearDraft } = useDraftMessage(
+    projectId,
+    baseSessionId,
+  );
+  const [message, setMessage] = useState(draft);
+  const [pendingAttachments, setPendingAttachments] = useState<
+    PendingAttachment[]
   >([]);
   const [cursorPosition, setCursorPosition] = useState<{
     relative: { top: number; left: number };
     absolute: { top: number; left: number };
   }>({ relative: { top: 0, left: 0 }, absolute: { top: 0, left: 0 } });
+  // Track cursor index in the text for completion parsing
+  const [cursorIndex, setCursorIndex] = useState(0);
+  const [isDraggingOnPage, setIsDraggingOnPage] = useState(false);
+  const [isDraggingOnZone, setIsDraggingOnZone] = useState(false);
+  const dragCounterRef = useRef(0);
+  const zoneDragCounterRef = useRef(0);
   const [sendMode, setSendMode] = useState<"immediate" | "scheduled">(
     "immediate",
   );
@@ -121,8 +160,7 @@ export const ChatInput: FC<ChatInputProps> = ({
   const createSchedulerJob = useCreateSchedulerJob();
 
   // Auto-resize textarea based on content
-  // biome-ignore lint/correctness/useExhaustiveDependencies: message is intentionally included to trigger resize
-  useEffect(() => {
+  const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
@@ -130,9 +168,14 @@ export const ChatInput: FC<ChatInputProps> = ({
     textarea.style.height = "auto";
     // Set height to scrollHeight, but respect min/max constraints
     const scrollHeight = textarea.scrollHeight;
-    const maxHeight = 200; // Maximum height in pixels (approx 5 lines)
+    const maxHeight = 400; // Maximum height in pixels (approx 10 lines)
     textarea.style.height = `${Math.max(minHeightValue, Math.min(scrollHeight, maxHeight))}px`;
-  }, [message, minHeightValue]);
+  }, [minHeightValue]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: message is intentionally included to trigger resize
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [message, adjustTextareaHeight]);
 
   // Set initial height to 1 line on mount
   useEffect(() => {
@@ -142,36 +185,165 @@ export const ChatInput: FC<ChatInputProps> = ({
     textarea.style.height = `${minHeightValue}px`;
   }, [minHeightValue]);
 
+  // Restore message when restoredMessage prop is set
+  useEffect(() => {
+    if (restoredMessage) {
+      setMessage(restoredMessage.text);
+      setDraft(restoredMessage.text);
+      // TODO: Also restore images/documents if needed
+      onMessageRestored?.();
+      textareaRef.current?.focus();
+    }
+  }, [restoredMessage, onMessageRestored, setDraft]);
+
+  // Register callback for inserting text from diff line comments, file explorer comments, and terminal
+  const { registerInsertCallback: registerDiffInsertCallback } =
+    useDiffLineComment();
+  const { registerInsertCallback: registerFileExplorerInsertCallback } =
+    useFileExplorerComment();
+  const { registerInsertCallback: registerTerminalInsertCallback } =
+    useTerminalComment();
+  useEffect(() => {
+    const insertTextAtCursor = (text: string) => {
+      const textarea = textareaRef.current;
+      if (!textarea) {
+        // Fallback: append to current message
+        setMessage((prev) => {
+          const separator = prev.trim() ? "\n\n" : "";
+          const newValue = prev + separator + text;
+          setDraft(newValue);
+          return newValue;
+        });
+        return;
+      }
+
+      // Get current cursor position (or end of text if not focused)
+      const start = textarea.selectionStart ?? message.length;
+      const end = textarea.selectionEnd ?? message.length;
+
+      // Determine separator based on context
+      const beforeCursor = message.slice(0, start);
+      const afterCursor = message.slice(end);
+      const needsLeadingSeparator =
+        beforeCursor.trim() && !beforeCursor.endsWith("\n\n");
+      const needsTrailingSeparator =
+        afterCursor.trim() && !afterCursor.startsWith("\n");
+
+      const leadingSep = needsLeadingSeparator ? "\n\n" : "";
+      const trailingSep = needsTrailingSeparator ? "\n\n" : "";
+
+      const newValue =
+        beforeCursor + leadingSep + text + trailingSep + afterCursor;
+      setMessage(newValue);
+      setDraft(newValue);
+
+      // Set cursor position after inserted text
+      const newCursorPos =
+        start + leadingSep.length + text.length + trailingSep.length;
+      requestAnimationFrame(() => {
+        textarea.focus();
+        textarea.setSelectionRange(newCursorPos, newCursorPos);
+      });
+    };
+
+    // Register the same callback with all contexts
+    const unregisterDiff = registerDiffInsertCallback(insertTextAtCursor);
+    const unregisterFileExplorer =
+      registerFileExplorerInsertCallback(insertTextAtCursor);
+    const unregisterTerminal =
+      registerTerminalInsertCallback(insertTextAtCursor);
+
+    return () => {
+      unregisterDiff();
+      unregisterFileExplorer();
+      unregisterTerminal();
+    };
+  }, [
+    registerDiffInsertCallback,
+    registerFileExplorerInsertCallback,
+    registerTerminalInsertCallback,
+    message,
+    setDraft,
+  ]);
+
+  // Global drag listeners to detect when files are dragged anywhere on the page
+  useEffect(() => {
+    const handleGlobalDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current++;
+      if (e.dataTransfer?.types.includes("Files")) {
+        setIsDraggingOnPage(true);
+      }
+    };
+
+    const handleGlobalDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current--;
+      if (dragCounterRef.current === 0) {
+        setIsDraggingOnPage(false);
+      }
+    };
+
+    const handleGlobalDrop = (e: DragEvent) => {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsDraggingOnPage(false);
+    };
+
+    const handleGlobalDragOver = (e: DragEvent) => {
+      e.preventDefault();
+    };
+
+    document.addEventListener("dragenter", handleGlobalDragEnter);
+    document.addEventListener("dragleave", handleGlobalDragLeave);
+    document.addEventListener("drop", handleGlobalDrop);
+    document.addEventListener("dragover", handleGlobalDragOver);
+
+    return () => {
+      document.removeEventListener("dragenter", handleGlobalDragEnter);
+      document.removeEventListener("dragleave", handleGlobalDragLeave);
+      document.removeEventListener("drop", handleGlobalDrop);
+      document.removeEventListener("dragover", handleGlobalDragOver);
+    };
+  }, []);
+
   const handleSubmit = async () => {
-    if (!message.trim() && attachedFiles.length === 0) return;
+    if (!message.trim() && pendingAttachments.length === 0) return;
 
     const images: ImageBlockParam[] = [];
     const documents: DocumentBlockParam[] = [];
 
-    for (const { file } of attachedFiles) {
-      const result = await processFile(file);
+    for (const attachment of pendingAttachments) {
+      if (attachment.type === "image") {
+        // Already-read image (from drag & drop)
+        images.push(attachment.data);
+      } else {
+        // File reference - read now
+        const result = await processFile(attachment.file);
 
-      if (result === null) {
-        continue;
-      }
+        if (result === null) {
+          continue;
+        }
 
-      if (result.type === "text") {
-        documents.push({
-          type: "document",
-          source: {
-            type: "text",
-            media_type: "text/plain",
-            data: result.content,
-          },
-        });
-      } else if (result.type === "image") {
-        images.push(result.block);
-      } else if (result.type === "document") {
-        documents.push(result.block);
+        if (result.type === "text") {
+          documents.push({
+            type: "document",
+            source: {
+              type: "text",
+              media_type: "text/plain",
+              data: result.content,
+            },
+          });
+        } else if (result.type === "image") {
+          images.push(result.block);
+        } else if (result.type === "document") {
+          documents.push(result.block);
+        }
       }
     }
 
-    if (enableScheduledSend && sendMode === "scheduled") {
+    // Scheduled send - always available, creates a reserved job
+    if (sendMode === "scheduled") {
       // Create a scheduler job for scheduled send
       const match = scheduledTime.match(
         /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/,
@@ -215,7 +387,8 @@ export const ChatInput: FC<ChatInputProps> = ({
         );
 
         setMessage("");
-        setAttachedFiles([]);
+        setPendingAttachments([]);
+        clearDraft();
       } catch (error) {
         toast.error(
           i18n._({
@@ -228,15 +401,28 @@ export const ChatInput: FC<ChatInputProps> = ({
         );
       }
     } else {
-      // Immediate send
-      await onSubmit({
-        text: message,
-        images: images.length > 0 ? images : undefined,
-        documents: documents.length > 0 ? documents : undefined,
-      });
+      // Immediate send - clear UI before async operation
+      const textToSend = message;
+      const imagesToSend = images.length > 0 ? images : undefined;
+      const documentsToSend = documents.length > 0 ? documents : undefined;
+      const attachmentsToRestore = [...pendingAttachments];
 
       setMessage("");
-      setAttachedFiles([]);
+      setPendingAttachments([]);
+      clearDraft();
+
+      try {
+        await onSubmit({
+          text: textToSend,
+          images: imagesToSend,
+          documents: documentsToSend,
+        });
+      } catch {
+        // Restore message and attachments on failure so user doesn't lose their input
+        setMessage(textToSend);
+        setPendingAttachments(attachmentsToRestore);
+        setDraft(textToSend);
+      }
     }
   };
 
@@ -244,20 +430,145 @@ export const ChatInput: FC<ChatInputProps> = ({
     const files = e.target.files;
     if (!files) return;
 
-    const newFiles = Array.from(files).map((file) => ({
-      file,
-      id: `${file.name}-${Date.now()}-${Math.random()}`,
-    }));
-
-    setAttachedFiles((prev) => [...prev, ...newFiles]);
+    addFiles(Array.from(files));
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
-  const handleRemoveFile = (id: string) => {
-    setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
+  const handleRemoveAttachment = (id: string) => {
+    setPendingAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
+
+  const addFiles = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const newAttachments: PendingAttachment[] = fileArray.map((file) => ({
+      type: "file",
+      file,
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
+    setPendingAttachments((prev) => [...prev, ...newAttachments]);
+
+    // Switch to immediate mode if in scheduled mode (scheduled send doesn't support attachments)
+    if (sendMode === "scheduled") {
+      setSendMode("immediate");
+      toast.info(
+        i18n._({
+          id: "chat.send_mode.switched_to_immediate",
+          message:
+            "Switched to immediate send (scheduled send doesn't support attachments)",
+        }),
+      );
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const files = e.clipboardData.files;
+    if (files.length === 0) return;
+
+    const supportedFiles = Array.from(files).filter((file) =>
+      isSupportedMimeType(file.type),
+    );
+    if (supportedFiles.length > 0) {
+      addFiles(supportedFiles);
+    }
+  };
+
+  const handleZoneDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current++;
+    if (e.dataTransfer.types.includes("Files")) {
+      setIsDraggingOnZone(true);
+    }
+  };
+
+  const handleZoneDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current--;
+    if (zoneDragCounterRef.current === 0) {
+      setIsDraggingOnZone(false);
+    }
+  };
+
+  const handleZoneDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleZoneDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    zoneDragCounterRef.current = 0;
+    setIsDraggingOnZone(false);
+    const files = e.dataTransfer.files;
+    if (files.length === 0) return;
+
+    const supportedFiles = Array.from(files).filter((file) =>
+      isSupportedMimeType(file.type),
+    );
+    if (supportedFiles.length === 0) return;
+
+    // Separate images from other files
+    // Images are read immediately to avoid issues with temporary blob references
+    // (e.g., from screenshot tools where the file reference may become invalid)
+    const imageFiles = supportedFiles.filter((file) =>
+      file.type.startsWith("image/"),
+    );
+    const otherFiles = supportedFiles.filter(
+      (file) => !file.type.startsWith("image/"),
+    );
+
+    const newAttachments: PendingAttachment[] = [];
+
+    // Read images immediately
+    if (imageFiles.length > 0) {
+      const imagePromises = imageFiles.map(async (file) => {
+        const imageData = await processImageImmediately(file);
+        if (imageData) {
+          return {
+            type: "image" as const,
+            data: imageData,
+            name: file.name || `image.${file.type.split("/")[1]}`,
+            id: `${file.name}-${Date.now()}-${Math.random()}`,
+          };
+        }
+        return null;
+      });
+
+      const results = await Promise.all(imagePromises);
+      for (const result of results) {
+        if (result !== null) {
+          newAttachments.push(result);
+        }
+      }
+    }
+
+    // Add other files as file references (they will be read at submit time)
+    for (const file of otherFiles) {
+      newAttachments.push({
+        type: "file",
+        file,
+        id: `${file.name}-${Date.now()}-${Math.random()}`,
+      });
+    }
+
+    if (newAttachments.length > 0) {
+      setPendingAttachments((prev) => [...prev, ...newAttachments]);
+
+      // Switch to immediate mode if in scheduled mode
+      if (sendMode === "scheduled") {
+        setSendMode("immediate");
+        toast.info(
+          i18n._({
+            id: "chat.send_mode.switched_to_immediate",
+            message:
+              "Switched to immediate send (scheduled send doesn't support attachments)",
+          }),
+        );
+      }
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -361,9 +672,22 @@ export const ChatInput: FC<ChatInputProps> = ({
     textareaRef.current?.focus();
   };
 
-  const handleFilePathSelect = (filePath: string) => {
-    setMessage(filePath);
-    textareaRef.current?.focus();
+  const handleFilePathSelect = (
+    newMessage: string,
+    newCursorPosition: number,
+  ) => {
+    setMessage(newMessage);
+    setDraft(newMessage);
+    setCursorIndex(newCursorPosition);
+
+    // Reposition cursor after React updates the textarea
+    requestAnimationFrame(() => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.focus();
+        textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+      }
+    });
   };
 
   return (
@@ -377,31 +701,70 @@ export const ChatInput: FC<ChatInputProps> = ({
         </div>
       )}
 
-      <div className="relative group">
+      <div
+        className="relative group"
+        onDragEnter={handleZoneDragEnter}
+        onDragLeave={handleZoneDragLeave}
+        onDragOver={handleZoneDragOver}
+        onDrop={handleZoneDrop}
+      >
         <div
-          className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className={`absolute -inset-0.5 rounded-2xl blur transition-opacity duration-300 ${
+            isDraggingOnZone
+              ? "opacity-100 bg-gradient-to-r from-blue-500/40 via-cyan-500/40 to-blue-500/40"
+              : isDraggingOnPage
+                ? "opacity-100 bg-gradient-to-r from-blue-500/30 via-cyan-500/30 to-blue-500/30"
+                : "opacity-0 group-hover:opacity-100 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20"
+          }`}
           aria-hidden="true"
         />
 
-        <div className="relative bg-background border border-border/40 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+        <div
+          className={`relative bg-background border border-border/40 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden ${
+            isDraggingOnZone
+              ? "ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-2 ring-offset-background"
+              : isDraggingOnPage
+                ? "ring-2 ring-blue-400/50 dark:ring-blue-500/50 ring-offset-2 ring-offset-background"
+                : ""
+          }`}
+        >
           <div className="relative" ref={containerRef}>
             <Textarea
               ref={textareaRef}
               value={message}
               onChange={(e) => {
-                if (
-                  e.target.value.endsWith("@") ||
-                  e.target.value.endsWith("/")
-                ) {
+                const newValue = e.target.value;
+                const newCursorIndex = e.target.selectionStart;
+
+                // Update cursor position for widget positioning when:
+                // - @ is typed anywhere (file completion)
+                // - / is typed as the first character (command completion)
+                const charTyped = newValue.slice(
+                  newCursorIndex - 1,
+                  newCursorIndex,
+                );
+                const isAtTyped = charTyped === "@";
+                const isSlashAtStart =
+                  charTyped === "/" && newCursorIndex === 1;
+
+                if (isAtTyped || isSlashAtStart) {
                   const position = getCursorPosition();
                   if (position) {
                     setCursorPosition(position);
                   }
                 }
 
-                setMessage(e.target.value);
+                setCursorIndex(newCursorIndex);
+                setMessage(newValue);
+                setDraft(newValue);
               }}
+              onSelect={(e) => {
+                // Track cursor movements (arrow keys, mouse clicks)
+                setCursorIndex(e.currentTarget.selectionStart);
+              }}
+              onFocus={adjustTextareaHeight}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               placeholder={placeholder}
               className="resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent px-5 py-2 text-base transition-all duration-200 placeholder:text-muted-foreground/60 overflow-y-auto leading-6"
               style={{
@@ -417,71 +780,63 @@ export const ChatInput: FC<ChatInputProps> = ({
             />
           </div>
 
-          {attachedFiles.length > 0 && (
-            <div className="px-5 py-3 flex flex-wrap gap-2 border-t border-border/40">
-              {attachedFiles.map(({ file, id }) => (
-                <div
-                  key={id}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg text-sm"
-                >
-                  <span className="truncate max-w-[200px]">{file.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveFile(id)}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                    disabled={isPending}
-                  >
-                    <XIcon className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+          {pendingAttachments.length > 0 && (
+            <div className="px-5 py-3 border-t border-border/40">
+              <AttachmentList
+                existingAttachments={[]}
+                pendingAttachments={pendingAttachments}
+                onRemoveExisting={() => {}}
+                onRemovePending={handleRemoveAttachment}
+                disabled={isPending}
+              />
             </div>
           )}
 
           <div className="flex flex-col gap-2 px-5 py-1 bg-muted/30 border-t border-border/40">
-            {enableScheduledSend && sendMode === "scheduled" && (
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                <Label htmlFor="send-mode-mobile" className="text-xs sr-only">
-                  <Trans id="chat.send_mode.label" />
-                </Label>
-                <Select
-                  value={sendMode}
-                  onValueChange={(value: "immediate" | "scheduled") =>
-                    setSendMode(value)
-                  }
-                  disabled={isPending || disabled}
-                >
-                  <SelectTrigger
-                    id="send-mode-mobile"
-                    className="h-8 w-full sm:w-[140px] text-xs"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="immediate">
-                      <Trans id="chat.send_mode.immediate" />
-                    </SelectItem>
-                    <SelectItem value="scheduled">
-                      <Trans id="chat.send_mode.scheduled" />
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <div className="flex items-center gap-1.5 flex-1">
-                  <Label htmlFor="scheduled-time" className="text-xs sr-only">
-                    <Trans id="chat.send_mode.scheduled_time" />
+            {(enableScheduledSend || showQueueOption) &&
+              sendMode === "scheduled" && (
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                  <Label htmlFor="send-mode-mobile" className="text-xs sr-only">
+                    <Trans id="chat.send_mode.label" />
                   </Label>
-                  <Input
-                    id="scheduled-time"
-                    type="datetime-local"
-                    value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
+                  <Select
+                    value={sendMode}
+                    onValueChange={(value: "immediate" | "scheduled") =>
+                      setSendMode(value)
+                    }
                     disabled={isPending || disabled}
-                    className="h-8 w-full sm:w-[180px] text-xs"
-                  />
+                  >
+                    <SelectTrigger
+                      id="send-mode-mobile"
+                      className="h-8 w-full sm:w-[140px] text-xs"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="immediate">
+                        <Trans id="chat.send_mode.immediate" />
+                      </SelectItem>
+                      <SelectItem value="scheduled">
+                        <Trans id="chat.send_mode.scheduled" />
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <div className="flex items-center gap-1.5 flex-1">
+                    <Label htmlFor="scheduled-time" className="text-xs sr-only">
+                      <Trans id="chat.send_mode.scheduled_time" />
+                    </Label>
+                    <Input
+                      id="scheduled-time"
+                      type="datetime-local"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      disabled={isPending || disabled}
+                      className="h-8 w-full sm:w-[180px] text-xs"
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
@@ -520,14 +875,52 @@ export const ChatInput: FC<ChatInputProps> = ({
               </div>
 
               <div className="flex items-center gap-2">
-                {enableScheduledSend && sendMode === "immediate" && (
-                  <div className="hidden sm:flex items-center gap-2">
-                    <Label
-                      htmlFor="send-mode-desktop"
-                      className="text-xs sr-only"
-                    >
-                      <Trans id="chat.send_mode.label" />
-                    </Label>
+                {(enableScheduledSend || showQueueOption) &&
+                  sendMode === "immediate" && (
+                    <div className="hidden sm:flex items-center gap-2">
+                      <Label
+                        htmlFor="send-mode-desktop"
+                        className="text-xs sr-only"
+                      >
+                        <Trans id="chat.send_mode.label" />
+                      </Label>
+                      <Select
+                        value={sendMode}
+                        onValueChange={(value: "immediate" | "scheduled") =>
+                          setSendMode(value)
+                        }
+                        disabled={isPending || disabled}
+                      >
+                        <SelectTrigger
+                          id="send-mode-desktop"
+                          className="h-8 w-[140px] text-xs"
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="immediate">
+                            <Trans id="chat.send_mode.immediate" />
+                          </SelectItem>
+                          <SelectItem
+                            value="scheduled"
+                            disabled={pendingAttachments.length > 0}
+                          >
+                            {pendingAttachments.length > 0 ? (
+                              <Trans
+                                id="chat.send_mode.scheduled_disabled_with_attachments"
+                                message="Scheduled (not available with attachments)"
+                              />
+                            ) : (
+                              <Trans id="chat.send_mode.scheduled" />
+                            )}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                {(enableScheduledSend || showQueueOption) &&
+                  sendMode === "immediate" && (
                     <Select
                       value={sendMode}
                       onValueChange={(value: "immediate" | "scheduled") =>
@@ -535,48 +928,32 @@ export const ChatInput: FC<ChatInputProps> = ({
                       }
                       disabled={isPending || disabled}
                     >
-                      <SelectTrigger
-                        id="send-mode-desktop"
-                        className="h-8 w-[140px] text-xs"
-                      >
+                      <SelectTrigger className="sm:hidden h-8 w-[110px] text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="immediate">
                           <Trans id="chat.send_mode.immediate" />
                         </SelectItem>
-                        <SelectItem value="scheduled">
+                        <SelectItem
+                          value="scheduled"
+                          disabled={pendingAttachments.length > 0}
+                        >
                           <Trans id="chat.send_mode.scheduled" />
                         </SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-                )}
-
-                {enableScheduledSend && sendMode === "immediate" && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSendMode("scheduled")}
-                    disabled={isPending || disabled}
-                    className="sm:hidden gap-1.5"
-                  >
-                    <span className="text-xs">
-                      <Trans id="chat.send_mode.scheduled" />
-                    </span>
-                  </Button>
-                )}
+                  )}
 
                 <Button
                   onClick={handleSubmit}
                   disabled={
-                    (!message.trim() && attachedFiles.length === 0) ||
+                    (!message.trim() && pendingAttachments.length === 0) ||
                     isPending ||
                     disabled
                   }
                   size={buttonSize}
-                  className="gap-2 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-muted disabled:to-muted"
+                  className="gap-2 transition-all duration-200 hover:shadow-md hover:scale-105 active:scale-95 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-muted disabled:to-muted disabled:text-muted-foreground"
                 >
                   {isPending ? (
                     <>
@@ -599,6 +976,7 @@ export const ChatInput: FC<ChatInputProps> = ({
         <InlineCompletion
           projectId={projectId}
           message={message}
+          cursorIndex={cursorIndex}
           commandCompletionRef={commandCompletionRef}
           fileCompletionRef={fileCompletionRef}
           handleCommandSelect={handleCommandSelect}

@@ -2,6 +2,7 @@ import { Command, FileSystem, Path } from "@effect/platform";
 import { Context, Data, Duration, Effect, Either, Layer } from "effect";
 import type { InferEffect } from "../../../lib/effect/types";
 import { EnvService } from "../../platform/services/EnvService";
+import { findBaseBranchFromData } from "../functions/findBaseBranchFromData";
 import { parseGitBranchesOutput } from "../functions/parseGitBranchesOutput";
 import { parseGitCommitsOutput } from "../functions/parseGitCommitsOutput";
 
@@ -103,6 +104,46 @@ const LayerImpl = Effect.gen(function* () {
         cwd,
       );
       return parseGitCommitsOutput(result);
+    });
+
+  const getCommitDetails = (cwd: string, sha: string) =>
+    Effect.gen(function* () {
+      // Use ASCII separators: \x1f (unit separator) between fields
+      const result = yield* execGitCommand(
+        [
+          "show",
+          "-s",
+          "--format=%H\x1f%s\x1f%b\x1f%an\x1f%ad",
+          "--date=iso",
+          sha,
+        ],
+        cwd,
+      );
+      const parts = result.split("\x1f");
+      if (parts.length < 5) {
+        return yield* Effect.fail(
+          new GitCommandError({
+            cwd,
+            command: `git show ${sha}`,
+          }),
+        );
+      }
+      const [commitSha, subject, body, author, date] = parts;
+      if (!commitSha || !subject || !author || !date) {
+        return yield* Effect.fail(
+          new GitCommandError({
+            cwd,
+            command: `git show ${sha} (parse error)`,
+          }),
+        );
+      }
+      return {
+        sha: commitSha.trim(),
+        message: subject.trim(),
+        body: (body ?? "").trim(),
+        author: author.trim(),
+        date: date.trim(),
+      };
     });
 
   const stageFiles = (cwd: string, files: string[]) =>
@@ -256,7 +297,7 @@ const LayerImpl = Effect.gen(function* () {
         ["rev-list", `${targetHash}..${compareHash}`],
         cwd,
       );
-      const aheadCounts = aheadResult
+      const ahead = aheadResult
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line !== "").length;
@@ -265,24 +306,12 @@ const LayerImpl = Effect.gen(function* () {
         ["rev-list", `${compareHash}..${targetHash}`],
         cwd,
       );
-      const behindCounts = behindResult
+      const behind = behindResult
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line !== "").length;
 
-      if (aheadCounts === 0 && behindCounts === 0) {
-        return "un-related" as const;
-      }
-
-      if (aheadCounts > 0) {
-        return "ahead" as const;
-      }
-
-      if (behindCounts > 0) {
-        return "behind" as const;
-      }
-
-      return "un-related" as const;
+      return { ahead, behind };
     });
 
   const getCommitsWithParent = (
@@ -326,47 +355,60 @@ const LayerImpl = Effect.gen(function* () {
 
   const findBaseBranch = (cwd: string, targetBranch: string) =>
     Effect.gen(function* () {
+      // Collect all commits (up to 100)
+      const allCommits: Array<{ current: string; parent: string }> = [];
       let offset = 0;
       const limit = 20;
 
       while (offset < 100) {
         const commits = yield* getCommitsWithParent(cwd, { offset, limit });
-
-        for (const commit of commits) {
-          const branchNames = yield* getBranchNamesByCommitHash(
-            cwd,
-            commit.current,
-          );
-
-          if (!branchNames.includes(targetBranch)) {
-            continue;
-          }
-
-          const otherBranchNames = branchNames.filter(
-            (branchName) => branchName !== targetBranch,
-          );
-
-          if (otherBranchNames.length === 0) {
-            continue;
-          }
-
-          for (const branchName of otherBranchNames) {
-            const comparison = yield* compareCommitHash(
-              cwd,
-              targetBranch,
-              branchName,
-            );
-
-            if (comparison === "behind") {
-              return { branch: branchName, hash: commit.current };
-            }
-          }
-        }
-
+        if (commits.length === 0) break;
+        allCommits.push(...commits);
         offset += limit;
       }
 
-      return null;
+      // Build caches for branch containment and comparisons
+      const branchCache = new Map<string, string[]>();
+      const comparisonCache = new Map<
+        string,
+        { ahead: number; behind: number }
+      >();
+
+      // Use the pure function with effectful callbacks wrapped in the Effect context
+      for (const commit of allCommits) {
+        if (!branchCache.has(commit.current)) {
+          const branches = yield* getBranchNamesByCommitHash(
+            cwd,
+            commit.current,
+          );
+          branchCache.set(commit.current, branches);
+        }
+
+        const branchNames = branchCache.get(commit.current) ?? [];
+        if (!branchNames.includes(targetBranch)) continue;
+
+        const otherBranches = branchNames.filter((b) => b !== targetBranch);
+        for (const otherBranch of otherBranches) {
+          const cacheKey = `${targetBranch}:${otherBranch}`;
+          if (!comparisonCache.has(cacheKey)) {
+            const comparison = yield* compareCommitHash(
+              cwd,
+              targetBranch,
+              otherBranch,
+            );
+            comparisonCache.set(cacheKey, comparison);
+          }
+        }
+      }
+
+      // Now call the pure function with cached data
+      return findBaseBranchFromData({
+        targetBranch,
+        commits: allCommits,
+        getBranchNamesForCommit: (hash) => branchCache.get(hash) ?? [],
+        compareBranches: (target, other) =>
+          comparisonCache.get(`${target}:${other}`) ?? { ahead: 0, behind: 0 },
+      });
     });
 
   const getCommitsBetweenBranches = (
@@ -393,6 +435,7 @@ const LayerImpl = Effect.gen(function* () {
     getCurrentBranch,
     branchExists,
     getCommits,
+    getCommitDetails,
     stageFiles,
     commit,
     push,
