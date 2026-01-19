@@ -196,6 +196,10 @@ const getConversationKey = (conversation: Conversation) => {
     return `queue-operation_${conversation.operation}_${conversation.sessionId}_${conversation.timestamp}`;
   }
 
+  if (conversation.type === "progress") {
+    return `progress_${conversation.uuid}`;
+  }
+
   conversation satisfies never;
   throw new Error(`Unknown conversation type: ${conversation}`);
 };

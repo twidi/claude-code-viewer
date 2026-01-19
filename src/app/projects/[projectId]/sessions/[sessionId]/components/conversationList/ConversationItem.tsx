@@ -8,9 +8,9 @@ import type { ToolResultContent } from "@/lib/conversation-schema/content/ToolRe
 import { AssistantConversationContent } from "./AssistantConversationContent";
 import { FileHistorySnapshotConversationContent } from "./FileHistorySnapshotConversationContent";
 import { MetaConversationContent } from "./MetaConversationContent";
-import { QueueOperationConversationContent } from "./QueueOperationConversationContent";
+// import { QueueOperationConversationContent } from "./QueueOperationConversationContent";
 import { SummaryConversationContent } from "./SummaryConversationContent";
-import { SystemConversationContent } from "./SystemConversationContent";
+// import { SystemConversationContent } from "./SystemConversationContent";
 import { TurnDuration } from "./TurnDuration";
 import { UserConversationContent } from "./UserConversationContent";
 
@@ -49,14 +49,17 @@ export const ConversationItem: FC<{
     );
   }
 
+  // System messages are technical implementation details (hooks, errors, etc.)
+  // Not displayed but code kept for potential future debug mode
   if (conversation.type === "system") {
-    const content =
-      "content" in conversation && typeof conversation.content === "string"
-        ? conversation.content
-        : conversation.subtype === "stop_hook_summary"
-          ? `Stop hook executed: ${conversation.hookInfos.map((h) => h.command).join(", ")}`
-          : "System message";
-    return <SystemConversationContent>{content}</SystemConversationContent>;
+    // const content =
+    //   "content" in conversation && typeof conversation.content === "string"
+    //     ? conversation.content
+    //     : conversation.subtype === "stop_hook_summary"
+    //       ? `Stop hook executed: ${conversation.hookInfos.map((h) => h.command).join(", ")}`
+    //       : "System message";
+    // return <SystemConversationContent>{content}</SystemConversationContent>;
+    return null;
   }
 
   if (conversation.type === "file-history-snapshot") {
@@ -65,8 +68,11 @@ export const ConversationItem: FC<{
     );
   }
 
+  // Queue operations are internal mechanisms (enqueue/dequeue)
+  // Not displayed but code kept for potential future debug mode
   if (conversation.type === "queue-operation") {
-    return <QueueOperationConversationContent conversation={conversation} />;
+    // return <QueueOperationConversationContent conversation={conversation} />;
+    return null;
   }
 
   if (conversation.type === "user") {
